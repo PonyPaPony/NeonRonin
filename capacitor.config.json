@@ -1,0 +1,9 @@
+{
+  "appId": "com.neonronin.game",
+  "appName": "Неоновый Ронин",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#05060c",
+    "allowMixedContent": false
+  }
+}
