@@ -103,7 +103,7 @@ button.big{padding:10px 16px;font-size:14px;border-radius:12px}
 @keyframes legend{50%{box-shadow:0 0 34px -6px var(--tc),inset 0 1px 0 rgba(255,255,255,.1)}}
 .slot.locked{align-items:center;justify-content:center;color:#5f6689;font-size:13px;border-style:dashed;background:repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 8px,transparent 8px 16px)}
 .slot.flash{animation:slotpop .75s cubic-bezier(.2,1.4,.4,1)}
-@keyframes slotpop{0%{transform:scale(.9);filter:brightness(2.4)}35%{transform:scale(1.045);box-shadow:0 0 54px 6px var(--tc)}100%{transform:scale(1);filter:none}}
+@keyframes slotpop{0%{transform:scale(.9);filter:brightness(1.35)}35%{transform:scale(1.045);box-shadow:0 0 54px 6px var(--tc)}100%{transform:scale(1);filter:none}}
 .s-top{display:flex;align-items:center;gap:9px;font-weight:700}
 .s-icon{position:relative;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--tc) 50%,#222),rgba(0,0,0,.4));color:#fff;font-size:15px;text-shadow:0 0 10px var(--tc);flex:none}
 .slot.filled .s-icon::before{content:'';position:absolute;inset:-4px;border-radius:12px;border:1px dashed var(--tc);opacity:.75;animation:spin 8s linear infinite}
@@ -216,6 +216,8 @@ button .pr.x{color:#e8dcff}
 .tv-ic{font-size:34px}.tvcard b{font-size:16px;color:#fff}.tvcard small{color:#c5cbe8;font-size:12px;flex:1}.tv-st{font-size:12px;color:#9fe6ff;font-weight:700}
 .masks{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 10px}.mask{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:12px;border:1px dashed rgba(255,255,255,.2);background:rgba(0,0,0,.3)}.mask span{font-size:24px;color:#6a6a8a}.mask small{font-size:10px;color:#9aa3c9;text-align:center}.mask.got{border:1px solid #ff5a3a;box-shadow:0 0 18px -6px #ff5a3a}.mask.got small{color:#ffb0a0}
 button.danger{background:linear-gradient(180deg,#ff5a3a,#a8141e);color:#fff;border-color:#ff8a6a}
+button.hold{touch-action:none;background:linear-gradient(90deg,rgba(255,220,120,.55) var(--hold,0%),transparent var(--hold,0%)),linear-gradient(180deg,#ff5a3a,#a8141e)}
+#menu h3.danger-h{color:#ff9a8a}
 @media (max-width:820px){.tr-body,#tv-cards{grid-template-columns:1fr}}
 .btabs{display:flex;gap:8px;margin-bottom:10px}.btab{flex:1;padding:9px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:#c5cbe8;font-weight:700;cursor:pointer;font-size:13px;line-height:1.2}.btab small{display:block;font-weight:500;font-size:10.5px;opacity:.75}.btab.active{border-color:#5ff0c8;color:#fff;background:linear-gradient(160deg,rgba(95,240,200,.22),rgba(0,0,0,.3))}.btab.trial.active{border-color:#c77dff;background:linear-gradient(160deg,rgba(199,125,255,.28),rgba(0,0,0,.3))}
 .bnote.trial{background:linear-gradient(170deg,#2c1840,#170c26);color:#efe4ff;box-shadow:0 8px 18px rgba(0,0,0,.5),0 0 22px -6px #b45cff;border:1px solid rgba(199,125,255,.5)}.bnote.trial .nd{color:#cbb8e8}.bnote.trial .nz{color:#ff9ad5}.bnote.trial .hanko{border-color:#c77dff;color:#e2b8ff}.bnote.trial .rg{color:#ffd76a}.bnote.trial .rs{color:#e0b4ff}.bnote.trial .rx{color:#c9a8ff}.bnote.trial .rj{color:#7dffb0}
@@ -278,6 +280,19 @@ body.touch-ui #joy-zone::after{content:'Двигай пальцем здесь';
 body:not(.touch-ui) #rotate-hint{display:none}
 @media (max-height:520px){#forge,#board,#soul,#shop,#tree,#travel,#menu{max-height:97vh;padding:10px 12px;border-radius:14px}.f-head{gap:8px}.f-title{font-size:18px!important}.f-emblem{width:38px!important;height:38px!important;font-size:18px!important}}
 
+/* ---------- лёгкие окна (качество «среднее» и «низкое»): без размытия фона и бесконечных анимаций ---------- */
+body.gfx-lo #forge,body.gfx-lo #board,body.gfx-lo #soul,body.gfx-lo #shop,body.gfx-lo #tree,body.gfx-lo #travel,body.gfx-lo #pets,body.gfx-lo #menu,body.gfx-lo #console{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:fpop .25s ease-out!important;box-shadow:0 16px 40px rgba(0,0,0,.6)!important}
+body.gfx-lo .f-emblem,body.gfx-lo .pip.on::after,body.gfx-lo .pip.next,body.gfx-lo button.primary,body.gfx-lo button.soul,body.gfx-lo button.soulb,body.gfx-lo .slot.t4,body.gfx-lo .slot.t5,body.gfx-lo .slot.filled .s-icon::before,body.gfx-lo .quest.done,body.gfx-lo .heat i::after,body.gfx-lo .toast,body.gfx-lo .tbtn{animation:none!important}
+body.gfx-lo .toast{backdrop-filter:none;background:rgba(10,12,26,.94)}
+body.gfx-lo .tbtn{backdrop-filter:none}
+body.gfx-lo button::after{display:none}
+/* ---------- Башня демонов: демоническое оформление окон ---------- */
+body.in-tower #forge,body.in-tower #soul,body.in-tower #shop{background:linear-gradient(165deg,rgba(46,10,28,.95),rgba(20,6,24,.96) 55%,rgba(10,4,16,.97)) padding-box,linear-gradient(115deg,#ff3a5a,#b45cff,#ff3a8a,#7a2aff,#ff3a5a) border-box;background-size:100% 100%,300% 300%}
+body.in-tower .f-emblem{background:radial-gradient(circle at 30% 25%,#ff8ab0,#5a0a2a 72%);color:#ffe0ee;text-shadow:0 0 10px #ff4a8a;box-shadow:0 0 24px rgba(255,60,120,.55)}
+body.in-tower .f-title{background:linear-gradient(90deg,#ffe0ee,#ff7ab0 45%,#b45cff)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+body.in-tower .res.g{color:#ff9ad0}body.in-tower .res.g i{background:radial-gradient(circle at 35% 30%,#ffd0e8,#b4205a);color:#fff}
+body.in-tower button .pr.g{color:#ffb0d8}
+body.in-tower .tab.active{background:linear-gradient(180deg,rgba(255,70,140,.5),rgba(140,40,255,.2))}
 #pets{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1180px,97vw);max-height:94vh;overflow:auto;z-index:11;border-radius:22px;padding:18px 20px;
   background:linear-gradient(165deg,rgba(40,18,36,.95),rgba(16,10,22,.96) 55%,rgba(8,8,18,.97)) padding-box,linear-gradient(115deg,#ffb0d8,#ff6ad5,#ffd76a,#ffb0d8) border-box;border:2px solid transparent;box-shadow:0 30px 90px rgba(0,0,0,.65)}
 .pt-emblem{background:radial-gradient(circle at 30% 25%,#ffd8ec,#a83a7a 72%);color:#fff2f8;box-shadow:0 0 24px rgba(255,140,200,.5)}
@@ -420,7 +435,10 @@ body:not(.touch-ui) #rotate-hint{display:none}
   <div class="mrow" id="mn-gfx"></div><div class="note" id="mn-gfxinfo" style="margin-top:6px"></div>
   <h3>📱 Экран и звук</h3>
   <div class="mrow"><button data-act="fsnow">⛶ Во весь экран</button><button data-act="fsauto" id="mn-fs"></button><button data-act="snd" id="mn-snd"></button></div>
-  <div class="note" style="margin-top:10px">Телефон: левая половина экрана — джойстик, справа — рывок, авто-охота, предметы. ПК: WASD/мышь, Space, T, H, L, U, Q, 1–4, O — меню, ~ — консоль.</div>
+  <div class="note" style="margin-top:10px">Телефон: левая половина экрана — джойстик, справа — рывок, авто-охота, предметы. ПК: WASD/мышь, Space, T, H, L, U, Q, 1–4, O — меню.</div>
+  <h3 class="danger-h">⚠ Опасная зона</h3>
+  <div class="note">Сброс сотрёт весь прогресс на этом устройстве. Перед сбросом игра сама сохранит резервную копию — её можно вернуть кнопкой «↺ Вернуть прошлый прогресс».</div>
+  <div class="mrow" style="margin-top:8px"><button class="danger hold" id="mn-reset">⟲ Удерживай 3 секунды, чтобы сбросить прогресс</button></div>
 </div>
 <div id="touch">
   <div id="joy-zone"><div id="joy-base"><div id="joy-knob"></div></div></div>
@@ -468,6 +486,17 @@ function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; le
 function fmt(n) { n = Math.floor(n); if (n >= 1e9) return (n / 1e9).toFixed(2) + 'B'; if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M'; if (n >= 1e4) return (n / 1e3).toFixed(1) + 'K'; return '' + n; }
 function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; }
 function hexRGB(hex) { const n = parseInt(hex.slice(1), 16); return `${n >> 16 & 255},${n >> 8 & 255},${n & 255}`; }
+// ---------- Время по Киеву (Europe/Kyiv, с летним временем) — часы устройства ----------
+const KYIV_TZ = (() => { for (const z of ['Europe/Kyiv', 'Europe/Kiev']) { try { new Intl.DateTimeFormat('en-GB', { timeZone: z }).format(0); return z; } catch (e) { } } return null; })();
+const _kyivFmt = KYIV_TZ ? new Intl.DateTimeFormat('en-GB', { timeZone: KYIV_TZ, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : null;
+function kyivOffsetMin(ts) { // смещение Киева от UTC в минутах
+  if (_kyivFmt) { const p = {}; for (const x of _kyivFmt.formatToParts(ts)) p[x.type] = +x.value || 0; return Math.round((Date.UTC(p.year, p.month - 1, p.day, p.hour % 24, p.minute, p.second) - Math.floor(ts / 1000) * 1000) / 60000); }
+  const d = new Date(ts), y = d.getUTCFullYear(), lastSun = m => { const t = new Date(Date.UTC(y, m + 1, 0, 1)); return t.getTime() - t.getUTCDay() * 864e5; }; // запасной вариант: правило ЕС
+  return ts >= lastSun(2) && ts < lastSun(9) ? 180 : 120;
+}
+function kyivParts(ts = Date.now()) { const d = new Date(ts + kyivOffsetMin(ts) * 60000); return { y: d.getUTCFullYear(), m: d.getUTCMonth() + 1, d: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes() }; }
+function kyivTs(y, m, d, h) { const guess = Date.UTC(y, m - 1, d, h); let ts = guess - kyivOffsetMin(guess) * 60000; ts = guess - kyivOffsetMin(ts) * 60000; return ts; } // момент «h:00 по Киеву» в этот день
+const kyivDay = (ts = Date.now()) => { const p = kyivParts(ts); return `${p.y}-${String(p.m).padStart(2, '0')}-${String(p.d).padStart(2, '0')}`; };
 function rr(ctx, x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
 
 // =====================================================================
@@ -666,7 +695,7 @@ function applyClassText() {
   ARMOR_RANKS.forEach((r, i) => { r.name = src.a[i][0]; r.desc = src.a[i][1]; });
 }
 const ONI_SUPER_T = 10, ONI_SUPER_CD = 360, ONI_MASKS = ['Рог Юки-онны', 'Клык Райдзю', 'Глаз Ямамбы', 'Корона Сютэн-додзи'];
-const oniEnergyGain = () => 0.6 * (1 + JKEYS.reduce((a, k) => a + ((S[k] && S[k].lvl) || 0), 0) * 0.12) * (1 + ((PFX && PFX.oniE) || 0)); // за удар
+const oniEnergyGain = () => 0.6 * (1 + JKEYS.reduce((a, k) => a + ((S[k] && S[k].lvl) || 0), 0) * 0.12) * (1 + ((PFX && PFX.oniE) || 0)) * (S.loc === 4 ? 1.5 : 1); // за удар; в башне +50%
 
 // ---- Древняя кузница: уровень = убийства в Горном пике ----
 const AFORGE_KILLS = [300, 2500, 8000, 20000];
@@ -687,7 +716,7 @@ const TREE = [
   { id: 'thunder', parent: 'bark', name: 'Лист Грозы',        icon: 'ϟ', col: '#ffe14a', max: 8,  per: 6,   x: 62, y: 22, fmt: v => `+${v}% сопротивления грому` },
   { id: 'pierce',  parent: 'eye',  name: 'Шип Пробивания',    icon: '➶', col: '#ff6ad5', max: 10, per: 5,   x: 86, y: 40, fmt: v => `игнорирует ${v}% защиты врагов` },
 ];
-const treeLv = id => (S.tree && S.tree[id]) || 0;
+const treeLv = id => (S.loc !== 4 && S.tree && S.tree[id]) || 0; // в башне Древа Жизни нет
 const treeVal = id => treeLv(id) * TREE.find(n => n.id === id).per;
 const treeCost = lv => 1 + Math.floor(lv * 0.75);
 const treeVisible = n => !n.parent || treeLv(n.parent) > 0;
@@ -790,7 +819,7 @@ function petFx() {
   return fx;
 }
 var PFX = {};
-function refreshPetFx() { PFX = petFx(); }
+function refreshPetFx() { PFX = petFx(); if (S.loc === 4) PFX = TOWER_PETS[S.pets && S.pets.active] ? { ult: PFX.ult } : {}; } // в башне пони — без пассивных бонусов
 // бонусы питомца к характеристикам (вызывается из computeStats)
 function applyPetStats(st) {
   const f = PFX || {};
@@ -822,7 +851,7 @@ function spawnPetEntity() {
   G.pet = { sp: id, x: hero.x - 40, y: hero.y + 10, vx: 0, vy: 0, face: 1, target: null, hop: 0, happyT: 0, idleT: 0, moving: false, atkT: 3, healT: 4, shieldT: 6, cleanseT: 10, ultT: 8, ultOn: 0, tickT: 0, blink: 2 };
 }
 function updatePet(dt) {
-  if (!S.pets || !S.pets.active) { G.pet = null; return; }
+  if (!S.pets || !S.pets.active || (towerIn() && !TOWER_PETS[S.pets.active])) { G.pet = null; return; }
   if (!G.pet || G.pet.sp !== S.pets.active) spawnPetEntity();
   const p = G.pet, f = PFX, pd = activePet(), h = hero;
   const sp = 250 * (1 + (f.pspeed || 0)) * (1 + petForm(pd.lvl) * 0.1), pick = 18 * (1 + (f.pickR || 0));
@@ -890,7 +919,7 @@ function updatePetUlt(dt, p, f) {
   else if (u === 'grove') { p.ultOn = 6; p.tickT = 0; }
   else if (u === 'stance') { p.ultOn = 3; G.petStance = 3; P('ring', hero.x, hero.y - 28, 0, 0, 0.6, 60, '200,255,220'); }
   else if (u === 'cauldron') { const id = pick2(['potion', 'potion', 'talisman', 'stone']); S.inv[id] = invN(id) + 1; toast(`${PET_SP[p.sp].icon} Тануки достал из котелка: ${ITEMS[id].icon} ${ITEMS[id].name}`); }
-  else if (u === 'drum') { for (const e of G.enemies) if (!e.dead && dist(e.x, e.y, hero.x, hero.y) < 220) { dealDamage(e, ST.dmg, { small: true, noProc: true, col: '#ffd76a' }); if (!e.boss) { const a = Math.atan2(e.y - hero.y, e.x - hero.x); e.kx += Math.cos(a) * 700; e.ky += Math.sin(a) * 700; } } P('ring', hero.x, hero.y, 0, 0, 0.5, 230, '255,215,110'); G.shake = 8; SFX.boom(); }
+  else if (u === 'drum') { for (const e of G.enemies) if (!e.dead && dist(e.x, e.y, hero.x, hero.y) < 220) { dealDamage(e, ST.dmg, { small: true, noProc: true, col: '#ffd76a' }); if (!e.boss) { const a = Math.atan2(e.y - hero.y, e.x - hero.x); e.kx += Math.cos(a) * 700; e.ky += Math.sin(a) * 700; } } P('ring', hero.x, hero.y, 0, 0, 0.5, 230, '255,215,110'); addShake(8); SFX.boom(); }
   else if (u === 'stars') { const ts = G.enemies.filter(e => !e.dead && dist(e.x, e.y, hero.x, hero.y) < 480); for (let i = 0; i < 10 && ts.length; i++) { const e = ts[i % ts.length]; setTimeout(() => { if (e.dead) return; addBolt(e.x + rand(-30, 30), e.y - 320, e.x, e.y - 20, '255,220,255', 3); dealDamage(e, ST.dmg * 0.8, { small: true, noProc: true, col: '#ffd0f0' }); }, i * 90); } }
   else if (u === 'rainbow') { heal(ST.maxHp * 0.3); cleanseAll('talisman'); burst(hero.x, hero.y - 30, 40, '255,200,255', 280, 0.9, 3, 'glow'); }
 }
@@ -1088,7 +1117,7 @@ function openPets() { if (G.petsOpen) return; G.petsOpen = true; $('#pets').clas
   if (!S.pets.intro) { S.pets.intro = true; giveEgg('cat', true); banner('🐾 Питомник', 'Хранительница дарит тебе первое яйцо — Неоновый котёнок!'); }
   if (!G.petSel) G.petSel = S.pets.active || Object.keys(S.pets.owned)[0] || null; ensureNQ(); renderPets(); SFX.click(); }
 function closePets() { if (!G.petsOpen) return; G.petsOpen = false; $('#pets').classList.add('hidden'); save(); }
-function togglePets() { G.petsOpen ? closePets() : openPets(); }
+function togglePets() { if (towerIn() && !G.petsOpen) { toast('🐾 Питомник остался снаружи башни'); return; } G.petsOpen ? closePets() : openPets(); }
 const treatPrice = () => Math.round(150 * shopGM());
 const respecPrice = () => 20 * LOC_FACTOR[S.loc];
 function renderPets() {
@@ -1127,10 +1156,11 @@ function renderNQ() {
   const P0 = S.pets, Q = P0.nq; ensureNQ();
   const card = (q, i, act) => `<div class="bnote nqn" style="--r:${[-1.2, 0.8, -0.5][i % 3]}deg"><div class="hanko">🐾</div><div class="nz">${ZONES[q.z].short} · ${'★'.repeat(q.z)}${'☆'.repeat(4 - q.z)}</div><h4>${NQ_TEXT[q.type](q.need, ZONES[q.z].short)}</h4>
     <div class="nd">Награда: ${PET_SP[q.egg].icon} <b>яйцо «${PET_SP[q.egg].short}»</b> · ¥${fmt(q.gold)}</div>
-    ${act ? `<div class="qbar"><i style="width:${Math.min(100, q.have / q.need * 100)}%"></i></div><div class="nd">${q.have}/${q.need}</div>${q.done ? '<button class="primary" data-act="nqclaim">Забрать награду</button>' : '<button data-act="nqdrop">Отказаться</button>'}` : `<button class="primary" data-act="nqtake" data-i="${i}" ${Q.active ? 'disabled title="Сначала заверши текущее задание"' : ''}>Взять задание</button>`}</div>`;
+    ${act ? `<div class="qbar"><i style="width:${Math.min(100, q.have / q.need * 100)}%"></i></div><div class="nd">${q.have}/${q.need}</div>${q.done ? `<button class="primary" data-act="nqclaim">Забрать награду${dailyLeft('nq') <= 0 ? ' (25%)' : ''}</button>` : '<button data-act="nqdrop">Отказаться</button>'}` : `<button class="primary" data-act="nqtake" data-i="${i}" ${Q.active ? 'disabled title="Сначала заверши текущее задание"' : ''}>Взять задание</button>`}</div>`;
   const nextSlot = P0.slots + 1;
   const slotCard = nextSlot <= PET_SLOTS_MAX ? `<div class="card itemcard" style="--rc:#ffd76a"><div class="iname" style="color:#ffd76a">🏠 Расширить Питомник → слот ${nextSlot}</div><div class="desc">Условие: <b>${SLOT_REQ[nextSlot].txt}</b></div><button class="primary big" data-act="nqslot" ${slotReqMet(nextSlot) ? '' : 'disabled'}>${slotReqMet(nextSlot) ? 'Построить новый домик' : 'Условие ещё не выполнено'}</button></div>` : '<div class="note">Питомник полностью расширен — 6 слотов.</div>';
-  $('#pt-left').innerHTML = `<div class="ctitle">Активное задание</div>${Q.active ? card(Q.active, 0, true) : '<div class="note">Нет активного задания. Возьми одно справа — задания Питомника сложные, зато дают яйца.</div>'}${slotCard}`;
+  const dn = daily().nq, nqLim = `<div class="note" style="margin:0 0 8px">Питомник сегодня: <b style="color:${dn >= DAILY.nq ? '#ffb36b' : '#9dffd0'}">${Math.min(dn, DAILY.nq)}/${DAILY.nq}</b>${dn >= DAILY.nq ? ' · дальше награда 25% (яйцо — с шансом 25%) до 00:00' : ''}</div>`;
+  $('#pt-left').innerHTML = nqLim + `<div class="ctitle">Активное задание</div>${Q.active ? card(Q.active, 0, true) : '<div class="note">Нет активного задания. Возьми одно справа — задания Питомника сложные, зато дают яйца.</div>'}${slotCard}`;
   $('#pt-mid').innerHTML = `<div class="ctitle">Задания · ${LOCS[S.loc].name}</div><div class="nqgrid">${Q.offers.map((q, i) => card(q, i, false)).join('')}</div>`;
   $('#pt-right').innerHTML = `<div class="note">Яйца зависят от места: Токио — 🐱 кот, Храмовый квартал — 🦊 кицунэ, Горный пик — 🦝 тануки (1–2 район) и 🐼 панда (3–4 район)${S.oni ? ', а у класса Они иногда попадается 👹 бесёнок' : ''}. Повторное яйцо становится большим лакомством.</div><div class="note">✨ Говорят, хранительнице иногда приносят <b>радужные яйца</b>… никто не знает, откуда.</div>`;
 }
@@ -1146,9 +1176,12 @@ $('#pets').addEventListener('click', ev => {
   else if (act === 'nqtake') { if (P0.nq.active) return; P0.nq.active = P0.nq.offers.splice(+b.dataset.i, 1)[0]; ensureNQ(); SFX.up(); }
   else if (act === 'nqdrop') { P0.nq.active = null; SFX.click(); }
   else if (act === 'nqclaim') {
-    const q = P0.nq.active; if (!q || !q.done) return; P0.nq.active = null; P0.nq.done++; S.gold += q.gold; SFX.coin(); giveEgg(q.egg);
-    P0.pity++; const ch = 0.02 * (1 + (PFX.eggChance || 0));
-    if (!P0.owned.pony && !P0.eggs.some(e => e.sp === 'pony') && (Math.random() < ch || P0.pity >= 40)) { P0.pity = 0; setTimeout(() => { giveEgg('pony', true); banner('🌈 РАДУЖНОЕ ЯЙЦО!', 'Хранительница не верит своим глазам… внутри что-то сияет'); G.flash = 0.5; SFX.boom(); }, 1600); }
+    const q = P0.nq.active; if (!q || !q.done) return; P0.nq.active = null; P0.nq.done++; SFX.coin();
+    const over = ++daily().nq > DAILY.nq; // после 10 заданий Питомника в сутки — 25% награды
+    if (over) { S.gold += Math.round(q.gold * 0.25); if (Math.random() < 0.25) giveEgg(q.egg); else { const ap = activePet(); if (ap) petGainXp(petNeed(ap.lvl) * 0.15); } toast('🐾 Лимит заданий Питомника на сегодня исчерпан — награда 25%'); }
+    else { S.gold += q.gold; giveEgg(q.egg); P0.pity++; }
+    const ch = 0.02 * (1 + (PFX.eggChance || 0));
+    if (!over && !P0.owned.pony && !P0.eggs.some(e => e.sp === 'pony') && (Math.random() < ch || P0.pity >= 40)) { P0.pity = 0; setTimeout(() => { giveEgg('pony', true); banner('🌈 РАДУЖНОЕ ЯЙЦО!', 'Хранительница не верит своим глазам… внутри что-то сияет'); flashScreen(0.15); SFX.boom(); }, 1600); }
   }
   else if (act === 'nqslot') { const n = P0.slots + 1; if (n > PET_SLOTS_MAX || !slotReqMet(n)) return; P0.slots = n; banner('🏠 Питомник расширен', `Теперь слотов: ${n}`); SFX.up(); tryHatch(); }
   save(); renderPets();
@@ -1316,7 +1349,7 @@ function fixSlots() {
     const n = jewelSlots(it.lvl); while (it.ench.length < n) it.ench.push(null); it.ench.length = n;
   }
   S.forge = clamp(S.forge | 0, 1, 10); S.jade = Math.max(0, +S.jade || 0); S.maxZone = clamp(S.maxZone | 0, 1, 4);
-  S.loc = [1, 2, 3].includes(S.loc) ? S.loc : 1; if (!Array.isArray(S.bossKills3) || S.bossKills3.length !== 4) S.bossKills3 = [0, 0, 0, 0]; S.maxZone3 = clamp(S.maxZone3 | 0, 1, 4); S.kills3 = Math.max(0, S.kills3 | 0); S.dew = Math.max(0, S.dew | 0);
+  S.loc = [1, 2, 3].includes(S.loc) || (S.loc === 4 && S.mainStash) ? S.loc : 1; if (!Array.isArray(S.bossKills3) || S.bossKills3.length !== 4) S.bossKills3 = [0, 0, 0, 0]; S.maxZone3 = clamp(S.maxZone3 | 0, 1, 4); S.kills3 = Math.max(0, S.kills3 | 0); S.dew = Math.max(0, S.dew | 0);
   if (!S.tree || typeof S.tree !== 'object') S.tree = {}; for (const n of TREE) S.tree[n.id] = clamp(S.tree[n.id] | 0, 0, n.max);
   if (!S.inv || typeof S.inv !== 'object') S.inv = {}; for (const k in ITEMS) S.inv[k] = Math.max(0, S.inv[k] | 0);
   if (!S.curses || typeof S.curses !== 'object') S.curses = {}; for (const k in CURSES) S.curses[k] = clamp(S.curses[k] | 0, 0, CURSE_MAX);
@@ -1326,17 +1359,20 @@ function fixSlots() {
   if (!S.look || typeof S.look !== 'object') S.look = { w: 0, a: 0 }; S.unlock2 = !!S.unlock2 || S.bossKills.every(k => k > 0); S.unlock3 = !!S.unlock3 || (S.unlock2 && S.bossKills2.every(k => k > 0)); if ((S.loc === 2 && !S.unlock2) || (S.loc === 3 && !S.unlock3)) S.loc = 1;
   if (S.recallPt && !(S.recallPt.loc >= 1 && S.recallPt.loc <= 3 && isFinite(S.recallPt.x) && isFinite(S.recallPt.y) && S.recallPt.x >= CFG.BASE_X && (S.recallPt.loc === 1 || (S.recallPt.loc === 2 && S.unlock2) || (S.recallPt.loc === 3 && S.unlock3)))) S.recallPt = null;
   if (!S.quests || !Array.isArray(S.quests.offers) || !Array.isArray(S.quests.active)) S.quests = { offers: [], active: [], refreshT: 180, done: 0 };
+  if (!S.daily || typeof S.daily !== 'object' || typeof S.daily.day !== 'string') S.daily = null; else for (const k of ['board', 'nq', 'trials']) S.daily[k] = Math.max(0, S.daily[k] | 0);
   applyClassText(); fixPets(); refreshPetFx();
   if (!Array.isArray(S.quests.trials)) S.quests.trials = []; S.quests.trials = S.quests.trials.filter(q => q && Array.isArray(q.mods)); for (const q of S.quests.active) if (q.trial && !Array.isArray(q.mods)) q.mods = [];
+  fixTower();
 }
 function loadSave() {
   try { const raw = localStorage.getItem(CFG.SAVE_KEY); if (raw) { const d = JSON.parse(raw); S = Object.assign(defaultSave(), d); } } catch (e) { S = defaultSave(); }
   fixSlots();
+  if (S.mainStash) towerSwapOut(); // игра закрылась внутри башни: основной комплект возвращается, заход можно продолжить через портал
 }
 function save() { try { localStorage.setItem(CFG.SAVE_KEY, JSON.stringify(S)); } catch (e) { } }
 function resetProgress() {
   try { localStorage.removeItem(CFG.SAVE_KEY); } catch (e) { }
-  S = defaultSave(); fixSlots(); refreshStats();
+  S = defaultSave(); fixSlots(); refreshStats(); G.tw = null; G.twEndAt = 0; document.body.classList.remove('in-tower');
   G.enemies.length = 0; G.loot.length = 0; G.telegraphs.length = 0; G.eprojectiles.length = 0; G.bosses = [null, null, null, null, null]; G.bossTimers = [0, 0, 0, 0, 0];
   if (G.soulOpen) toggleSoul(false); setupLocation(1);
   G.waves.length = 0; G.texts.length = 0; G.bolts.length = 0; G.autoHunt = false; G.autoAnchor = null; G.autoRetreat = false; G.curZone = -1; G.helpT = 14;
@@ -1651,6 +1687,7 @@ function killEnemy(e) {
   burst(e.x, e.y - 25, e.boss ? 70 : 16, e.boss ? hexRGB(e.col2) : '255,90,120', 260 * s, 0.6, 3);
   burst(e.x, e.y - 20, e.boss ? 26 : 7, '30,30,48', 110, 0.9, 12, 'smoke');
   P('ring', e.x, e.y, 0, 0, 0.45, e.boss ? 160 : 42, e.boss ? hexRGB(e.col2) : '255,120,160');
+  if (e.tower) { towerOnKill(e); return; }
   if (e.boss) {
     for (let i = 0; i < 14; i++) dropLoot('gold', e.x, e.y, Math.round(e.gold / 14));
     const n = Math.min(e.souls, 10); for (let i = 0; i < n; i++) dropLoot('soul', e.x, e.y, Math.round(e.souls / n));
@@ -1684,7 +1721,7 @@ function damageHero(amount, src, elem) {
 }
 function heroDie() {
   if (petSaveLife() || tryRevive()) return;
-  hero.dead = true; hero.deadT = 2.8; hero.hp = 0; SFX.death(); G.shake = 12;
+  hero.dead = true; hero.deadT = 2.8; hero.hp = 0; SFX.death(); addShake(12);
   burst(hero.x, hero.y - 30, 40, '255,90,120', 300, 0.8, 3); burst(hero.x, hero.y - 20, 14, '30,30,48', 100, 1, 14, 'smoke');
   G.telegraphs.length = 0; G.eprojectiles.length = 0;
 }
@@ -1694,6 +1731,7 @@ function heroRespawn() {
   hero.hair.init = hero.scarf.init = hero.obi.init = false; G.cam.x = hero.x; G.cam.y = hero.y;
   for (const z of [1, 2, 3, 4]) { const b = G.bosses[z]; if (b && !b.dead) b.hp = b.maxHp; }
   if (G.autoHunt) { G.autoAnchor = { x: SPAWN.x, y: SPAWN.y }; G.autoRetreat = false; G.autoTarget = null; }
+  if (towerIn() && G.tw) towerRespawn();
 }
 function tryDash(dir) {
   if (hero.dashCd > 0 || hero.dead) return false; const inp = dir || inputDir();
@@ -1738,7 +1776,7 @@ function updateEnemy(e, dt) {
   e.x += e.kx * dt; e.y += e.ky * dt; const kd = Math.max(0, 1 - dt * 9); e.kx *= kd; e.ky *= kd; if (e.buffT > 0) updateBuff(e, dt);
   e.cd -= dt;
   const dx = hero.x - e.x, dy = hero.y - e.y, d = Math.hypot(dx, dy) || 1;
-  const canSee = !hero.dead && hero.x > CFG.BASE_X - 10 && d < (e.boss ? 820 : 720);
+  const canSee = !hero.dead && hero.x > CFG.BASE_X - 10 && (d < (e.boss ? 820 : 720) || e.tower); // в башне враги всегда охотятся на героиню
   if (e.boss) updateBoss(e, dt, dx, dy, d, canSee);
   else if (e.state === 'move') {
     if (canSee) {
@@ -1792,7 +1830,7 @@ function updateBoss(e, dt, dx, dy, d, canSee) {
   if (!e.engaged) { e.engaged = true; SFX.warn(); }
   e.face = dx >= 0 ? 1 : -1;
   if (e.state === 'move') {
-    if (d > 150 && da < 650) moveEnemy(e, dx / d, dy / d, e.speed, dt);
+    if (d > 150 && da < (e.tower ? 1500 : 650)) moveEnemy(e, dx / d, dy / d, e.speed, dt); // босс башни преследует по всей арене
     if (e.cd <= 0 && d < 680) { let a = pick(e.attacks); if (a === e.lastAtk) a = pick(e.attacks); e.lastAtk = a; bossAttack(e, a, dx, dy, d); }
   } else if (e.state === 'windup') { e.t += dt; if (e.t > 3.5) e.state = 'move'; }
   else if (e.state === 'recover') { e.t -= dt; if (e.t <= 0) e.state = 'move'; }
@@ -1824,7 +1862,7 @@ function bossAttack(e, kind, dx, dy, d) {
   } else if (kind === 'summon') {
     for (let i = 0; i < 3; i++) {
       const a = rand(TAU), x = clamp(e.x + Math.cos(a) * 120, CFG.BASE_X + 60, CFG.WORLD_W - 60), y = clamp(e.y + Math.sin(a) * 120, 520, CFG.WORLD_H - 520);
-      const m = makeEnemy(pick(ZONES[z].mobs), x, y, z, false); m.cd = 1.2; G.enemies.push(m); burst(x, y - 20, 14, '40,40,60', 120, 0.8, 14, 'smoke');
+      const m = towerIn() ? makeTowerMob(pick(ZONES[z].mobs), x, y, false) : makeEnemy(pick(ZONES[z].mobs), x, y, z, false); m.cd = 1.2; G.enemies.push(m); burst(x, y - 20, 14, '40,40,60', 120, 0.8, 14, 'smoke');
     }
     e.t = 0; done(0.8);
   }
@@ -1871,7 +1909,7 @@ function updateTelegraphs(dt) {
 }
 function spawnBullet(e, ang, sp) {
   const sx = e.x + Math.cos(ang) * 18, sy = e.y + Math.sin(ang) * 18; e.muzzle = 0.08; SFX.shot();
-  G.eprojectiles.push({ x: sx, y: sy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, dmg: e.dmg, owner: e, life: 2.2, col: e.elem ? ELEM[e.elem].rgb : e.boss ? hexRGB(e.col2) : (e.loc === 2 ? '120,255,220' : '255,170,60'), arrow: e.loc === 2, elem: e.elem || null });
+  G.eprojectiles.push({ x: sx, y: sy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, dmg: e.dmg, owner: e, life: 2.2, col: e.elem ? ELEM[e.elem].rgb : e.boss ? hexRGB(e.col2) : ((e.dloc || e.loc) === 2 ? '120,255,220' : '255,170,60'), arrow: (e.dloc || e.loc) === 2, elem: e.elem || null });
 }
 function updateProjectiles(dt) {
   for (let i = G.waves.length - 1; i >= 0; i--) {
@@ -1906,7 +1944,7 @@ function updateLoot(dt) {
     if (l.t > 60) G.loot.splice(i, 1);
   }
   G.xpPopT -= dt; if (G.xpPop > 0 && G.xpPopT <= 0) { spawnText(hero.x - 24, hero.y - 56, '+' + fmt(G.xpPop) + ' ✦', '#c9a6ff', 12); G.xpPop = 0; G.xpPopT = 0.6; }
-  G.goldPopT -= dt; if (G.goldPop > 0 && G.goldPopT <= 0) { spawnText(hero.x + 16, hero.y - 66, '+¥' + fmt(G.goldPop), '#ffd76a', 13); G.goldPop = 0; G.goldPopT = 0.3; }
+  G.goldPopT -= dt; if (G.goldPop > 0 && G.goldPopT <= 0) { spawnText(hero.x + 16, hero.y - 66, '+' + CUR() + fmt(G.goldPop), towerIn() ? '#ff9ad0' : '#ffd76a', 13); G.goldPop = 0; G.goldPopT = 0.3; }
 }
 function updateParticles(dt) {
   for (let i = G.particles.length - 1; i >= 0; i--) {
@@ -1975,10 +2013,11 @@ function updateHero(dt) {
     const L = WEAPON_RANKS[S.w.rank - 1].len, a = h.bladeAng, tx = h.x + Math.cos(a) * (10 + L), ty = h.y - 28 - h.bob + Math.sin(a) * (10 + L), tg = a - Math.PI / 2 * h.swingDir;
     for (let k = 0; k < (S.w.rank >= 3 ? 2 : 1); k++) P('spark', tx, ty, Math.cos(tg) * rand(60, 200) + rand(-30, 30), Math.sin(tg) * rand(60, 200) + rand(-30, 30), rand(0.15, 0.3), rand(1.2, 2.4), RANK_FX[S.w.rank - 1]);
   }
+  const noRegen = h.x >= CFG.BASE_X && (trialMods(zoneAt(h.x)).curse || towerModN('curse') > 0); // модификатор «Проклятие»: без регенерации вне базы
   if (h.x < CFG.BASE_X) { heal(ST.maxHp * 0.3 * dt); h.shield = Math.min(ST.shieldMax, h.shield + ST.shieldMax * dt); }
-  else if (h.lastHurt > 4) heal(ST.maxHp * OOC_REGEN * dt);
-  if (ST.regen > 0) heal(ST.maxHp * ST.regen * dt);
-  h.regenRate = (h.x >= CFG.BASE_X && trialMods(zoneAt(h.x)).curse) ? 0 : ST.maxHp * ((h.x < CFG.BASE_X ? 0.3 : (h.lastHurt > 4 ? OOC_REGEN : 0)) + ST.regen);
+  else if (h.lastHurt > 4 && !noRegen) heal(ST.maxHp * OOC_REGEN * dt);
+  if (ST.regen > 0 && !noRegen) heal(ST.maxHp * ST.regen * dt);
+  h.regenRate = noRegen ? 0 : ST.maxHp * ((h.x < CFG.BASE_X ? 0.3 : (h.lastHurt > 4 ? OOC_REGEN : 0)) + ST.regen);
   if (h.lastHurt > 3 && h.shield < ST.shieldMax) h.shield = Math.min(ST.shieldMax, h.shield + ST.shieldMax * 0.25 * dt);
   if (S.a.rank >= 4) {
     h.auraT -= dt;
@@ -1992,17 +2031,18 @@ function updateHero(dt) {
   const df = dist(h.x, h.y, FORGE.x, FORGE.y);
   if (df < FORGE.r) { if (!G.inForgeCircle) { G.inForgeCircle = true; openForge(); } }
   else if (df > FORGE.r + 16 && G.inForgeCircle) { G.inForgeCircle = false; closeForge(); }
-  const db = dist(h.x, h.y, BOARD.x, BOARD.y);
+  const db = towerIn() ? 1e9 : dist(h.x, h.y, BOARD.x, BOARD.y);
   if (db < BOARD.r) { if (!G.inBoardCircle) { G.inBoardCircle = true; openBoard(); } }
   else if (db > BOARD.r + 16 && G.inBoardCircle) { G.inBoardCircle = false; closeBoard(); }
   G.inPortal = dist(h.x, h.y, PORTAL.x, PORTAL.y) < PORTAL.r;
   const z = zoneAt(h.x);
-  if (z !== G.curZone) { G.curZone = z; setMaxZone(z); banner(ZONES[z].name, z === 0 ? 'Безопасная зона · Кузница · Доска объявлений' : 'Опасность ' + '★'.repeat(z) + '☆'.repeat(4 - z)); }
+  if (z !== G.curZone) { G.curZone = z; if (towerIn()) { if (z === 0) banner('Холл башни', 'Демоническая кузница · демоническая лавка · выход'); } else { setMaxZone(z); banner(ZONES[z].name, z === 0 ? 'Безопасная зона · Кузница · Доска объявлений' : 'Опасность ' + '★'.repeat(z) + '☆'.repeat(4 - z)); } }
   updateHeroRibbons(h, dt, S.a.rank, G.time);
 }
 
 // ---------- Спавн ----------
 function updateSpawns(dt) {
+  if (towerIn()) { towerSpawns(dt); return; }
   for (let z = 1; z <= 4; z++) {
     if (G.bossTimers[z] > 0) G.bossTimers[z] -= dt;
     const b = G.bosses[z], A = WORLD.arenas[z - 1];
@@ -2204,7 +2244,7 @@ function drawMob3Yokai(ctx, e, t, F, ec) { // Ёкай: парящий приз�
 const MOB3_DRAW = { bruiser: drawMob3Brute, ninja: drawMob3Crow, caster: drawMob3Caster, shaman: drawMob3Shaman, yokai: drawMob3Yokai };
 function drawMob3(ctx, e, t) {
   const appear = Math.min(1, e.spawnT / 0.3), base = { bruiser: 1.2, ninja: 1, caster: 1.02, shaman: 1.05, yokai: 1 }[e.type] || 1;
-  const sc = base * (e.elite ? 1.18 : 1) * (0.6 + 0.4 * appear), F = e.flash > 0 ? hitTint : (c => c), ec = ELEM[e.elem || 'fire'].col;
+  const sc = base * (e.elite ? 1.18 : 1) * (e.bigS || 1) * (0.6 + 0.4 * appear), F = e.flash > 0 ? hitTint : (c => c), ec = ELEM[e.elem || 'fire'].col;
   if (e.elite) elemGlow(ctx, e.x, e.y - 4, 34, '#ffd23f', 0.3);
   if (e.buffT > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = `rgba(120,255,150,${0.5 + 0.3 * Math.sin(t * 8)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(e.x, e.y, 22 * sc, 8 * sc, 0, 0, TAU); ctx.stroke(); ctx.restore(); if (Math.random() < 0.2) P('glow', e.x + rand(-10, 10), e.y - rand(10, 50), 0, -40, 0.5, 4, '120,255,150'); }
   ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(e.x, e.y + 1, 15 * sc, 5.5 * sc, 0, 0, TAU); ctx.fill();
@@ -2213,8 +2253,8 @@ function drawMob3(ctx, e, t) {
   ctx.restore();
   const top = e.y - 62 * sc - 6;
   // значок стихии
-  ctx.save(); ctx.globalCompositeOperation = 'lighter'; elemGlow(ctx, e.x + 22 * sc, top + 2, 7, ec, 0.7); ctx.restore();
-  ctx.font = '700 9px "Segoe UI",sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = ec; ctx.fillText(ELEM[e.elem || 'fire'].icon, e.x + 22 * sc, top + 3);
+  if (!e.noIcon) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; elemGlow(ctx, e.x + 22 * sc, top + 2, 7, ec, 0.7); ctx.restore();
+  ctx.font = '700 9px "Segoe UI",sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = ec; ctx.fillText(ELEM[e.elem || 'fire'].icon, e.x + 22 * sc, top + 3); }
   if (e.hp < e.maxHp) {
     const w = 34 * (e.elite ? 1.3 : 1), bx = e.x - w / 2, by = top;
     ctx.fillStyle = 'rgba(0,0,0,0.6)'; rr(ctx, bx - 1, by - 1, w + 2, 6, 3); ctx.fill();
@@ -2320,6 +2360,7 @@ function drawBossShuten(ctx, e, t, F) { // Сютэн-додзи: Король �
 //  БЛОК 7. ОТРИСОВКА: МИР
 // =====================================================================
 function drawGround(ctx, v, t) {
+  if (WORLD.theme === 'tower') { drawTowerGround(ctx, v, t); return; }
   const H = CFG.WORLD_H;
   for (const Z of ZONES) {
     const x0 = Math.max(Z.x0, v.x0), x1 = Math.min(Z.x1, v.x1); if (x0 >= x1) continue;
@@ -3372,7 +3413,7 @@ function drawBossKurama(ctx, e, t, F) { // Сёгун-тэнгу Курама: �
 }
 const BOSS_DRAW = { '1-1': drawBossGenzo, '1-2': drawBossKaga, '1-3': drawBossMurasame, '1-4': drawBossRyuji, '2-1': drawBossKomainu, '2-2': drawBossTsukuyomi, '2-3': drawBossTamamo, '2-4': drawBossKurama };
 function drawBoss(ctx, e, t) {
-  const key = `${e.loc || 1}-${e.z}`, fn = BOSS_DRAW[key], appear = Math.min(1, e.spawnT / 0.3);
+  const key = e.bkey || `${e.loc || 1}-${e.z}`, fn = BOSS_DRAW[key], appear = Math.min(1, e.spawnT / 0.3);
   const sc = (BOSS_SC[key] || 2) * (0.6 + 0.4 * appear), F = e.flash > 0 ? hitTint : (c => c);
   bossGroundFX(ctx, e, t);
   ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.beginPath(); ctx.ellipse(e.x, e.y + 1, (key === '2-1' ? 26 : 16) * sc, 6 * sc, 0, 0, TAU); ctx.fill();
@@ -3383,11 +3424,12 @@ function drawBoss(ctx, e, t) {
 }
 
 function drawEnemy(ctx, e, t) {
-  if (e.loc === 3 && !e.boss) { if (e.trial) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = 'rgba(200,120,255,0.55)'; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.ellipse(e.x, e.y, 24, 9, 0, 0, TAU); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); } drawMob3(ctx, e, t); return; }
+  if (e.tower && !e.boss && !e.mini) { drawTowerMob(ctx, e, t); return; }
+  if ((e.dloc || e.loc) === 3 && !e.boss) { if (e.trial) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = 'rgba(200,120,255,0.55)'; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.ellipse(e.x, e.y, 24, 9, 0, 0, TAU); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); } drawMob3(ctx, e, t); return; }
   if (e.trial) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; const rr2 = (e.boss ? 60 : 22) + Math.sin(t * 4 + e.anim) * 2; ctx.strokeStyle = 'rgba(200,120,255,0.55)'; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]); ctx.lineDashOffset = -t * 20; ctx.beginPath(); ctx.ellipse(e.x, e.y, rr2, rr2 * 0.36, 0, 0, TAU); ctx.stroke(); ctx.setLineDash([]); ctx.restore(); }
-  if (e.boss && BOSS_DRAW[`${e.loc || 1}-${e.z}`]) { drawBoss(ctx, e, t); return; }
-  const P0 = (e.loc === 2 ? PAL2 : PAL)[e.boss ? e.kind : e.type], appear = Math.min(1, e.spawnT / 0.3);
-  const sc = (e.boss ? 1.85 : P0.scale) * (e.elite ? 1.18 : 1) * (0.6 + 0.4 * appear);
+  if (e.boss && BOSS_DRAW[e.bkey || `${e.loc || 1}-${e.z}`]) { drawBoss(ctx, e, t); return; }
+  const P0 = ((e.dloc || e.loc) === 2 ? PAL2 : PAL)[e.boss ? e.kind : e.type], appear = Math.min(1, e.spawnT / 0.3);
+  const sc = (e.boss ? 1.85 : P0.scale) * (e.elite ? 1.18 : 1) * (e.bigS || 1) * (0.6 + 0.4 * appear);
   const F = e.flash > 0 ? hitTint : (c => c);
   if (e.boss || e.elite) {
     const c = e.boss ? e.col2 : '#ffd23f'; ctx.save(); ctx.globalCompositeOperation = 'lighter';
@@ -3622,30 +3664,33 @@ function drawHUD(ctx, sw, sh, t) {
   ctx.font = '600 11px "Segoe UI",sans-serif'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
   ctx.fillText(`${fmt(hero.hp)} / ${fmt(ST.maxHp)}${ST.shieldMax > 0 ? `   ◈ ${fmt(hero.shield)}` : ''}`, bx + bw / 2, by + 8.5); ctx.textAlign = 'left';
   if (hero.regenRate > 0 && hero.hp < ST.maxHp - 0.5 && !hero.dead) { ctx.font = '800 10px "Segoe UI",sans-serif'; ctx.textAlign = 'right'; ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(0,30,10,0.7)'; ctx.strokeText(`+${fmt(hero.regenRate)}/с`, bx + bw - 7, by + 8.5); ctx.fillStyle = '#9dffbf'; ctx.fillText(`+${fmt(hero.regenRate)}/с`, bx + bw - 7, by + 8.5); ctx.textAlign = 'left'; }
-  ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = '#ffd76a'; ctx.fillText('¥ ' + fmt(S.gold), 30, 84); ctx.fillStyle = '#d6a6ff'; ctx.fillText('◆ ' + fmt(S.souls), 136, 84);
-  ctx.fillStyle = '#7dffb0'; ctx.fillText('✧ ' + fmt(S.jade), 224, 84);
+  ctx.font = '700 15px "Segoe UI",sans-serif';
+  if (towerIn()) { ctx.fillStyle = '#ff8ac0'; ctx.fillText('❖ ' + fmt(S.gold) + '  демонических душ', 30, 84); }
+  else { ctx.fillStyle = '#ffd76a'; ctx.fillText('¥ ' + fmt(S.gold), 30, 84); ctx.fillStyle = '#d6a6ff'; ctx.fillText('◆ ' + fmt(S.souls), 136, 84); ctx.fillStyle = '#7dffb0'; ctx.fillText('✧ ' + fmt(S.jade), 224, 84); }
   ctx.font = '600 12px "Segoe UI",sans-serif';
   ctx.fillStyle = RANK_COLORS[S.w.rank - 1]; ctx.fillText(`⚔ ${WEAPON_RANKS[S.w.rank - 1].name} +${S.w.lvl}`, 30, 108);
   ctx.fillStyle = RANK_COLORS[S.a.rank - 1]; ctx.fillText(`◈ ${ARMOR_RANKS[S.a.rank - 1].name} +${S.a.lvl}`, 30, 127);
   ctx.fillStyle = '#7d86ad'; ctx.textAlign = 'right'; ctx.fillText(`урон ${fmt(ST.dmg)}`, 314, 108); ctx.fillText(`убито ${fmt(S.kills)}`, 314, 127); ctx.textAlign = 'left';
   { const sp = Math.floor(soulTotal() / SOUL_TOTAL * 100), can = soulTotal() < SOUL_TOTAL && S.xp >= soulCost(soulTotal()); ctx.font = '700 12px "Segoe UI",sans-serif'; ctx.fillStyle = '#d6b4ff'; ctx.fillText(`魂 Душа ${sp}%  ·  ✦ ${fmt(S.xp)}`, 30, 148); ctx.textAlign = 'right'; ctx.fillStyle = can ? '#ffd76a' : '#7d86ad'; ctx.fillText(can ? 'U — прокачать ▲' : 'U — душа', 314, 148); ctx.textAlign = 'left'; }
   // зона
-  const Z = ZONES[Math.max(0, G.curZone)];
+  const Z = ZONES[Math.max(0, G.curZone)], inT = towerIn(), hudTm = inT ? [] : Object.keys(trialMods(Math.max(0, G.curZone)));
+  if (inT) drawTowerHUD(ctx, sw, sh, t); else {
   ctx.textAlign = 'center'; ctx.font = '700 17px "Segoe UI",sans-serif'; ctx.fillStyle = '#fff'; ctx.shadowColor = Z.neon[0]; ctx.shadowBlur = 12; ctx.fillText(Z.name, sw / 2, 30); ctx.shadowBlur = 0;
   ctx.font = '600 12px "Segoe UI",sans-serif'; ctx.fillStyle = Z.safe ? '#7dffb0' : '#ff8a9a';
   ctx.fillText(Z.safe ? 'Безопасная зона' : 'Опасность ' + '★'.repeat(Z.lvl) + '☆'.repeat(4 - Z.lvl), sw / 2, 50);
-  const hudTm = Object.keys(trialMods(Math.max(0, G.curZone)));
   if (hudTm.length) { ctx.font = '700 12px "Segoe UI",sans-serif'; ctx.fillStyle = '#d9a8ff'; ctx.fillText('試 Испытание: ' + hudTm.map(id => TRIAL_MODS[id].icon + ' ' + TRIAL_MODS[id].short).join(' · '), sw / 2, 68); }
+  }
   // босс
   let boss = null; for (const z of [1, 2, 3, 4]) { const b = G.bosses[z]; if (b && !b.dead && b.engaged && dist(b.x, b.y, hero.x, hero.y) < 1100) boss = b; }
   if (boss) {
-    const w = Math.min(560, sw - 420), x = sw / 2 - w / 2, y = hudTm.length ? 84 : 66;
+    const w = Math.min(560, sw - 420), x = sw / 2 - w / 2, y = inT ? (G.tw && S.tower.run && S.tower.run.mods.length ? 104 : 86) : hudTm.length ? 84 : 66;
     glass(ctx, x - 12, y - 6, w + 24, 46, 12);
     ctx.font = '700 13px "Segoe UI",sans-serif'; ctx.fillStyle = boss.col2; ctx.fillText(`☠ ${boss.name}${boss.hp < boss.maxHp * 0.5 ? ' · ЯРОСТЬ' : ''}${boss.aura ? (auraWeak(boss) ? ' · АУРА ТЭНГУ: урон −55% (нужно 60% души)' : ' · аура подавлена душой') : ''}`, sw / 2, y + 7);
     ctx.fillStyle = 'rgba(0,0,0,0.55)'; rr(ctx, x, y + 18, w, 12, 6); ctx.fill();
     g = ctx.createLinearGradient(x, 0, x + w, 0); g.addColorStop(0, '#ff2d55'); g.addColorStop(1, boss.col2); ctx.fillStyle = g; rr(ctx, x, y + 18, Math.max(6, w * boss.hp / boss.maxHp), 12, 6); ctx.fill();
   }
   // мини-карта
+  if (!inT) {
   const mw = Math.min(300, sw * 0.24), sc = mw / CFG.WORLD_W, mh = CFG.WORLD_H * sc, mx = sw - mw - 18, my = 18;
   glass(ctx, mx - 8, my - 8, mw + 16, mh + 30, 12);
   ZONES.forEach((z, i) => { ctx.fillStyle = hexA(z.mini, i === G.curZone ? 0.42 : 0.2); ctx.fillRect(mx + z.x0 * sc, my, (z.x1 - z.x0) * sc, mh); });
@@ -3657,6 +3702,7 @@ function drawHUD(ctx, sw, sh, t) {
   ctx.fillStyle = 'rgba(255,80,100,0.8)'; for (const e of G.enemies) if (!e.dead && !e.boss) ctx.fillRect(mx + e.x * sc - 0.8, my + e.y * sc - 0.8, 1.6, 1.6);
   const pu = 3 + Math.sin(t * 6); ctx.fillStyle = '#5ff7ff'; ctx.shadowColor = '#5ff7ff'; ctx.shadowBlur = 8; ctx.beginPath(); ctx.arc(mx + hero.x * sc, my + hero.y * sc, pu, 0, TAU); ctx.fill(); ctx.shadowBlur = 0;
   ctx.font = '600 10px "Segoe UI",sans-serif'; ctx.fillStyle = '#9aa3c9'; ZONES.forEach(z => ctx.fillText(z.short, mx + (z.x0 + z.x1) / 2 * sc, my + mh + 12));
+  }
   // способности
   const abil = [
     { k: 'Space', n: 'Рывок', on: true, cd: hero.dashCd / ST.dashCd, col: '#7fe8ff' },
@@ -3664,7 +3710,7 @@ function drawHUD(ctx, sw, sh, t) {
     { k: 'взмах', n: 'Волна', on: S.w.rank >= 3, col: '#b48cff' },
     { k: 'крит', n: 'Танец теней', on: S.w.rank >= 4, col: '#ff7cf0' },
     { k: 'T', n: 'Авто-охота', on: true, active: G.autoHunt, col: '#7dffb0' },
-    { k: 'H', n: recallMode() === 'back' ? 'Назад' : 'Домой', on: !!recallMode() && S.loc !== 3, cd: G.recall ? 1 - G.recall.t / RECALL_T : 0, col: '#78e6ff', click: 'recall' },
+    { k: 'H', n: recallMode() === 'back' ? 'Назад' : 'Домой', on: !!recallMode() && S.loc !== 3 && !inT, cd: G.recall ? 1 - G.recall.t / RECALL_T : 0, col: '#78e6ff', click: 'recall' },
   ];
   G.abilRects = [];
   const aw = 64, ax0 = sw / 2 - abil.length * aw / 2, ay = sh - 78;
@@ -3682,8 +3728,8 @@ function drawHUD(ctx, sw, sh, t) {
   });
   // подсказки
   ctx.textAlign = 'left'; ctx.font = '500 12px "Segoe UI",sans-serif'; ctx.fillStyle = G.touchUI ? 'rgba(0,0,0,0)' : 'rgba(200,210,240,0.55)';
-  ctx.fillText('WASD/стрелки или ЛКМ — бег · атака автоматическая · Space — рывок · T — авто-охота · H — домой · L — древо · P — питомцы · 1–4 — предметы · Q — Они · M — звук · O — меню · ~/F1 — консоль', 18, sh - 16);
-  if (G.helpT > 0) {
+  ctx.fillText('WASD/стрелки или ЛКМ — бег · атака автоматическая · Space — рывок · T — авто-охота · H — домой · L — древо · P — питомцы · 1–4 — предметы · Q — Они · M — звук · O — меню' + (consoleUnlocked() ? ' · ~/F1 — консоль' : ''), 18, sh - 16);
+  if (G.helpT > 0 && !towerIn()) {
     const a = Math.min(1, G.helpT); ctx.globalAlpha = a; const w = 470, x = 18, y = 178; glass(ctx, x, y, w, 112);
     ctx.fillStyle = '#ffcf8a'; ctx.font = '700 14px "Segoe UI",sans-serif'; ctx.fillText('Путь Ронина', x + 14, y + 20);
     ctx.fillStyle = '#c5cbe8'; ctx.font = '500 12.5px "Segoe UI",sans-serif';
@@ -3692,7 +3738,8 @@ function drawHUD(ctx, sw, sh, t) {
   }
   if (G.inForgeCircle && !G.forgeOpen) { ctx.textAlign = 'center'; ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = '#ffcf8a'; ctx.fillText('E — открыть кузницу', sw / 2, sh - 110); }
   if (G.inBoardCircle && !G.boardOpen) { ctx.textAlign = 'center'; ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = '#7dffd8'; ctx.fillText('E — открыть доску объявлений', sw / 2, sh - 110); }
-  if (G.inPortal) { ctx.textAlign = 'center'; ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = S.unlock2 ? '#9ff8ff' : '#a6a6b6'; ctx.fillText(S.unlock2 ? `E — портал: выбрать локацию` : `Портал запечатан · победи всех боссов Токио (${S.bossKills.filter(k => k > 0).length}/4)`, sw / 2, sh - 110); }
+  if (G.inPortal && inT) { ctx.textAlign = 'center'; ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = '#ff9ad0'; ctx.fillText('E — выход из башни', sw / 2, sh - 110); }
+  else if (G.inPortal) { ctx.textAlign = 'center'; ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = S.unlock2 ? '#9ff8ff' : '#a6a6b6'; ctx.fillText(S.unlock2 ? `E — портал: выбрать локацию` : `Портал запечатан · победи всех боссов Токио (${S.bossKills.filter(k => k > 0).length}/4)`, sw / 2, sh - 110); }
   drawQuestTracker(ctx);
   // баннер
   if (G.banner) {
@@ -3716,6 +3763,9 @@ const canvas = $('#game'), ctx = canvas.getContext('2d', { alpha: false });
 (() => { const d = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, 'globalCompositeOperation'); if (d && d.set) Object.defineProperty(ctx, 'globalCompositeOperation', { configurable: true, get() { return d.get.call(this); }, set(v) { d.set.call(this, CALM && v === 'lighter' ? 'source-over' : v); } }); })();
 (() => { const d = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, 'shadowBlur'); if (d && d.set) Object.defineProperty(ctx, 'shadowBlur', { configurable: true, get() { return d.get.call(this); }, set(v) { d.set.call(this, GFX.level >= 2 ? v : 0); } }); })();
 let dpr = 1, vignette = null;
+const emberRes = () => GFX.level >= 2 ? dpr : 0.5;
+const uiRes = () => GFX.level >= 2 ? dpr : GFX.level === 1 ? 0.8 : 0.65; // разрешение превью в окнах
+const bigWindow = () => !!(G.forgeOpen || G.boardOpen || G.soulOpen || G.shopOpen || G.treeOpen || G.travelOpen || G.petsOpen || G.menuOpen);
 const rain = []; for (let i = 0; i < 150; i++) rain.push({ x: Math.random(), y: Math.random(), s: rand(0.6, 1.2) });
 function resize() {
   const W = Math.max(1, innerWidth | 0), H = Math.max(1, innerHeight | 0);
@@ -3725,8 +3775,9 @@ function resize() {
   vignette = document.createElement('canvas'); vignette.width = W; vignette.height = H; const v = vignette.getContext('2d');
   const g = v.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);
   g.addColorStop(0, 'rgba(0,0,8,0)'); g.addColorStop(1, 'rgba(0,0,12,0.6)'); v.fillStyle = g; v.fillRect(0, 0, W, H);
-  const pc = $('#preview'); pc.width = Math.round(260 * dpr); pc.height = Math.round(300 * dpr);
-  const so = $('#soul-orb'); so.width = Math.round(260 * dpr); so.height = Math.round(300 * dpr);
+  document.body.classList.toggle('gfx-lo', GFX.level < 2); const pr = uiRes();
+  const pc = $('#preview'); pc.width = Math.round(260 * pr); pc.height = Math.round(300 * pr);
+  const so = $('#soul-orb'); so.width = Math.round(260 * pr); so.height = Math.round(300 * pr);
 }
 function render(realDt) {
   if (innerWidth < 2 || innerHeight < 2) return;
@@ -3737,26 +3788,28 @@ function render(realDt) {
   ctx.setTransform(dpr * z, 0, 0, dpr * z, dpr * (sw / 2 - G.cam.x * z + shx), dpr * (sh / 2 - G.cam.y * z + shy));
   const hw = sw / 2 / z, hh = sh / 2 / z; const v = G.view = { x0: G.cam.x - hw - 60, x1: G.cam.x + hw + 60, y0: G.cam.y - hh - 60, y1: G.cam.y + hh + 300 };
   drawGround(ctx, v, t);
-  if (v.x0 < CFG.BASE_X + 200) { drawForgeCircle(ctx, t); drawBoardCircle(ctx, t); drawPortalCircle(ctx, t); drawShopCircle(ctx, t); drawNurseryCircle(ctx, t); }
+  const inT = WORLD.theme === 'tower';
+  if (v.x0 < CFG.BASE_X + 200) { drawForgeCircle(ctx, t); if (!inT) drawBoardCircle(ctx, t); drawPortalCircle(ctx, t); drawShopCircle(ctx, t); if (!inT) drawNurseryCircle(ctx, t); }
   for (const A of WORLD.arenas) if (A.x > v.x0 - 400 && A.x < v.x1 + 400) drawArena(ctx, A, t);
   drawAutoAnchor(ctx, t);
+  drawTowerAura(ctx, t);
   drawTelegraphs(ctx, t);
   drawLoot(ctx, t);
   // Y-сортировка: здания, деревья, фонари, мобы, героиня
   const L = [], inV = (x, y, m = 120) => x > v.x0 - m && x < v.x1 + m && y > v.y0 - m && y < v.y1 + m;
   for (const b of WORLD.buildings) if (b.x < v.x1 && b.x + b.w > v.x0 && b.y < v.y1 && b.y + b.h > v.y0 - 60) L.push({ y: b.y + b.h, k: 0, o: b });
   for (const o of WORLD.props) if (inV(o.x, o.y, 160)) L.push({ y: o.y + o.h, k: 1, o });
-  for (const o of WORLD.lamps) if (inV(o.x, o.y)) L.push({ y: o.y, k: 2, o });
+  if (!inT) for (const o of WORLD.lamps) if (inV(o.x, o.y)) L.push({ y: o.y, k: 2, o });
   for (const o of WORLD.trees) if (inV(o.x, o.y, 160)) L.push({ y: o.y, k: 3, o });
   for (const o of WORLD.toro) if (inV(o.x, o.y)) L.push({ y: o.y, k: 4, o });
   for (const o of G.enemies) if (!o.dead && inV(o.x, o.y, 160)) L.push({ y: o.y, k: 5, o });
   if (inV(WORLD.torii.x, WORLD.torii.y, 260)) L.push({ y: WORLD.torii.y, k: 6, o: WORLD.torii });
   if (v.x0 < 700) L.push({ y: FORGE.sy, k: 7, o: null });
-  if (v.x0 < 1000 && BOARD.sy > v.y0 - 200 && BOARD.sy < v.y1 + 200) L.push({ y: BOARD.sy, k: 9, o: null });
+  if (!inT && v.x0 < 1000 && BOARD.sy > v.y0 - 200 && BOARD.sy < v.y1 + 200) L.push({ y: BOARD.sy, k: 9, o: null });
   if (v.x0 < 1100 && PORTAL.sy > v.y0 - 200 && PORTAL.sy < v.y1 + 260) L.push({ y: PORTAL.sy, k: 10, o: null });
   for (const gt of WORLD.gates) if (inV(gt.x, gt.y, 260)) L.push({ y: gt.y, k: 11, o: gt });
   if (v.x0 < 400 && SHOP.sy > v.y0 - 200 && SHOP.sy < v.y1 + 200) L.push({ y: SHOP.sy, k: 12, o: null });
-  if (v.x0 < 400 && NURSERY.sy > v.y0 - 200 && NURSERY.sy < v.y1 + 200) L.push({ y: NURSERY.sy, k: 14, o: null });
+  if (!inT && v.x0 < 400 && NURSERY.sy > v.y0 - 200 && NURSERY.sy < v.y1 + 200) L.push({ y: NURSERY.sy, k: 14, o: null });
   if (G.pet) L.push({ y: G.pet.y, k: 13, o: null });
   if (!hero.dead) L.push({ y: hero.y, k: 8, o: hero });
   L.sort((a, b) => a.y - b.y);
@@ -3777,7 +3830,7 @@ function render(realDt) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   if (WORLD.theme === 'mountain') drawSnowOverlay(ctx, sw, sh, realDt, t);
   ctx.strokeStyle = WORLD.theme === 'mountain' ? 'rgba(0,0,0,0)' : 'rgba(160,190,255,0.16)'; ctx.lineWidth = 1; ctx.beginPath();
-  const rainN = GFX.level === 2 ? rain.length : GFX.level === 1 ? rain.length >> 1 : 0;
+  const rainN = inT ? 0 : GFX.level === 2 ? rain.length : GFX.level === 1 ? rain.length >> 1 : 0;
   for (let ri = 0; ri < rainN; ri++) { const r = rain[ri]; r.y += realDt * 1.4 * r.s; r.x -= realDt * 0.12 * r.s; if (r.y > 1) { r.y -= 1; r.x = Math.random() * 1.1; } if (r.x < 0) r.x += 1.1; const x = r.x * sw, y = r.y * sh; ctx.moveTo(x, y); ctx.lineTo(x - 4 * r.s, y + 16 * r.s); }
   ctx.stroke();
   if (GFX.level > 0 && vignette && vignette.width > 1 && vignette.height > 1) ctx.drawImage(vignette, 0, 0, sw, sh);
@@ -3788,7 +3841,6 @@ function render(realDt) {
   drawHUD(ctx, sw / U, sh / U, t);
   drawHUD3(ctx, sw / U, sh / U, t);
   ctx.restore();
-  if (G.petsOpen) drawPetsPreview(t);
   drawFps(ctx, sw, sh);
 }
 
@@ -3799,22 +3851,25 @@ const PREV = Object.assign(mkHeroObj(), { x: 0, y: 0, t: 0, swingTimer: 0.8, cou
 const EMB = [];
 const ARMOR_PERKS = [{ rank: 2, name: 'Лёгкость шага', desc: '+5% к скорости бега' }, { rank: 3, name: 'Закалённый доспех', desc: '−10% входящего урона' }, { rank: 4, name: 'Аура мифа', desc: 'аура жжёт врагов, −15% урона' }, { rank: 5, name: 'Печать жрицы', desc: '−18% урона, далее до −28%' }, { rank: 7, name: 'Лисий покров', desc: '+5% уклонения' }, { rank: 8, name: 'Солнечная аура', desc: 'аура наносит вдвое больше урона' }];
 function prevBurst(col, n, spd = 160) { for (let i = 0; i < n; i++) { const a = rand(TAU), s = rand(spd * 0.3, spd); PREV.parts.push({ x: rand(-6, 6), y: -28 + rand(-12, 12), vx: Math.cos(a) * s, vy: Math.sin(a) * s - 40, life: rand(0.5, 1.1), max: 1.1, size: rand(1.5, 3.2), col, spark: Math.random() < 0.55 }); } }
-function emberBurst(n) { const c = $('#embers'); for (let i = 0; i < n; i++) EMB.push({ x: c.width * rand(0.15, 0.85), y: c.height * rand(0.55, 1), vx: rand(-70, 70) * dpr, vy: -rand(90, 280) * dpr, life: rand(0.8, 1.8), max: 1.8, size: rand(1.4, 3.4) * dpr, hot: true }); }
+function emberBurst(n) { const c = $('#embers'); for (let i = 0; i < n; i++) EMB.push({ x: c.width * rand(0.15, 0.85), y: c.height * rand(0.55, 1), vx: rand(-70, 70) * emberRes(), vy: -rand(90, 280) * emberRes(), life: rand(0.8, 1.8), max: 1.8, size: rand(1.4, 3.4) * emberRes(), hot: true }); }
 function panelHit() { const el = $('#f-inner'); el.classList.remove('hit'); void el.offsetWidth; el.classList.add('hit'); }
 function openForge() { if (G.forgeOpen) return; G.forgeOpen = true; $('#forge').classList.remove('hidden'); PREV.hair.init = PREV.scarf.init = PREV.obi.init = false; G.resStr = ''; updateRes(true); renderForge(); emberBurst(30); SFX.click(); }
 function closeForge() { if (!G.forgeOpen) return; G.forgeOpen = false; $('#forge').classList.add('hidden'); save(); }
 function updateRes(force, dt = 0) {
   if (force) { G.dispGold = S.gold; G.dispSouls = S.souls; }
   else { const k = Math.min(1, dt * 9); G.dispGold = lerp(G.dispGold, S.gold, k); G.dispSouls = lerp(G.dispSouls, S.souls, k); if (Math.abs(G.dispGold - S.gold) < 1) G.dispGold = S.gold; if (Math.abs(G.dispSouls - S.souls) < 1) G.dispSouls = S.souls; }
-  const str = `<span class="res g"><i>¥</i>${fmt(G.dispGold)}</span><span class="res s"><i>◆</i>${fmt(G.dispSouls)}</span><span class="res j"><i>✧</i>${fmt(S.jade)}</span>`;
+  const str = towerIn() ? `<span class="res g"><i>❖</i>${fmt(G.dispGold)}</span>` : `<span class="res g"><i>¥</i>${fmt(G.dispGold)}</span><span class="res s"><i>◆</i>${fmt(G.dispSouls)}</span><span class="res j"><i>✧</i>${fmt(S.jade)}</span>`;
   if (str !== G.resStr) { G.resStr = str; $('#f-res').innerHTML = str; }
 }
 // Предпросмотр считается на глубокой копии: реальные объекты S (и ссылки интерфейса на них) не меняются
 function previewStats(fn) { const orig = S; S = JSON.parse(JSON.stringify(orig)); try { fn(S); fixSlots(); return computeStats(); } finally { S = orig; } }
 const arrow = (a, b) => `${fmt(a)} <span class="ar">→</span> <b class="up">${fmt(b)}</b>`;
+// В башне все цены кузницы — в демонических душах ❖: души ◆ и нефрит ✧ пересчитываются в надбавку к цене
+function towerCost(g, s, j) { return towerIn() ? [Math.ceil((g || 0) * (1 + (s ? 0.35 : 0) + (j ? 0.6 : 0))), 0, 0] : [g || 0, s || 0, j || 0]; }
 function costBtn(act, item, slot, label, gold, souls, cls = '', sub = '', jade = 0) {
+  [gold, souls, jade] = towerCost(gold, souls, jade);
   const ok = S.gold >= gold && S.souls >= (souls || 0) && S.jade >= (jade || 0);
-  const price = (gold ? `<span class="pr g">¥${fmt(gold)}</span>` : '') + (souls ? `<span class="pr s">◆${fmt(souls)}</span>` : '') + (jade ? `<span class="pr j">✧${fmt(jade)}</span>` : '');
+  const price = (gold ? `<span class="pr g">${CUR()}${fmt(gold)}</span>` : '') + (souls ? `<span class="pr s">◆${fmt(souls)}</span>` : '') + (jade ? `<span class="pr j">✧${fmt(jade)}</span>` : '');
   return `<button class="${cls}" data-act="${act}" data-item="${item || ''}" data-slot="${slot ?? ''}" ${ok ? '' : 'disabled'}>${label}${price}${sub ? `<span class="sub">${sub}</span>` : ''}</button>`;
 }
 function renderForge() {
@@ -3822,7 +3877,8 @@ function renderForge() {
   const mt = forgeMaxTier(S.forge);
   $('#f-sub').innerHTML = `Горн ур. <b>${S.forge}</b>/10 · макс. тир чар <b style="color:${TIER_COLORS[mt - 1]}">${TIER_NAMES[mt - 1]}</b>`;
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === G.forgeTab));
-  $('#tab-af').classList.toggle('hidden', !S.unlock3 && !S.oni); document.querySelector('#forge .f-title').textContent = S.loc === 3 ? 'Древняя кузница' : 'Кузница Ками';
+  const inT = towerIn(); $('#tab-af').classList.toggle('hidden', inT || (!S.unlock3 && !S.oni)); if (inT && G.forgeTab === 'af') G.forgeTab = 'w';
+  document.querySelector('#forge .f-title').textContent = inT ? 'Демоническая кузница' : S.loc === 3 ? 'Древняя кузница' : 'Кузница Ками'; document.querySelector('#forge .f-emblem').textContent = inT ? '魔' : '鍛';
   const row = (ic, c, n, v) => `<div class="st"><span class="si" style="color:${c}">${ic}</span><span>${n}</span><b>${v}</b></div>`;
   $('#f-stats').innerHTML = row('⚔', '#ffb36b', 'Урон', fmt(ST.dmg)) + row('♥', '#ff6a86', 'Здоровье', fmt(ST.maxHp)) + row('✦', '#ffd84a', 'Крит', `${(ST.critChance * 100).toFixed(1)}% · ×${ST.critDmg.toFixed(2)}`)
     + row('»', '#7dffb0', 'Скорость бега', Math.round(ST.speed)) + row('◈', '#5fe0ff', 'Щит', fmt(ST.shieldMax)) + row('≋', '#9fdcff', 'Уклонение', (ST.dodge * 100).toFixed(1) + '%') + row('⛨', '#c9b0ff', 'Защита', Math.round(ST.reduce * 100) + '%')
@@ -3843,7 +3899,7 @@ function renderForge() {
       <div class="ctitle">Шансы тира при зачаровании</div>
       <div class="odds">${w.map((x, i) => `<div class="odd" style="--tc:${TIER_COLORS[i]};opacity:${x ? 1 : 0.3}"><span>${(x / tot * 100).toFixed(0)}%</span><div class="bar" style="height:${(x / tot / mx * 62).toFixed(1)}%"></div><b>${TIER_NAMES[i]}</b></div>`).join('')}</div>
       <div class="btns">${S.forge < 10 ? costBtn('forgeup', '', '', '🔥 Раздуть горн', c.gold, c.souls, 'primary big', sub) : '<button class="big" disabled>Горн пылает на максимуме</button>'}</div>
-      <div class="note">Вставка и замена чар: ¥${fmt(insertCost())} · реролл: ¥${fmt(rerollCost())}. Цены растут вместе с уровнем горна.<br>Число слотов чар зависит от ранга предмета: ранг 1 → 1 слот … ранг 4 → 4 слота.</div></div>`;
+      <div class="note">Вставка и замена чар: ${CUR()}${fmt(towerCost(insertCost())[0])} · реролл: ${CUR()}${fmt(towerCost(rerollCost())[0])}. Цены растут вместе с уровнем горна.<br>Число слотов чар зависит от ранга предмета: ранг 1 → 1 слот … ранг 4 → 4 слота.</div></div>`;
     return;
   }
   if (G.forgeTab === 'j') { renderJewelTab(R); return; }
@@ -3851,13 +3907,13 @@ function renderForge() {
   const key = G.forgeTab, it = S[key], RK = key === 'w' ? WEAPON_RANKS : ARMOR_RANKS, info = RK[it.rank - 1], rc = RANK_COLORS[it.rank - 1];
   const statName = key === 'w' ? 'Урон' : 'Здоровье', statOf = st => key === 'w' ? st.dmg : st.maxHp;
   let action;
-  if (it.lvl < CFG.MAX_LVL && it.rank >= 9 && S.loc !== 3) action = '<button class="big" disabled>⛰ Закалка горных клинков и доспехов — только в Древней кузнице</button>';
+  if (it.lvl < CFG.MAX_LVL && it.rank >= 9 && S.loc !== 3 && !inT) action = '<button class="big" disabled>⛰ Закалка горных клинков и доспехов — только в Древней кузнице</button>';
   else if (it.lvl < CFG.MAX_LVL) { const nx = previewStats(s => s[key].lvl++); action = costBtn('lvl', key, '', `⚒ Закалить до +${it.lvl + 1}`, levelCost(it.rank, it.lvl), 0, 'primary big', `${statName} ${arrow(statOf(ST), statOf(nx))}`); }
-  else if (it.rank === 4 && !S.unlock2) action = '<button class="big" disabled>🔒 Храмовые ранги откроются после победы над всеми 4 боссами Токио</button>';
-  else if (it.rank === 8 && !S.unlock3) action = '<button class="big" disabled>🔒 Горные ранги откроются после победы над всеми 4 боссами Храмового квартала</button>';
-  else if (it.rank >= 8 && it.rank < MAX_RANK && S.loc !== 3) action = '<button class="big" disabled>⛰ Горные ранги куются только в Древней кузнице Горного пика</button>';
-  else if (it.rank >= 8 && it.rank < MAX_RANK && aforgeLevel() < it.rank - 7) action = `<button class="big" disabled>⛰ Нужна Древняя кузница ур. ${it.rank - 7}: убей врагов в горах — ${fmt(S.kills3 || 0)}/${fmt(AFORGE_KILLS[it.rank - 8])}</button>`;
-  else if (it.rank < MAX_RANK) { const c = RANKUP[it.rank], nx = previewStats(s => { s[key].rank++; s[key].lvl = 0; }); action = costBtn('rank', key, '', `✦ Возвысить до Ранга ${it.rank + 1}`, c.gold, c.souls, 'soul big', `${statName} ${arrow(statOf(ST), statOf(nx))} · новый облик · +1 слот чар`); }
+  else if (it.rank === 4 && !S.unlock2 && !inT) action = '<button class="big" disabled>🔒 Храмовые ранги откроются после победы над всеми 4 боссами Токио</button>';
+  else if (it.rank === 8 && !S.unlock3 && !inT) action = '<button class="big" disabled>🔒 Горные ранги откроются после победы над всеми 4 боссами Храмового квартала</button>';
+  else if (it.rank >= 8 && it.rank < MAX_RANK && S.loc !== 3 && !inT) action = '<button class="big" disabled>⛰ Горные ранги куются только в Древней кузнице Горного пика</button>';
+  else if (it.rank >= 8 && it.rank < MAX_RANK && aforgeLevel() < it.rank - 7 && !inT) action = `<button class="big" disabled>⛰ Нужна Древняя кузница ур. ${it.rank - 7}: убей врагов в горах — ${fmt(S.kills3 || 0)}/${fmt(AFORGE_KILLS[it.rank - 8])}</button>`;
+  else if (it.rank < MAX_RANK) { const c = RANKUP[it.rank], nx = previewStats(s => { s[key].rank++; s[key].lvl = 0; }); action = costBtn('rank', key, '', `✦ Возвысить до Ранга ${it.rank + 1}`, c.gold, c.souls, 'soul big', `${statName} ${arrow(statOf(ST), statOf(nx))} · новый облик${it.rank < 4 ? ' · +1 слот чар' : ''}`); }
   else action = '<button class="big" disabled>✧ Предмет достиг совершенства</button>';
   const next = it.rank < MAX_RANK ? `<div class="note">Следующий ранг: <b style="color:${RANK_COLORS[it.rank]}">${RK[it.rank].name}</b> — ${RK[it.rank].desc}${it.lvl < CFG.MAX_LVL ? ` <i>(сначала закалка до +${CFG.MAX_LVL})</i>` : ''}</div>` : '';
   const perks = key === 'w' ? ABILITIES : ARMOR_PERKS, curR = it.rank;
@@ -3876,13 +3932,13 @@ function forgeAction(act, item, slot, btn) {
   if (act === 'jsel') { G.jewelSel = item; SFX.click(); renderForge(); return; }
   if (act === 'look') { S.look[item] = slot === S[item].rank ? 0 : slot; SFX.click(); save(); renderForge(); return; }
   const it = item ? S[item] : null, name = item === 'w' ? 'Катана' : 'Одежда';
-  const pay = (g, s = 0, j = 0) => { if (S.gold < g || S.souls < s || S.jade < j) { SFX.fail(); toast('Не хватает ресурсов'); return false; } S.gold -= g; S.souls -= s; S.jade -= j; return true; };
+  const pay = (g, s = 0, j = 0) => { [g, s, j] = towerCost(g, s, j); if (S.gold < g || S.souls < s || S.jade < j) { SFX.fail(); toast('Не хватает ресурсов'); return false; } S.gold -= g; S.souls -= s; S.jade -= j; return true; };
   if (act === 'lvl') {
-    if (it.lvl >= CFG.MAX_LVL || (it.rank >= 9 && S.loc !== 3) || !pay(levelCost(it.rank, it.lvl))) return; it.lvl++;
+    if (it.lvl >= CFG.MAX_LVL || (it.rank >= 9 && S.loc !== 3 && !towerIn()) || !pay(levelCost(it.rank, it.lvl))) return; it.lvl++;
     SFX.up(); panelHit(); prevBurst('255,180,90', 30, 220); emberBurst(20); PREV.flash = 0.25; burst(hero.x, hero.y - 30, 14, '255,170,80', 200, 0.5, 3); toast(`⚒ ${name}: закалка +${it.lvl}`);
   } else if (act === 'rank') {
-    if (it.rank >= MAX_RANK || it.lvl < CFG.MAX_LVL || (it.rank === 4 && !S.unlock2) || (it.rank >= 8 && (!S.unlock3 || S.loc !== 3 || aforgeLevel() < it.rank - 7))) return; const c = RANKUP[it.rank]; if (!pay(c.gold, c.souls)) return;
-    it.rank++; it.lvl = 0; S.look[item] = 0; fixSlots(); SFX.up(); G.shake = 8; const RK = item === 'w' ? WEAPON_RANKS : ARMOR_RANKS, rc = hexRGB(RANK_COLORS[it.rank - 1]);
+    if (it.rank >= MAX_RANK || it.lvl < CFG.MAX_LVL || (!towerIn() && ((it.rank === 4 && !S.unlock2) || (it.rank >= 8 && (!S.unlock3 || S.loc !== 3 || aforgeLevel() < it.rank - 7))))) return; const c = RANKUP[it.rank]; if (!pay(c.gold, c.souls)) return;
+    it.rank++; it.lvl = 0; S.look[item] = 0; fixSlots(); SFX.up(); addShake(8); const RK = item === 'w' ? WEAPON_RANKS : ARMOR_RANKS, rc = hexRGB(RANK_COLORS[it.rank - 1]);
     prevBurst(rc, 80, 300); PREV.flash = 1; emberBurst(60); panelHit();
     burst(hero.x, hero.y - 30, 50, rc, 360, 0.9, 4, 'glow'); P('ring', hero.x, hero.y, 0, 0, 0.6, 160, rc);
     banner(`${name} эволюционирует!`, `${RK[it.rank - 1].name} · Ранг ${it.rank} · ${RANK_NAMES[it.rank - 1]}`);
@@ -3897,7 +3953,7 @@ function forgeAction(act, item, slot, btn) {
     if (act === 'reroll') toast(`${ENCH[id].name}: <span style="color:${TIER_COLORS[cur.t - 1]}">${TIER_NAMES[cur.t - 1]} (${cur.v})</span> → <b style="color:${TIER_COLORS[e.t - 1]}">${TIER_NAMES[e.t - 1]} (${e.v})</b>`);
     else toast(`${ENCH[id].icon} ${ENCH[id].name} · <b style="color:${TIER_COLORS[e.t - 1]}">Тир ${TIER_NAMES[e.t - 1]}</b>`);
   } else if (act === 'jcraft' || act === 'jup') {
-    const J = JEWELS[item]; if ((act === 'jcraft' && it.lvl > 0) || (act === 'jup' && (it.lvl === 0 || it.lvl >= JMAX || (it.lvl >= 10 && !S.unlock2)))) return;
+    const J = JEWELS[item]; if ((act === 'jcraft' && it.lvl > 0) || (act === 'jup' && (it.lvl === 0 || it.lvl >= JMAX || (it.lvl >= 10 && !S.unlock2 && !towerIn())))) return;
     const c = act === 'jcraft' ? J.craft : jUpCost(it.lvl); if (!pay(c.gold, 0, c.jade)) return; it.lvl++; fixSlots();
     const jc = hexRGB(jewelColor(it.lvl)); SFX.up(); panelHit(); prevBurst(jc, act === 'jcraft' ? 70 : 34, 240); PREV.flash = act === 'jcraft' ? 0.8 : 0.3; emberBurst(act === 'jcraft' ? 50 : 20);
     if (act === 'jcraft') banner('Украшение выковано!', `${J.name} · ${J.stat} ${J.fmt(J.val(1))}`); else toast(`${J.icon} ${J.short}: уровень ${it.lvl} · ${J.stat} ${J.fmt(J.val(it.lvl))}`);
@@ -3912,13 +3968,14 @@ function forgeAction(act, item, slot, btn) {
 }
 $('#forge').addEventListener('click', ev => { const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return; forgeAction(b.dataset.act, b.dataset.item, b.dataset.slot === '' || b.dataset.slot === undefined ? null : +b.dataset.slot, b); });
 function updateEmbers(dt) {
-  const c = $('#embers'), f = $('#forge'), w = Math.round(f.clientWidth * dpr), h = Math.round(f.scrollHeight * dpr);
-  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; c.style.height = f.scrollHeight + 'px'; }
+  const er = emberRes(); if (GFX.level === 0) { const c0 = $('#embers'); if (c0.width > 1) { c0.width = 1; c0.height = 1; } EMB.length = 0; return; } // на низком — без искр
+  const c = $('#embers'), f = $('#forge'), w = Math.round(f.clientWidth * er), h = Math.round(f.scrollHeight * er);
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; c.style.height = f.scrollHeight + 'px'; c.style.width = f.clientWidth + 'px'; }
   const x = c.getContext('2d');
-  if (Math.random() < dt * 24) EMB.push({ x: rand(w), y: h + 5, vx: rand(-15, 15) * dpr, vy: -rand(30, 80) * dpr, life: rand(3, 6), max: 6, size: rand(0.8, 2.2) * dpr, hot: false });
+  if (Math.random() < dt * (GFX.level >= 2 ? 24 : 10)) EMB.push({ x: rand(w), y: h + 5, vx: rand(-15, 15) * er, vy: -rand(30, 80) * er, life: rand(3, 6), max: 6, size: rand(0.8, 2.2) * er, hot: false });
   x.clearRect(0, 0, w, h); x.globalCompositeOperation = 'lighter';
   for (let i = EMB.length - 1; i >= 0; i--) {
-    const e = EMB[i]; e.life -= dt; e.x += (e.vx + Math.sin(e.life * 2 + i) * 12 * dpr) * dt; e.y += e.vy * dt; if (e.hot) e.vy += 70 * dpr * dt;
+    const e = EMB[i]; e.life -= dt; e.x += (e.vx + Math.sin(e.life * 2 + i) * 12 * er) * dt; e.y += e.vy * dt; if (e.hot) e.vy += 70 * er * dt;
     if (e.life <= 0 || e.y < -10) { EMB.splice(i, 1); continue; }
     const a = Math.min(1, e.life / e.max * 2) * (e.hot ? 1 : 0.55), r = e.size * 3, g = x.createRadialGradient(e.x, e.y, 0, e.x, e.y, r);
     g.addColorStop(0, `rgba(255,200,120,${a})`); g.addColorStop(0.4, `rgba(255,110,40,${a * 0.5})`); g.addColorStop(1, 'rgba(255,80,20,0)'); x.fillStyle = g; x.beginPath(); x.arc(e.x, e.y, r, 0, TAU); x.fill();
@@ -3945,9 +4002,9 @@ function updatePreview(dt) {
   let g = p.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#0c0d1c'); g.addColorStop(1, '#05060d'); p.fillStyle = g; p.fillRect(0, 0, W, H);
   g = p.createRadialGradient(W / 2, H * 0.62, 10, W / 2, H * 0.62, W * 0.78); g.addColorStop(0, hexA(tc, 0.32 * pu)); g.addColorStop(1, 'rgba(0,0,0,0)'); p.fillStyle = g; p.fillRect(0, 0, W, H);
   p.save(); p.globalCompositeOperation = 'lighter';
-  for (let i = 0; i < 5; i++) { const bx = W * (0.18 + i * 0.16), sw = Math.sin(ph.t * 0.5 + i * 1.3) * 30 * dpr, bg = p.createLinearGradient(0, 0, 0, H * 0.85); bg.addColorStop(0, hexA(tc, 0.1)); bg.addColorStop(1, hexA(tc, 0)); p.fillStyle = bg; p.beginPath(); p.moveTo(bx - 5 * dpr, 0); p.lineTo(bx + 5 * dpr, 0); p.lineTo(bx + sw + 34 * dpr, H * 0.85); p.lineTo(bx + sw - 34 * dpr, H * 0.85); p.closePath(); p.fill(); }
+  for (let i = 0; i < 5; i++) { const bx = W * (0.18 + i * 0.16), sw = Math.sin(ph.t * 0.5 + i * 1.3) * 30 * (W / 260), bg = p.createLinearGradient(0, 0, 0, H * 0.85); bg.addColorStop(0, hexA(tc, 0.1)); bg.addColorStop(1, hexA(tc, 0)); p.fillStyle = bg; p.beginPath(); p.moveTo(bx - 5 * (W / 260), 0); p.lineTo(bx + 5 * (W / 260), 0); p.lineTo(bx + sw + 34 * (W / 260), H * 0.85); p.lineTo(bx + sw - 34 * (W / 260), H * 0.85); p.closePath(); p.fill(); }
   p.restore();
-  p.fillStyle = 'rgba(255,255,255,0.045)'; p.font = `700 ${130 * dpr}px "Yu Gothic","Meiryo",sans-serif`; p.textAlign = 'center'; p.textBaseline = 'middle';
+  p.fillStyle = 'rgba(255,255,255,0.045)'; p.font = `700 ${130 * (W / 260)}px "Yu Gothic","Meiryo",sans-serif`; p.textAlign = 'center'; p.textBaseline = 'middle';
   p.fillText(G.forgeTab === 'a' ? '鎧' : G.forgeTab === 'f' ? '炎' : G.forgeTab === 'j' ? '飾' : '刀', W / 2, H * 0.4);
   const sc = W / 260 * 2.2; p.setTransform(sc, 0, 0, sc, W * 0.42, H * 0.8);
   p.save(); p.globalCompositeOperation = 'lighter'; p.scale(1, 0.32);
@@ -3969,7 +4026,7 @@ function updatePreview(dt) {
     else { const r = q.size * 2.2, qg = p.createRadialGradient(q.x, q.y, 0, q.x, q.y, r); qg.addColorStop(0, `rgba(${q.col},${a})`); qg.addColorStop(1, `rgba(${q.col},0)`); p.fillStyle = qg; p.beginPath(); p.arc(q.x, q.y, r, 0, TAU); p.fill(); }
   }
   p.restore();
-  if (ph.flash > 0) { p.setTransform(1, 0, 0, 1, 0, 0); p.fillStyle = `rgba(255,255,255,${ph.flash * 0.7})`; p.fillRect(0, 0, W, H); }
+  if (ph.flash > 0 && !CALM) { p.setTransform(1, 0, 0, 1, 0, 0); p.fillStyle = `rgba(255,214,160,${Math.min(0.15, ph.flash * 0.15)})`; p.fillRect(0, 0, W, H); } // без белой вспышки
   updateEmbers(dt);
 }
 
@@ -4001,7 +4058,7 @@ function renderJewelTabRaw(R) {
   const sel = `<div class="jsel">${JKEYS.map(x => { const l = S[x].lvl, c = jewelColor(l), X = JEWELS[x]; return `<button class="jbtn ${x === k ? 'active' : ''}" style="--jc:${c}" data-act="jsel" data-item="${x}"><span class="ji">${X.icon}</span><span><b>${X.short}</b><small>${l ? `ур. ${l} · ${X.fmt(X.val(l))}` : 'не выковано'}</small></span></button>`; }).join('')}</div>`;
   let action;
   if (lv === 0) action = costBtn('jcraft', k, '', `✧ Выковать: ${J.name}`, J.craft.gold, 0, 'primary big', `${J.stat}: <b class="up">${J.fmt(J.val(1))}</b> · открывает 1 слот чар`, J.craft.jade);
-  else if (lv >= 10 && !S.unlock2) action = '<button class="big" disabled>🔒 Уровни 11–15 откроются после победы над всеми боссами Токио</button>';
+  else if (lv >= 10 && !S.unlock2 && !towerIn()) action = '<button class="big" disabled>🔒 Уровни 11–15 откроются после победы над всеми боссами Токио</button>';
   else if (lv < JMAX) { const c = jUpCost(lv); action = costBtn('jup', k, '', `⚒ Улучшить до ур. ${lv + 1}`, c.gold, 0, 'primary big', `${J.stat}: ${J.fmt(J.val(lv))} <span class="ar">→</span> <b class="up">${J.fmt(J.val(lv + 1))}</b>${jewelSlots(lv + 1) > jewelSlots(lv) ? ' · +1 слот чар' : ''}`, c.jade); }
   else action = '<button class="big" disabled>✧ Украшение совершенно</button>';
   R.innerHTML = sel + `<div class="card itemcard" style="--rc:${tc}"><div class="irow"><div><div class="iname" style="color:${tc};text-shadow:0 0 16px ${tc}88">${J.name}${lv ? ' +' + lv : ''}</div><div class="stars">${lv ? '◆'.repeat(lv) + '◇'.repeat(JMAX - lv) : 'ещё не выковано'}</div></div><div class="badge" style="color:${tc}">${J.stat}: ${lv ? J.fmt(J.val(lv)) : '—'}</div></div>
@@ -4117,6 +4174,7 @@ const modsHtml = q => q.mods.map(id => `<span class="tmod" title="${TRIAL_MODS[i
 function ensureOffers() { const Q = S.quests; while (Q.offers.length < 4) Q.offers.push(genQuest()); if (!Array.isArray(Q.trials)) Q.trials = []; while (Q.trials.length < 4) Q.trials.push(genTrial()); }
 function qProgress(q) { return q.type === 'gold' ? `¥${fmt(q.have)} / ¥${fmt(q.need)}` : `${q.have} / ${q.need}`; }
 function questEvent(kind, a) {
+  if (towerIn()) return;
   for (const q of S.quests.active) {
     if (q.done) continue; let inc = 0;
     if (kind === 'kill') {
@@ -4129,14 +4187,19 @@ function questEvent(kind, a) {
     if (inc) { q.have = Math.min(q.need, q.have + inc); if (q.have >= q.need) { q.done = true; toast(`📜 Задание выполнено: <b>${q.title}</b> — сдай на доске`); SFX.up(); } }
   }
 }
-function updateQuests(dt) { const Q = S.quests; Q.refreshT -= dt; if (Q.refreshT <= 0) { Q.refreshT = 180; Q.offers = []; Q.trials = []; ensureOffers(); if (G.boardOpen) renderBoard(); } }
+function updateQuests(dt) { const Q = S.quests; Q.refreshT -= dt; if (Q.refreshT <= 0) { Q.refreshT = 180; Q.offers = []; Q.trials = []; if (!towerIn()) ensureOffers(); if (G.boardOpen) renderBoard(); } }
 const refreshCost = () => Math.round(60 * ZONES[locMaxZone()].goldM);
 const qZone = q => LOCS[q.loc || 1].zones[q.z];
 const mmss = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
 const rewardHtml = q => `<span class="rg">¥${fmt(q.gold)}</span>${q.souls ? ` <span class="rs">◆${q.souls}</span>` : ''}${q.xp ? ` <span class="rx">✦${fmt(q.xp)}</span>` : ''}${q.jade ? ` <span class="rj">✧${q.jade}</span>` : ''}${q.dew ? ` <span class="rd">💧${q.dew}</span>` : ''}`;
+// ---------- Суточные лимиты наград (сброс в 00:00 по Киеву), считаются по сдаче ----------
+const DAILY = { board: 15, nq: 10, trials: 5 };
+function daily() { const d = kyivDay(); if (!S.daily || S.daily.day !== d) S.daily = { day: d, board: 0, nq: 0, trials: 0 }; return S.daily; }
+const dailyLeft = k => DAILY[k] - daily()[k];
+const dailyHtml = () => { const d = daily(), c = (n, k) => `<span style="color:${d[k] >= DAILY[k] ? '#ffb36b' : '#9dffd0'}">${n}: <b>${Math.min(d[k], DAILY[k])}/${DAILY[k]}</b></span>`; return `${c('Задания сегодня', 'board')} · ${c('Испытания', 'trials')}`; };
 function openBoard() { if (G.boardOpen) return; G.boardOpen = true; ensureOffers(); $('#board').classList.remove('hidden'); renderBoard(); SFX.click(); }
 function closeBoard() { if (!G.boardOpen) return; G.boardOpen = false; $('#board').classList.add('hidden'); save(); }
-function updateBoardSub() { const Q = S.quests; $('#b-sub').innerHTML = `Взято <b>${Q.active.length}</b>/3 · выполнено всего: <b>${Q.done}</b> · новые объявления через <b>${mmss(Q.refreshT)}</b>`; }
+function updateBoardSub() { const Q = S.quests; $('#b-sub').innerHTML = `Взято <b>${Q.active.length}</b>/3 · ${dailyHtml()} · новые объявления через <b>${mmss(Q.refreshT)}</b>`; }
 function renderBoard() {
   if (!G.boardOpen) return; const Q = S.quests; ensureOffers(); updateBoardSub();
   $('#b-res').innerHTML = `<span class="res g"><i>¥</i>${fmt(S.gold)}</span><span class="res s"><i>◆</i>${fmt(S.souls)}</span>`;
@@ -4147,7 +4210,7 @@ function renderBoard() {
   else $('#b-offers').innerHTML = Q.offers.map((q, i) => `<div class="bnote" style="--r:${rots[i % 4]}deg"><div class="hanko">${seals[i % 4]}</div><div class="nz">${qZone(q).short} · ${'★'.repeat(q.z)}${'☆'.repeat(4 - q.z)}</div><h4>${QUEST_ICON[q.type]} ${q.title}</h4><div class="nd">${q.desc}</div><div class="rw">Награда: ${rewardHtml(q)}</div><button class="primary" data-act="accept" data-kind="order" data-i="${i}" ${full ? 'disabled title="Можно держать не больше 3 заданий"' : ''}>Взять заказ</button></div>`).join('');
   const c = refreshCost();
   $('#b-refresh').innerHTML = `<button data-act="brefresh" ${S.gold >= c ? '' : 'disabled'}>↻ Сорвать все объявления<span class="pr g">¥${fmt(c)}</span></button>`;
-  $('#b-active').innerHTML = Q.active.length ? Q.active.map(q => `<div class="quest ${q.done ? 'done' : ''} ${q.trial ? 'trial' : ''}"><div class="qh"><span class="qi">${QUEST_ICON[q.type]}</span><b>${q.title}</b><span class="qz">${qZone(q).short}</span></div><div class="nd2">${q.desc}</div>${q.trial ? `<div class="tmods">${modsHtml(q)}</div>` : ''}<div class="qbar"><i style="width:${(q.have / q.need * 100).toFixed(0)}%"></i></div><div class="qrow"><span>${qProgress(q)}</span><span>${rewardHtml(q)}</span></div>${q.done ? `<button class="primary big" data-act="claim" data-id="${q.id}">🎁 Получить награду</button><div class="stamp">済</div>` : `<button class="ghost" data-act="abandon" data-id="${q.id}">Отказаться</button>`}</div>`).join('')
+  $('#b-active').innerHTML = Q.active.length ? Q.active.map(q => `<div class="quest ${q.done ? 'done' : ''} ${q.trial ? 'trial' : ''}"><div class="qh"><span class="qi">${QUEST_ICON[q.type]}</span><b>${q.title}</b><span class="qz">${qZone(q).short}</span></div><div class="nd2">${q.desc}</div>${q.trial ? `<div class="tmods">${modsHtml(q)}</div>` : ''}<div class="qbar"><i style="width:${(q.have / q.need * 100).toFixed(0)}%"></i></div><div class="qrow"><span>${qProgress(q)}</span><span>${rewardHtml(q)}</span></div>${q.done ? `<button class="primary big" data-act="claim" data-id="${q.id}">🎁 Получить награду${q.trial ? (dailyLeft('trials') <= 0 ? '<span class="sub">лимит испытаний на сегодня: только 💧1</span>' : '') : (dailyLeft('board') <= 0 ? '<span class="sub">лимит заданий на сегодня: награда 25%</span>' : '')}</button><div class="stamp">済</div>` : `<button class="ghost" data-act="abandon" data-id="${q.id}">Отказаться</button>`}</div>`).join('')
     : `<div class="qempty">Пока нет взятых заданий.<br>Выбери объявление на доске — можно держать до трёх сразу.<br><small>Выполненное задание сдаётся здесь же.</small></div>`;
 }
 $('#board').addEventListener('click', ev => {
@@ -4162,8 +4225,17 @@ $('#board').addEventListener('click', ev => {
     else toast(`📜 Взято: <b>${q.title}</b>`);
   }
   else if (act === 'claim') {
-    const i = Q.active.findIndex(q => q.id === b.dataset.id), q = Q.active[i]; if (!q || !q.done) return;
-    Q.active.splice(i, 1); S.gold += q.gold; S.souls += q.souls || 0; S.xp += q.xp || 0; S.jade += q.jade || 0; if (q.dew) { S.dew = (S.dew || 0) + q.dew; spawnText(hero.x - 30, hero.y - 100, `+${q.dew} 💧`, '#7dffb0', 18, true); if (!G.dewHint) { G.dewHint = true; setTimeout(() => toast('💧 Роса жизни растит Древо Жизни — открой его клавишей L'), 1200); } } Q.done++; SFX.up(); G.shake = 5;
+    const i = Q.active.findIndex(q => q.id === b.dataset.id); let q = Q.active[i]; if (!q || !q.done) return;
+    Q.active.splice(i, 1); const D = daily();
+    if (q.trial && ++D.trials > DAILY.trials) { // после 5 испытаний в сутки — только 1 роса
+      Q.done++; S.dew = (S.dew || 0) + 1; spawnText(hero.x, hero.y - 100, '+1 💧', '#7dffb0', 18, true); SFX.up();
+      banner('Испытание пройдено', 'Лимит испытаний на сегодня исчерпан: награда — 1 💧 роса'); save(); renderBoard(); return;
+    }
+    if (!q.trial && ++D.board > DAILY.board) { // после 15 заданий в сутки — 25% награды
+      q = Object.assign({}, q, { gold: Math.round(q.gold * 0.25), souls: Math.round((q.souls || 0) * 0.25), xp: Math.round((q.xp || 0) * 0.25), jade: Math.round((q.jade || 0) * 0.25) });
+      toast('📜 Лимит заданий на сегодня исчерпан — награда 25%. Новый день начнётся в 00:00');
+    }
+    S.gold += q.gold; S.souls += q.souls || 0; S.xp += q.xp || 0; S.jade += q.jade || 0; if (q.dew) { S.dew = (S.dew || 0) + q.dew; spawnText(hero.x - 30, hero.y - 100, `+${q.dew} 💧`, '#7dffb0', 18, true); if (!G.dewHint) { G.dewHint = true; setTimeout(() => toast('💧 Роса жизни растит Древо Жизни — открой его клавишей L'), 1200); } } Q.done++; SFX.up(); addShake(5);
     burst(hero.x, hero.y - 30, 30, '255,215,110', 260, 0.7, 3, 'glow'); P('ring', hero.x, hero.y, 0, 0, 0.5, 120, '95,240,200');
     spawnText(hero.x, hero.y - 88, '+¥' + fmt(q.gold), '#ffd76a', 20, true); if (q.souls) spawnText(hero.x + 30, hero.y - 70, `+${q.souls} ◆`, '#d6a6ff', 16, true);
     banner('Награда получена', `${q.title} · +¥${fmt(q.gold)}${q.souls ? ` · +${q.souls} ◆` : ''}`);
@@ -4214,7 +4286,7 @@ function drawBoardStructure(ctx, t) {
 }
 function drawQuestTracker(ctx) {
   const A = S.quests.active; if (!A.length) return;
-  const x = 16, y0 = G.helpT > 0 ? 302 : 176, w = 312, h = 30 + A.length * 40;
+  const x = 16, y0 = G.helpT > 0 && !towerIn() ? 302 : 176, w = 312, h = 30 + A.length * 40;
   glass(ctx, x, y0, w, h); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   ctx.font = '700 11px "Segoe UI",sans-serif'; ctx.fillStyle = '#5ff0c8'; ctx.fillText('📜 ЗАДАНИЯ', x + 14, y0 + 16);
   A.forEach((q, i) => {
@@ -4238,32 +4310,56 @@ function toggleAuto(force) {
   G.autoHunt = force === undefined ? !G.autoHunt : force; G.autoAnchor = { x: hero.x, y: hero.y }; G.autoRetreat = false; G.autoTarget = null;
   toast(G.autoHunt ? '🎯 Авто-охота: охочусь в радиусе вокруг этой точки' : 'Авто-охота выключена');
 }
+const RANGED = { gunner: 1, caster: 1, shaman: 1, yokai: 1 };
+const autoBoss = () => G.autoBossTest || SET.autoBoss !== false; // настройка «Авто-охота сражается с боссами» (по умолчанию — да)
+// Направление уклонения только внутри круга авто-охоты: наружу — никогда, у края — вдоль круга или к центру
+function autoInside(h, A, x, y) {
+  const ax = A.x - h.x, ay = A.y - h.y, ad = Math.hypot(ax, ay) || 1, nx = -ax / ad, ny = -ay / ad, out = x * nx + y * ny;
+  const room = AUTO_LEASH - ad; // сколько осталось до края
+  if (out > 0 && room < 140) { const k = room < 40 ? 1.25 : 1; x -= nx * out * k; y -= ny * out * k; if (room < 40) { x -= nx * 0.35; y -= ny * 0.35; } }
+  const l = Math.hypot(x, y); return l < 0.05 ? { x: -nx, y: -ny } : { x: x / l, y: y / l };
+}
+// Оценка угрозы снаряда: попадёт ли в ближайшие ~0,4 с и заметен ли урон при текущем HP
+function bulletThreat(h, b) {
+  const px = h.x - b.x, py = h.y - b.y, v2 = b.vx * b.vx + b.vy * b.vy || 1, tc = (px * b.vx + py * b.vy) / v2;
+  if (tc < 0 || tc > 0.4) return 0;
+  const cx = px - b.vx * tc, cy = py - b.vy * tc, miss = Math.hypot(cx, cy);
+  if (miss > h.r + (b.orb ? 12 : 7) + 6) return 0;
+  if (b.curse) return 2; // проклятые сферы — всегда уворачиваемся
+  const est = Math.max(0, b.dmg * (1 - ST.reduce) * (ST.frail || 1) * (mountainWeak() ? 1.4 : 1) - (hero.shield || 0)), hpK = h.hp / ST.maxHp;
+  return est > h.hp * 0.12 || (hpK < 0.5 && est > h.hp * 0.05) ? 1 : 0;
+}
 function autoHuntRaw(h, dt) {
   const A = G.autoAnchor || (G.autoAnchor = { x: h.x, y: h.y }), az = Math.max(1, zoneAt(A.x));
-  // 1) уклонение от красных зон и линий прицела
-  if (G.autoNoDodge) { /* режим теста: без уклонений */ } else {
-  let ex = 0, ey = 0, urgent = 9;
-  for (const o of G.telegraphs) {
-    if (o.type === 'line') {
-      const c = Math.cos(o.ang), s = Math.sin(o.ang), dx = h.x - o.x, dy = h.y - o.y, lx = dx * c + dy * s, ly = -dx * s + dy * c;
-      if (lx > 0 && lx < o.len && Math.abs(ly) < 28) { const sg = ly >= 0 ? 1 : -1; ex += -s * sg; ey += c * sg; urgent = Math.min(urgent, o.dur - o.t); }
-      continue;
+  G.autoDodgeCd = Math.max(0, (G.autoDodgeCd || 0) - dt);
+  if (!G.autoNoDodge) {
+    // 0) начатый манёвр доводим до конца (~0,25 с), потом снова в бой
+    const M = G.autoDodge; if (M && M.t > 0) { M.t -= dt; const d = autoInside(h, A, M.x, M.y); return { x: d.x, y: d.y, mag: 1, dodge: true }; }
+    // 1) красные зоны атак — обходим всегда
+    let ex = 0, ey = 0, urgent = 9;
+    for (const o of G.telegraphs) {
+      if (o.type === 'line' || !(o.dmg || (o.type === 'rect' && o.owner)) || !heroInTele(o, 22)) continue;
+      urgent = Math.min(urgent, o.dur - o.t);
+      const dx = h.x - o.x, dy = h.y - o.y, d = Math.hypot(dx, dy) || 1;
+      if (o.type === 'circle') { ex += dx / d; ey += dy / d; }
+      else if (o.type === 'ring') { const sg = (d - o.r0) < (o.r1 - d) ? -1 : 1; ex += dx / d * sg; ey += dy / d * sg; }
+      else if (o.type === 'cone') { const side = angDiff(o.ang, Math.atan2(dy, dx)) >= 0 ? 1 : -1, pa = o.ang + Math.PI / 2 * side; ex += dx / d + Math.cos(pa); ey += dy / d + Math.sin(pa); }
+      else if (o.type === 'rect') { const c = Math.cos(o.ang), s = Math.sin(o.ang), sg = (-dx * s + dy * c) >= 0 ? 1 : -1; ex += -s * sg; ey += c * sg; }
     }
-    if (!(o.dmg || (o.type === 'rect' && o.owner)) || !heroInTele(o, 22)) continue;
-    urgent = Math.min(urgent, o.dur - o.t);
-    const dx = h.x - o.x, dy = h.y - o.y, d = Math.hypot(dx, dy) || 1;
-    if (o.type === 'circle') { ex += dx / d; ey += dy / d; }
-    else if (o.type === 'ring') { const sg = (d - o.r0) < (o.r1 - d) ? -1 : 1; ex += dx / d * sg; ey += dy / d * sg; }
-    else if (o.type === 'cone') { const side = angDiff(o.ang, Math.atan2(dy, dx)) >= 0 ? 1 : -1, pa = o.ang + Math.PI / 2 * side; ex += dx / d + Math.cos(pa); ey += dy / d + Math.sin(pa); }
-    else if (o.type === 'rect') { const c = Math.cos(o.ang), s = Math.sin(o.ang), sg = (-dx * s + dy * c) >= 0 ? 1 : -1; ex += -s * sg; ey += c * sg; }
-  }
-  if (ex || ey) { const l = Math.hypot(ex, ey); return { x: ex / l, y: ey / l, mag: 1, dodge: true, dash: urgent < 0.3 }; }
-  // 2) летящие пули — шаг в сторону
-  for (const b of G.eprojectiles) {
-    const dx = h.x - b.x, dy = h.y - b.y; if (dx * dx + dy * dy > 170 * 170) continue;
-    const sp = Math.hypot(b.vx, b.vy) || 1, vx = b.vx / sp, vy = b.vy / sp; if (dx * vx + dy * vy <= 0) continue;
-    const perp = -dx * vy + dy * vx; if (Math.abs(perp) < 24) { let sg = perp >= 0 ? 1 : -1; const ax = A.x - h.x, ay = A.y - h.y; if (Math.abs(perp) < 10 && Math.hypot(ax, ay) > AUTO_LEASH * 0.6 && (-vy * sg * ax + vx * sg * ay) < 0) sg = -sg; return { x: -vy * sg, y: vx * sg, mag: 1, dodge: true }; }
-  }
+    if (ex || ey) { const d = autoInside(h, A, ex, ey); return { x: d.x, y: d.y, mag: 1, dodge: true, dash: urgent < 0.3 }; }
+    // 2) пули: только реальная угроза и не чаще одного манёвра в 0,8 с
+    if (G.autoDodgeCd <= 0) {
+      let best = null, bt = 0;
+      for (const b of G.eprojectiles) { const k = bulletThreat(h, b); if (k > bt) { bt = k; best = b; } }
+      if (best) {
+        const sp = Math.hypot(best.vx, best.vy) || 1, nx = -best.vy / sp, ny = best.vx / sp, perp = (h.x - best.x) * nx + (h.y - best.y) * ny;
+        const ax = A.x - h.x, ay = A.y - h.y; let sg = perp >= 0 ? 1 : -1;
+        const outA = Math.hypot(h.x + nx * sg * 90 - A.x, h.y + ny * sg * 90 - A.y), outB = Math.hypot(h.x - nx * sg * 90 - A.x, h.y - ny * sg * 90 - A.y);
+        if (outA > AUTO_LEASH - 30 && outB < outA) sg = -sg; else if (Math.abs(perp) < 6 && (nx * ax + ny * ay) * sg < 0) sg = -sg;
+        G.autoDodge = { t: 0.25, x: nx * sg, y: ny * sg }; G.autoDodgeCd = 0.8;
+        const d = autoInside(h, A, nx * sg, ny * sg); return { x: d.x, y: d.y, mag: 1, dodge: true };
+      }
+    }
   }
   // 3) мало здоровья — отступаем от врагов к якорю, ждём регенерацию
   const k = h.hp / ST.maxHp; if (k < 0.35) G.autoRetreat = true; else if (k > 0.7) G.autoRetreat = false;
@@ -4274,32 +4370,33 @@ function autoHuntRaw(h, dt) {
     rx -= 0.3; const ax = A.x - h.x, ay = A.y - h.y, ad = Math.hypot(ax, ay); if (ad > 150) { rx += ax / ad * 0.35; ry += ay / ad * 0.35; }
     const l = Math.hypot(rx, ry) || 1; return { x: rx / l, y: ry / l, mag: 1 };
   }
-  // 4) цель: ближайший враг в радиусе якоря, не в районе сложнее стартового, не у живого босса
+  // 4) цель: сначала стрелки внутри круга, затем ближайшие; боссы — если включена настройка
   G.autoT = (G.autoT || 0) - dt; let tg = G.autoTarget;
   if (G.autoT <= 0 || !tg || tg.dead) {
-    G.autoT = 0.25; tg = null; let bd = 1e9, alt = null, bdAlt = 1e9;
+    G.autoT = 0.25; tg = null; let bd = 1e9, alt = null, bdAlt = 1e9; const fb = autoBoss();
     for (const e of G.enemies) {
-      if (e.dead || (e.boss && !G.autoBossTest) || zoneAt(e.x) > az || dist(e.x, e.y, A.x, A.y) > AUTO_LEASH) continue;
-      if (!G.autoBossTest && WORLD.arenas.some(ar => { const b = G.bosses[ar.z]; return b && !b.dead && dist(e.x, e.y, ar.x, ar.y) < 720; })) continue;
-      const d = dist(h.x, h.y, e.x, e.y);
+      if (e.dead || (e.boss && !fb) || zoneAt(e.x) > az || dist(e.x, e.y, A.x, A.y) > AUTO_LEASH) continue;
+      if (!fb && WORLD.arenas.some(ar => { const b = G.bosses[ar.z]; return b && !b.dead && dist(e.x, e.y, ar.x, ar.y) < 720; })) continue;
+      const d = dist(h.x, h.y, e.x, e.y) * (RANGED[e.type] ? 0.55 : 1);
       if (d < bd && losClear(h.x, h.y, e.x, e.y)) { bd = d; tg = e; } else if (d < bdAlt) { bdAlt = d; alt = e; }
     }
     G.autoTarget = tg = tg || alt;
   }
-  if (tg) { const d = dist(h.x, h.y, tg.x, tg.y); return d > ST.range * 0.7 ? { x: (tg.x - h.x) / d, y: (tg.y - h.y) / d, mag: 1 } : null; }
+  if (tg) { const d = dist(h.x, h.y, tg.x, tg.y); return d > ST.range * 0.7 + (tg.boss ? tg.r : 0) ? { x: (tg.x - h.x) / d, y: (tg.y - h.y) / d, mag: 1 } : null; }
   const da = dist(h.x, h.y, A.x, A.y); return da > 80 ? { x: (A.x - h.x) / da, y: (A.y - h.y) / da, mag: 1 } : null;
 }
 // Жёсткие рамки: не выходить за границу стартового района и за радиус охоты (при отступлении радиус шире)
 function autoConstrain(h, d, A, az) {
   let x = d.x, y = d.y;
   if (x > 0 && h.x > ZONES[az].x1 - (d.dash ? 260 : 80)) x = 0;
-  const lim = G.autoRetreat ? AUTO_LEASH * 1.8 : AUTO_LEASH + 90, ax = h.x - A.x, ay = h.y - A.y, ad = Math.hypot(ax, ay);
+  const lim = G.autoRetreat ? AUTO_LEASH * 1.8 : d.dodge ? AUTO_LEASH : AUTO_LEASH + 90, ax = h.x - A.x, ay = h.y - A.y, ad = Math.hypot(ax, ay);
   if (ad > lim) { const nx = ax / ad, ny = ay / ad, out = x * nx + y * ny; if (out > 0) { x -= nx * out * 1.6; y -= ny * out * 1.6; } }
   const l = Math.hypot(x, y); return l < 0.05 ? null : { x: x / l, y: y / l, mag: 1 };
 }
 function autoHuntInput(h, dt) {
   const r = autoHuntRaw(h, dt); if (!r) return null;
-  const A = G.autoAnchor, az = Math.max(1, zoneAt(A.x)), c = autoConstrain(h, r, A, az) || (r.dodge ? r : null);
+  const A = G.autoAnchor, az = Math.max(1, zoneAt(A.x)); let c = autoConstrain(h, r, A, az);
+  if (!c && r.dodge) { const d = autoInside(h, A, r.x, r.y); c = { x: d.x, y: d.y, mag: 1 }; } // уклонение — только внутрь круга
   if (c && r.dash) tryDash(c);
   return c;
 }
@@ -4672,7 +4769,7 @@ function drawPortalStructure(ctx, t) {
   ctx.restore();
   ctx.save(); ctx.translate(x, y); ctx.scale(0.72, 0.72); drawTorii(ctx, { x: 0, y: 0 }, t); ctx.restore();
   ctx.font = '700 13px "Segoe UI",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = open ? `rgb(${c})` : '#9a9aaa';
-  ctx.fillText(open ? '⛩ Портал · выбор пути' : '⛩ Запечатано', x, y - 136);
+  ctx.fillText(S.loc === 4 ? '魔 Выход из башни' : open ? '⛩ Портал · выбор пути' : '⛩ Запечатано', x, y - 136);
 }
 // =====================================================================
 //  БЛОК 7.7. ГОРНЫЙ ПИК: скалы, хижины, сосны, каменные тропы, снег
@@ -5065,12 +5162,14 @@ function useItem(id) {
     if (curseTotal() === 0 && !(hero.hburn && hero.hburn.t > 0) && !(hero.hpoison && hero.hpoison.t > 0)) { toast('📜 На тебе нет проклятий'); return; }
     S.inv.talisman--; cleanseAll('talisman');
   } else if (id === 'stone') {
+    if (towerIn()) { toast('💠 В башне камни телепортации не работают'); return; }
     if (atBase() && !S.recallPt) { toast('💠 Ты на базе, а точки возврата нет'); return; }
     S.inv.stone--; G.recall = { t: 0, mode: recallMode(), x: hero.x, y: hero.y }; finishRecall();
   } else if (id === 'scroll') { toast('🕊 Свиток сработает сам, если героиня падёт'); return; }
   save();
 }
 function tryRevive() {
+  if (towerIn()) return false; // в башне свиток воскрешения не работает
   if (invN('scroll') <= 0 || G.scrollCd > 0 || G.god) return false;
   S.inv.scroll--; G.scrollCd = SCROLL_CD;
   hero.hp = ST.maxHp * 0.6; hero.iframe = 2.5; hero.hburn = null; hero.hpoison = null;
@@ -5086,6 +5185,8 @@ function openShop() { if (G.shopOpen) return; G.shopOpen = true; $('#shop').clas
 function closeShop() { if (!G.shopOpen) return; G.shopOpen = false; $('#shop').classList.add('hidden'); save(); }
 function renderShop() {
   if (!G.shopOpen) return;
+  document.querySelector('#shop .f-title').textContent = towerIn() ? 'Демоническая лавка' : 'Лавка «Тысяча мелочей»';
+  if (towerIn()) { renderTowerShop(); return; }
   $('#sh-res').innerHTML = `<span class="res g"><i>¥</i>${fmt(S.gold)}</span>`;
   $('#sh-sub').innerHTML = `Цены зависят от локации и самого дальнего открытого района · сейчас: <b>${LOCS[S.loc].name}</b>`;
   $('#sh-items').innerHTML = Object.keys(ITEMS).map(id => {
@@ -5098,6 +5199,7 @@ function renderShop() {
 $('#shop').addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return;
   if (b.dataset.act === 'close') { closeShop(); return; }
+  if (b.dataset.act === 'buy' && towerIn()) { towerBuy(b.dataset.id); return; }
   if (b.dataset.act === 'buy') {
     const id = b.dataset.id, n = +b.dataset.n, cost = itemPrice(id) * n;
     if (S.gold < cost || (id === 'scroll' && (S.scrollStock || 0) < 1)) { SFX.fail(); return; }
@@ -5142,6 +5244,7 @@ function drawShopStructure(ctx, t) {
 
 // ---------- Древо Жизни ----------
 function toggleTree(force) {
+  if (towerIn() && force !== false && !G.treeOpen) { toast('🌳 В башне нет Древа Жизни'); return; }
   G.treeOpen = force === undefined ? !G.treeOpen : force; $('#tree').classList.toggle('hidden', !G.treeOpen);
   if (G.treeOpen) { if (!G.treeSel) G.treeSel = 'seed'; renderTree(); SFX.click(); } else save();
 }
@@ -5200,10 +5303,13 @@ const locOpen = l => l === 1 || (l === 2 && S.unlock2) || (l === 3 && S.unlock3)
 function openTravel() { G.travelOpen = true; $('#travel').classList.remove('hidden'); renderTravel(); SFX.click(); }
 function closeTravel() { G.travelOpen = false; $('#travel').classList.add('hidden'); }
 function renderTravel() {
+  const tab = towerIn() ? 'tower' : (G.travelTab || 'locs'), tUnl = S.tower && S.tower.unlocked;
+  const tabs = towerIn() ? '' : `<div class="btabs" style="grid-column:1/-1;margin:0"><button class="btab ${tab === 'locs' ? 'active' : ''}" data-act="tvtab" data-tab="locs">🗺 Локации</button><button class="btab trial ${tab === 'tower' ? 'active' : ''}" data-act="tvtab" data-tab="tower">魔 Башня демонов <small>${tUnl ? 'заряды: ' + S.tower.charges + '/' + TW.MAX_CH : 'откроется в Горном пике'}</small></button></div>`;
+  if (tab === 'tower') { $('#tv-cards').innerHTML = tabs + towerTabHtml(); return; }
   const req = { 2: 'Победи всех 4 боссов Неонового Токио', 3: 'Победи всех 4 боссов Храмового квартала' };
   const desc = { 1: 'Неоновые переулки якудза. Ранги 1–4.', 2: 'Неоновые храмы и тории. Ранги 5–8, душа 60% к финальному боссу.', 3: 'Ледяные перевалы и пик Короля Они. Стихии, проклятия, защита и уклонение врагов. Ранги 9–12, нужна душа 80%.' };
   const ic = { 1: '🏙', 2: '⛩', 3: '🏔' };
-  $('#tv-cards').innerHTML = [1, 2, 3].map(l => {
+  $('#tv-cards').innerHTML = tabs + [1, 2, 3].map(l => {
     const open = locOpen(l), cur = S.loc === l, kills = l === 1 ? S.bossKills : l === 2 ? S.bossKills2 : S.bossKills3, n = kills.filter(k => k > 0).length;
     return `<div class="tvcard ${open ? '' : 'locked'} ${cur ? 'cur' : ''}"><div class="tv-ic">${ic[l]}</div><b>${LOCS[l].name}</b><small>${desc[l]}</small><span class="tv-st">${open ? `Боссов побеждено: ${n}/4` : '🔒 ' + req[l]}</span>
       ${cur ? '<button disabled>Ты здесь</button>' : `<button class="primary" data-act="go" data-l="${l}" ${open ? '' : 'disabled'}>Отправиться</button>`}</div>`;
@@ -5212,6 +5318,8 @@ function renderTravel() {
 $('#travel').addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return;
   if (b.dataset.act === 'close') { closeTravel(); return; }
+  if (b.dataset.act === 'tvtab') { G.travelTab = b.dataset.tab; SFX.click(); renderTravel(); return; }
+  if (towerTravelClick(b)) return;
   if (b.dataset.act === 'go') { const l = +b.dataset.l; if (!locOpen(l)) return; closeTravel(); travelTo(l); }
 });
 
@@ -5277,7 +5385,7 @@ function drawHUD3(ctx, sw, sh, t) {
     y += 36;
   };
   ctx.textBaseline = 'middle';
-  if ((S.dew || 0) > 0 || S.tree && Object.keys(S.tree).length) chip('💧', '#7dffb0', `${fmt(S.dew || 0)} · L — древо`);
+  if (!towerIn() && ((S.dew || 0) > 0 || S.tree && Object.keys(S.tree).length)) chip('💧', '#7dffb0', `${fmt(S.dew || 0)} · L — древо`);
   for (const id of Object.keys(CURSES)) if (curseN(id)) chip(CURSES[id].icon, CURSES[id].col, `${CURSES[id].name} ×${curseN(id)}`);
   if (hero.hburn && hero.hburn.t > 0) chip('🔥', ELEM.fire.col, 'Ожог', hero.hburn.t / 3);
   if (hero.hpoison && hero.hpoison.t > 0) chip('☠', ELEM.poison.col, 'Яд', hero.hpoison.t / 4);
@@ -5316,7 +5424,7 @@ Object.assign(BOSS_SC, { '3-1': 2.1, '3-2': 2.0, '3-3': 2.1, '3-4': 2.35 });
 function setupLocation(loc) {
   S.loc = loc; ZONES = LOCS[loc].zones;
   for (const k of ['obstacles', 'buildings', 'props', 'lamps', 'trees', 'puddles', 'toro', 'arenas', 'streets', 'gates']) WORLD[k] = [];
-  genWorld(loc);
+  if (loc === 4) genTowerWorld(); else genWorld(loc);
 }
 function checkUnlock() {
   if (S.unlock2 && !S.unlock3 && S.bossKills2.every(k => k > 0)) { S.unlock3 = true; save(); SFX.up(); setTimeout(() => banner('Путь в Горный пик открыт!', 'Вернись на базу: портал теперь ведёт и в горы'), 3300); }
@@ -5332,6 +5440,7 @@ const atBase = () => hero.x < CFG.BASE_X;
 function recallMode() { return atBase() ? (S.recallPt ? 'back' : null) : 'home'; }
 function startRecall() {
   if (hero.dead || G.recall) return;
+  if (towerIn()) { toast('魔 Из башни выходят через портал в холле'); SFX.fail(); return; }
   if (S.loc === 3) { toast('🏔 В горах духи мешают свободному телепорту — используй 💠 камень телепортации (клавиша 3)'); SFX.fail(); return; }
   const m = recallMode();
   if (!m) { toast('🏠 Ты уже на базе · точки возврата нет'); SFX.fail(); return; }
@@ -5375,16 +5484,22 @@ function drawRecall(ctx, t) {
   ctx.fillText(r.mode === 'home' ? 'Телепорт домой…' : 'Возвращение…', hero.x, hero.y - 92);
 }
 function travelTo(loc) {
+  if (towerIn() && loc !== 4) { towerSwapOut(); towerOnLeave(); }
+  if (loc === 4 && !towerIn()) { towerSwapIn(); applyClassText(); fixSlots(); refreshPetFx(); refreshStats(); }
+  if (loc === 3 && S.tower && !S.tower.unlocked) { S.tower.unlocked = true; setTimeout(() => toast('魔 В портале открылась вкладка <b>Башня демонов</b>'), 3600); }
   closeForge(); closeBoard(); closeShop(); closeTravel(); if (G.soulOpen) toggleSoul(false); if (G.treeOpen) toggleTree(false); G.inForgeCircle = G.inBoardCircle = G.inShopCircle = false; G.oniSuperT = 0; closePets(); G.inNurseryCircle = false; G.petShots = []; G.pet = null; G.goldRush = 0; G.petStance = 0;
   setupLocation(loc);
   G.enemies.length = 0; G.loot.length = 0; G.telegraphs.length = 0; G.eprojectiles.length = 0; G.waves.length = 0; G.particles.length = 0; G.texts.length = 0;
   G.bosses = [null, null, null, null, null]; G.bossTimers = [0, 0, 0, 0, 0]; G.curZone = -1; G.autoHunt = false; G.autoAnchor = null;
   hero.x = PORTAL.x - 130; hero.y = PORTAL.y + 70; hero.dead = false; hero.hp = ST.maxHp; hero.hair.init = hero.scarf.init = hero.obi.init = false;
   G.cam.x = hero.x; G.cam.y = hero.y; G.inPortal = false; G.fadeT = 1;
-  S.quests.offers = []; S.quests.trials = []; SFX.boom(); save();
+  S.quests.offers = []; S.quests.trials = []; SFX.boom();
+  if (loc === 4) { refreshPetFx(); towerOnArrive(); save(); return; }
+  save();
   setTimeout(() => banner(LOCS[loc].name, loc === 3 ? 'Стихии, проклятия, защита и уклонение врагов · нужна душа 80%' : loc === 2 ? 'Цены выше, враги сильнее — храмовые ранги, душа и бижутерия решают' : 'Неоновые районы якудза'), 50);
 }
 function tryTravel() {
+  if (towerIn()) { openTravel(); return; }
   if (!S.unlock2) { const n = S.bossKills.filter(k => k > 0).length; toast(`⛩ Портал запечатан · побеждено боссов: <b>${n}/4</b>`); SFX.fail(); return; }
   openTravel();
 }
@@ -5413,6 +5528,8 @@ function renderSoul() {
   const row = (ic, c, n, v) => `<div class="st"><span class="si" style="color:${c}">${ic}</span><span>${n}</span><b>${v}</b></div>`, L = id => soulLv(id) * SOUL.find(s => s.id === id).per;
   $('#s-sum').innerHTML = row('⚔', '#ff8a5c', 'Урон', `+${round1(L('pow'))}%`) + row('♥', '#ff5a7e', 'Здоровье', `+${round1(L('vit'))}%`) + row('⛨', '#9fb4ff', 'Защита', `−${round1(L('def'))}%`) + row('✦', '#ffd84a', 'Крит', `+${round1(L('acc'))}%`)
     + row('✸', '#ff6a3d', 'Крит. урон', `+${round1(L('fury'))}%`) + row('☾', '#7dffb0', 'Регенерация', `+${round1(L('life'))}%/с`) + row('»', '#5ff0ff', 'Скорость', `+${round1(L('agi'))}%`) + row('¥', '#ffd76a', 'Йены и опыт', `+${round1(L('greed'))}%`);
+  document.querySelector('#soul .f-title').textContent = towerIn() ? 'Демоническая душа' : 'Развитие души';
+  if (towerIn()) { $('#s-note').innerHTML = 'Это душа демонического комплекта: она растёт от врагов башни и работает только внутри башни. Основная душа героини ждёт снаружи.'; return; }
   $('#s-note').innerHTML = `Цена уровня растёт с каждым освоенным уровнем души — в любой ветке. Опыт дают враги, элита, боссы и задания доски объявлений.<br><b style="color:#ffd76a">Для финального босса Храмового квартала (Сёгун-тэнгу Курама) нужно не меньше 60% души</b>, плюс лучшие храмовые ранги катаны и облачения и прокачанная бижутерия.`;
 }
 $('#soul').addEventListener('click', ev => {
@@ -5436,7 +5553,7 @@ function drawSoulOrb(dt) {
   if (G.soulFlash > 0) G.soulFlash -= dt;
   p.setTransform(1, 0, 0, 1, 0, 0);
   let g = p.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#120a1e'); g.addColorStop(1, '#06040c'); p.fillStyle = g; p.fillRect(0, 0, W, H);
-  const cx = W / 2, cy = H * 0.46, R = W * 0.28, u = dpr;
+  const cx = W / 2, cy = H * 0.46, R = W * 0.28, u = W / 260;
   p.save(); p.globalCompositeOperation = 'lighter'; g = p.createRadialGradient(cx, cy, R * 0.5, cx, cy, R * 1.9); g.addColorStop(0, `rgba(190,120,255,${0.25 + (G.soulFlash > 0 ? G.soulFlash : 0)})`); g.addColorStop(1, 'rgba(120,60,255,0)'); p.fillStyle = g; p.fillRect(0, 0, W, H); p.restore();
   const RR = R + 20 * u; p.lineCap = 'round';
   p.strokeStyle = 'rgba(255,255,255,0.08)'; p.lineWidth = 7 * u; p.beginPath(); p.arc(cx, cy, RR, 0, TAU); p.stroke();
@@ -5471,6 +5588,366 @@ function drawSoulOrb(dt) {
   p.restore();
 }
 // =====================================================================
+//  БЛОК 11.12. БАШНЯ ДЕМОНОВ
+//  Отдельная «локация 4»: холл (кузница, лавка, выход) и арена этажей.
+//  Свой демонический профиль: при входе снаряжение, душа и ресурсы
+//  меняются местами с основными, при выходе возвращаются.
+// =====================================================================
+const TW = { AX0: 1040, AX1: 3060, AY0: 1060, AY1: 2340, CX: 2050, CY: 1700, RUN_MS: 30 * 60 * 1000, MAX_CH: 2, REFILL_H: [12, 19], FLOORS: 100 };
+const TOWER_KEYS = ['w', 'a', 'ring', 'brace', 'neck', 'look', 'soul', 'xp', 'gold', 'souls', 'jade', 'forge', 'inv', 'curses'];
+const TOWER_SHOP_LIMIT = { potion: 5, talisman: 3 };
+const TOWER_PETS = { pony: 1 }; // в башню пускают только пони (и в будущем Тётина)
+const towerIn = () => S.loc === 4;
+const CUR = () => towerIn() ? '❖' : '¥';
+const ZONES4 = [
+  { name: 'Холл Башни демонов', short: 'Холл', x0: 0, x1: 1000, safe: true, g0: '#120814', g1: '#1c0c1e', neon: ['#ff4a8a', '#b45cff'], roof: '#1e0c20', mini: '#b45cff' },
+  { name: 'Этаж 1', short: 'Этаж', x0: 1000, x1: 3100, lvl: 1, hpM: 1, dmgM: 1, goldM: 1, xpM: 1, soulV: 1, count: 18, elite: 0.06, def: 0, eva: 0, mobs: ['bruiser', 'gunner', 'ninja'], g0: '#0e0610', g1: '#1a0a16', neon: ['#ff3a5a', '#b45cff', '#ff8a3d', '#ff4ad8'], roof: '#1e0a18', mini: '#ff4a8a' },
+];
+LOCS[4] = { name: 'Башня демонов', theme: 'tower', seed: 40404, zones: ZONES4, kanji: ['', '魔'] };
+LOC_FACTOR[4] = 4;
+// Кривая силы этажей: 100 этажей проходят по той же кривой, что 12 районов основной игры
+const Z12 = [...ZONES1.slice(1), ...ZONES2.slice(1), ...ZONES3.slice(1)];
+const TOWER_BOSS = { 10: '1-1', 20: '1-2', 30: '1-4', 40: '2-1', 50: '2-3', 60: '2-2', 70: '3-1', 80: '3-2', 90: '3-3', 100: '3-4' };
+const towerKind = f => f % 10 === 0 ? 'boss' : f % 5 === 0 ? 'mini' : 'floor';
+const towerMaxLvl = () => clamp(1 + Math.floor((S.tower.kills || 0) / 10000), 1, 99);
+const towerModN = id => towerIn() && S.tower.run ? S.tower.run.mods.filter(m => m === id).length : 0;
+const towerLeft = () => S.tower.run ? Math.max(0, S.tower.run.endTs - Date.now()) : 0;
+function defaultTowerProf() { return { w: { rank: 1, lvl: 0, ench: [null] }, a: { rank: 1, lvl: 0, ench: [null] }, ring: { lvl: 0, ench: [] }, brace: { lvl: 0, ench: [] }, neck: { lvl: 0, ench: [] }, look: { w: 0, a: 0 }, soul: {}, xp: 0, gold: 0, souls: 0, jade: 0, forge: 1, inv: { potion: 2, talisman: 1, stone: 0, scroll: 0 }, curses: {} }; }
+function fixTower() {
+  let T = S.tower; if (!T || typeof T !== 'object') T = S.tower = {};
+  T.unlocked = !!T.unlocked || !!(S.unlock3 && (S.loc === 3 || (S.maxZone3 | 0) > 1 || (S.kills3 | 0) > 0));
+  T.charges = clamp(T.charges === undefined ? TW.MAX_CH : T.charges | 0, 0, TW.MAX_CH); T.chk = +T.chk || 0;
+  T.cp = clamp(T.cp | 0, 1, 91); T.cp = 1 + Math.floor((T.cp - 1) / 10) * 10;
+  T.best = clamp(T.best | 0, 0, TW.FLOORS); T.kills = Math.max(0, +T.kills || 0); T.lvlSel = clamp(T.lvlSel | 0, 1, 99);
+  if (!S.mainStash && (!T.prof || typeof T.prof !== 'object')) T.prof = defaultTowerProf();
+  if (T.prof) { const d = defaultTowerProf(); for (const k of TOWER_KEYS) if (T.prof[k] === undefined) T.prof[k] = d[k]; }
+  const R = T.run;
+  if (R && (typeof R !== 'object' || !isFinite(R.endTs) || !Array.isArray(R.mods))) T.run = null;
+  else if (R) { R.floor = clamp(R.floor | 0, 1, TW.FLOORS); R.lvl = clamp(R.lvl | 0, 1, 99); R.fromLoc = [1, 2, 3].includes(R.fromLoc) ? R.fromLoc : 1; R.kills = Math.max(0, R.kills | 0); if (!R.buys || typeof R.buys !== 'object') R.buys = { potion: 0, talisman: 0 }; R.mods = R.mods.filter(m => TRIAL_MODS[m]); if (R.endTs <= Date.now() && !S.mainStash) T.run = null; }
+}
+// ---------- Заряды: +1 в 12:00 и в 19:00 по Киеву, копится максимум 2 ----------
+function towerRefill() {
+  const T = S.tower, now = Date.now();
+  if (!T.chk || now < T.chk || T.charges >= TW.MAX_CH) { T.chk = now; return; }
+  if (now - T.chk > 3 * 864e5) { T.charges = TW.MAX_CH; T.chk = now; return; }
+  let n = 0; const p = kyivParts(T.chk);
+  for (let dd = 0; dd < 5; dd++) { const day = new Date(Date.UTC(p.y, p.m - 1, p.d + dd)); for (const h of TW.REFILL_H) { const ts = kyivTs(day.getUTCFullYear(), day.getUTCMonth() + 1, day.getUTCDate(), h); if (ts > T.chk && ts <= now) n++; } }
+  T.charges = Math.min(TW.MAX_CH, T.charges + n); T.chk = now;
+}
+function towerNextRefill() { const now = Date.now(), p = kyivParts(now); for (let dd = 0; dd < 2; dd++) { const day = new Date(Date.UTC(p.y, p.m - 1, p.d + dd)); for (const h of TW.REFILL_H) { const ts = kyivTs(day.getUTCFullYear(), day.getUTCMonth() + 1, day.getUTCDate(), h); if (ts > now) return { ts, h, today: dd === 0 }; } } return null; }
+// ---------- Профиль: обмен снаряжения ----------
+function towerSwapIn() {
+  if (S.mainStash) return; const T = S.tower, st = {};
+  for (const k of TOWER_KEYS) { st[k] = S[k]; S[k] = T.prof[k]; }
+  S.mainStash = st; T.prof = null;
+}
+function towerSwapOut() {
+  if (!S.mainStash) return; const T = S.tower, pr = {};
+  for (const k of TOWER_KEYS) { pr[k] = S[k]; S[k] = S.mainStash[k]; }
+  T.prof = pr; delete S.mainStash;
+  if (S.loc === 4) S.loc = (T.run && T.run.fromLoc) || 1;
+  applyClassText(); fixSlots(); refreshPetFx(); refreshStats();
+}
+// ---------- Вход и выход ----------
+function towerEnter(cp, lvl) {
+  const T = S.tower; towerRefill(); if (!T.unlocked) return;
+  let R = T.run; if (R && R.endTs <= Date.now()) R = T.run = null;
+  if (!R) {
+    if (T.charges <= 0) { toast('魔 Заряды башни закончились — новый появится в 12:00 или 19:00'); SFX.fail(); return; }
+    cp = clamp(cp | 0, 1, T.cp); cp = 1 + Math.floor((cp - 1) / 10) * 10; lvl = clamp(lvl | 0, 1, towerMaxLvl());
+    T.charges--; R = T.run = { endTs: Date.now() + TW.RUN_MS, floor: cp, lvl, mods: [], kills: 0, buys: { potion: 0, talisman: 0 }, fromLoc: S.loc };
+    // против накопления: в начале захода в сумке не больше, чем можно купить за заход
+    const inv = T.prof.inv; for (const k in TOWER_SHOP_LIMIT) inv[k] = Math.min(inv[k] | 0, TOWER_SHOP_LIMIT[k]);
+  } else R.fromLoc = S.loc;
+  T.lvlSel = R.lvl;
+  travelTo(4);
+}
+function towerExit(timeUp) {
+  const R = S.tower.run, to = (R && R.fromLoc) || 1;
+  if (timeUp) S.tower.run = null;
+  G.twEndAt = 0; travelTo(to);
+  if (timeUp) setTimeout(() => banner('⏳ Время башни вышло', 'Героиня вернулась в безопасную зону'), 120);
+  else if (S.tower.run) setTimeout(() => toast(`魔 Ты вышла из башни · заход активен ещё ${mmss(towerLeft() / 1000)} — вернуться можно через портал`), 200);
+}
+// Вызывается из travelTo после постройки мира башни
+function towerOnArrive() {
+  document.body.classList.add('in-tower');
+  G.tw = { floor: 0, state: 'wait', killed: 0, need: 0, spawned: 0, clearT: 0, boss: null };
+  towerStartFloor(S.tower.run.floor);
+  const ap = S.pets && S.pets.active; if (ap && !TOWER_PETS[ap]) setTimeout(() => toast(`${PET_SP[ap].icon} ${PET_SP[ap].short} остался у Питомника: в башню пускают только пони`), 1500);
+  setTimeout(() => banner('魔 Башня демонов', `Уровень башни ${S.tower.run.lvl} · этаж ${S.tower.run.floor} · ⏳ ${mmss(towerLeft() / 1000)}`), 60);
+}
+function towerOnLeave() { document.body.classList.remove('in-tower'); G.tw = null; G.twEndAt = 0; }
+// ---------- Этажи ----------
+function towerZoneStats(f) {
+  const R = S.tower.run, Z = ZONES4[1], p = (f - 1) / (TW.FLOORS - 1) * 11, i = Math.min(10, Math.floor(p)), k = p - i, a = Z12[i], b = Z12[i + 1];
+  const geo = key => Math.exp(lerp(Math.log(a[key]), Math.log(b[key]), k));
+  const lvlM = 1 + 0.06 * (R.lvl - 1), n = id => R.mods.filter(m => m === id).length;
+  Z.name = `Этаж ${f}`; Z.lvl = 1;
+  Z.hpM = geo('hpM') * lvlM * (1 + 0.5 * n('hp')); Z.dmgM = geo('dmgM') * lvlM * (1 + 0.35 * n('dmg'));
+  Z.goldM = geo('goldM') * (1 + 0.05 * (R.lvl - 1)) * (1 + 0.12 * R.mods.length); Z.xpM = geo('xpM') * (1 + 0.12 * R.mods.length); Z.soulV = 1;
+  Z.def = lerp(a.def || 0, b.def || 0, k) * 0.5; Z.eva = lerp(a.eva || 0, b.eva || 0, k) * 0.5;
+  Z.count = Math.min(35, Math.round((16 + Math.floor(f / 5)) * (1 + 0.4 * n('horde'))));
+  Z.elite = Math.min(0.5, (0.05 + f * 0.0012) * (1 + 2 * n('elite')));
+  Z.mobs = f <= 33 ? ['bruiser', 'gunner', 'ninja', 'bruiser'] : f <= 66 ? ['bruiser', 'gunner', 'ninja', 'caster', 'yokai'] : ['bruiser', 'gunner', 'caster', 'yokai', 'shaman', 'ninja'];
+  Z.spd = Math.min(1.6, 1 + 0.25 * n('speed')); Z.arm = Math.max(0.4, Math.pow(0.75, n('armor')));
+  return Z;
+}
+function towerStartFloor(f) {
+  const R = S.tower.run, tw = G.tw; f = clamp(f, 1, TW.FLOORS); R.floor = f;
+  for (const e of G.enemies) e.dead = true; G.enemies.length = 0; G.telegraphs.length = 0; G.eprojectiles.length = 0; G.bosses = [null, null, null, null, null];
+  const Z = towerZoneStats(f), kind = towerKind(f);
+  Object.assign(tw, { floor: f, kind, state: 'fight', killed: 0, spawned: 0, clearT: 0, boss: null, bossPending: kind !== 'floor' });
+  tw.need = kind === 'boss' ? 0 : Math.round((kind === 'mini' ? 12 : 20 + f * 0.6) * (1 + 0.25 * R.mods.filter(m => m === 'horde').length));
+  G.curZone = -1; save();
+}
+// Враг башни: обычные виды в демоническом обличье
+function makeTowerMob(type, x, y, elite) {
+  const Z = ZONES4[1], e = makeEnemyRaw(type, x, y, 1, elite);
+  e.tower = true; e.loc = 4; e.dloc = (type === 'caster' || type === 'shaman' || type === 'yokai') ? 3 : 2;
+  e.speed *= 1.1 * (Z.spd || 1); if (Z.arm < 1) e.tArm = Z.arm;
+  if (e.dloc === 3) e.elem = pick(MOB_ELEMS3[type] || ['fire']);
+  if (type === 'ninja' && !e.rib) e.rib = new Ribbon(6, 5);
+  return e;
+}
+function towerSpawnPoint(minD = 380) {
+  for (let i = 0; i < 24; i++) { const x = rand(TW.AX0 + 60, TW.AX1 - 60), y = rand(TW.AY0 + 70, TW.AY1 - 50), d = dist(x, y, hero.x, hero.y); if (d > minD && (d < 1050 || i > 16)) return { x, y }; }
+  return { x: TW.AX1 - 120, y: TW.CY };
+}
+function towerSpawnBoss() {
+  const tw = G.tw, f = tw.floor, Z = ZONES4[1];
+  if (tw.kind === 'boss') {
+    const key = TOWER_BOSS[f] || '1-1', [l, z] = key.split('-').map(Number), B = LOCS[l].zones[z].boss;
+    const e = { boss: true, tower: true, type: 'boss', kind: B.kind, bkey: key, name: 'Тень · ' + B.name, col: B.col, col2: B.col2, attacks: B.attacks, x: clamp(hero.x + 560, TW.AX0 + 300, TW.AX1 - 120), y: TW.CY, z: 1, arena: { x: TW.CX, y: TW.CY, z: 1 }, r: 30,
+      hp: 1000 * Z.hpM * (B.hpX || 1), maxHp: 1000 * Z.hpM * (B.hpX || 1), dmg: 16 * Z.dmgM * (B.dmgX || 1), speed: 82 * (Z.spd || 1), gold: Z.goldM * 600, souls: 0, state: 'move', t: 0, cd: 2, kx: 0, ky: 0, flash: 0,
+      face: -1, burnT: 0, burnDps: 0, burnTick: 0, anim: 0, moving: false, spawnT: 0, swingT: 0, muzzle: 0, aim: 0, engaged: false, rib: B.kind === 'ninja' ? new Ribbon(10, 7) : null, lastAtk: '', loc: 4, xp: 60 * Z.xpM, aura: false, elem: B.elem || null, def: Z.def * 0.8, eva: Z.eva * 0.5 };
+    if (Z.arm < 1) e.tArm = Z.arm;
+    tw.boss = e; G.bosses[1] = e; G.enemies.push(e); burst(e.x, e.y - 40, 30, '60,20,50', 160, 1, 20, 'smoke');
+    banner('⚠ ' + e.name, `Босс ${f}-го этажа · следи за красными зонами`); SFX.warn();
+  } else {
+    const p = towerSpawnPoint(420), type = pick(['bruiser', 'bruiser', 'ninja']), e = makeTowerMob(type, p.x, p.y, true); // страж — ближнего боя, чтобы не убегал
+    e.mini = true; e.hp *= 10; e.maxHp *= 10; e.dmg *= 1.4; e.r *= 1.3; e.bigS = 1.45; e.name = 'Страж этажа · ' + enemyName(type, e.dloc); e.col2 = '#ff4a8a'; e.engaged = true; e.gold *= 8; e.xp *= 8;
+    tw.boss = e; G.bosses[1] = e; G.enemies.push(e); burst(p.x, p.y - 30, 24, '60,20,50', 140, 1, 16, 'smoke');
+    banner('⚔ ' + e.name, `Полубосс ${f}-го этажа`); SFX.warn();
+  }
+  tw.bossPending = false;
+}
+function towerSpawns(dt) {
+  const tw = G.tw; if (!tw || tw.state !== 'fight' || hero.dead || hero.x < CFG.BASE_X - 40) return;
+  if (tw.bossPending) towerSpawnBoss();
+  G.spawnT -= dt; if (G.spawnT > 0) return; G.spawnT = 0.12;
+  if (tw.kind === 'boss' || tw.spawned >= tw.need) return;
+  let alive = 0; for (const e of G.enemies) if (!e.dead && !e.boss && !e.mini) alive++;
+  const Z = ZONES4[1]; if (alive >= Z.count) return;
+  const p = towerSpawnPoint(); const e = makeTowerMob(pick(Z.mobs), p.x, p.y, Math.random() < Z.elite); e.floorMob = true;
+  G.enemies.push(e); tw.spawned++; burst(p.x, p.y - 20, 8, '60,20,50', 90, 0.7, 12, 'smoke');
+}
+function towerOnKill(e) {
+  const T = S.tower, R = T.run, tw = G.tw;
+  const lv0 = towerMaxLvl(); T.kills++; if (R) R.kills++;
+  if (towerMaxLvl() > lv0) { banner(`魔 Уровень башни ${towerMaxLvl()} открыт!`, 'Враги сильнее — и добыча богаче. Уровень выбирается при входе'); SFX.up(); }
+  // добыча: только демонические души
+  const n = e.boss ? 14 : e.mini ? 6 : randi(1, 2), val = Math.max(1, Math.round(e.gold * (e.elite && !e.mini ? 1 + (PFX.eliteGold || 0) : 1) / n));
+  for (let i = 0; i < n; i++) dropLoot('gold', e.x, e.y, val);
+  if (!tw) return;
+  if (e.floorMob) tw.killed++;
+  if (e === tw.boss) {
+    tw.boss = null; G.bosses[1] = null; addShake(e.boss ? 14 : 8); if (e.boss) { G.hitStop = 0.12; flashScreen(0.15); SFX.boom(); }
+    banner(e.boss ? 'БОСС ПОВЕРЖЕН' : 'Страж повержен', `${e.name} · +❖${fmt(e.gold)}`);
+  }
+}
+function towerFloorCleared() {
+  const tw = G.tw; return tw.state === 'fight' && !tw.bossPending && !tw.boss && (tw.kind === 'boss' || tw.killed >= tw.need);
+}
+function towerAdvance() {
+  const T = S.tower, R = T.run, tw = G.tw, f = tw.floor;
+  T.best = Math.max(T.best, f);
+  if (f % 10 === 0 && f < TW.FLOORS && T.cp < f + 1) { T.cp = f + 1; toast(`🏁 Открыта контрольная точка: этаж ${f + 1} — с неё можно начинать заход`); }
+  if (f % 5 === 0) { let id = pick(Object.keys(TRIAL_MODS)); if (id === 'curse' && R.mods.includes('curse')) id = pick(['hp', 'dmg', 'speed', 'armor', 'elite', 'horde']); R.mods.push(id); setTimeout(() => toast(`${TRIAL_MODS[id].icon} Новый модификатор башни: <b>${TRIAL_MODS[id].name}</b> — ${TRIAL_MODS[id].desc} · награда +12%`), 900); }
+  if (f >= TW.FLOORS) { toast('魔 <b>Башня покорена!</b> Сотый этаж пройден — можно сражаться дальше на вершине'); SFX.up(); }
+  towerStartFloor(Math.min(TW.FLOORS, f + 1));
+  banner(`Этаж ${tw.floor}`, tw.kind === 'boss' ? 'Этаж босса' : tw.kind === 'mini' ? 'Этаж стража' : `Победи ${tw.need} врагов`);
+}
+function towerUpdate(dt) {
+  const tw = G.tw, R = S.tower.run; if (!tw || !R) return;
+  // время захода — реальное
+  if (!G.twEndAt && Date.now() >= R.endTs) { G.twEndAt = performance.now() + 5000; banner('⏳ Время башни вышло!', 'Через 5 секунд героиня вернётся в безопасную зону'); SFX.warn(); }
+  if (G.twEndAt && performance.now() >= G.twEndAt) { towerExit(true); return; }
+  if (tw.state === 'fight' && towerFloorCleared()) {
+    tw.state = 'clear'; tw.clearT = 2.4; for (const l of G.loot) l.attract = true;
+    banner(`Этаж ${tw.floor} пройден!`, tw.floor >= TW.FLOORS ? 'Вершина башни' : 'Проход на следующий этаж открывается…'); SFX.up();
+  } else if (tw.state === 'clear') { tw.clearT -= dt; if (tw.clearT <= 0 && !hero.dead) towerAdvance(); }
+}
+// Смерть в башне: возрождение у входа на арену, этаж — начало текущего десятка
+function towerRespawn() {
+  const f = G.tw.floor, cp = f - ((f - 1) % 10);
+  hero.x = TW.AX0 + 110; hero.y = TW.CY; hero.iframe = 2; G.cam.x = hero.x; G.cam.y = hero.y;
+  towerStartFloor(cp); banner('Контрольная точка', `Этаж ${cp} · время идёт: ⏳ ${mmss(towerLeft() / 1000)}`);
+  if (G.autoHunt) G.autoAnchor = { x: TW.AX0 + 520, y: TW.CY };
+}
+// ---------- Мир башни ----------
+function genTowerWorld() {
+  WORLD.theme = 'tower'; WORLD.torii = { x: -9999, y: -9999 };
+  WORLD.streets = [{ y0: TW.AY0, y1: TW.AY1, main: true }];
+  const W = (x, y, w, h) => WORLD.obstacles.push({ kind: 'wall', x, y, w, h });
+  W(0, 0, 3300, TW.AY0); W(0, TW.AY1, 3300, CFG.WORLD_H - TW.AY1); W(TW.AX1, 0, 200, CFG.WORLD_H); W(-200, 0, 210, CFG.WORLD_H);
+  WORLD.obstacles.push({ kind: 'col', x: FORGE.x - 55, y: FORGE.sy - 50, w: 110, h: 50 }, { kind: 'col', x: SHOP.x - 58, y: SHOP.sy - 40, w: 116, h: 40 });
+  WORLD.obstacles.push({ kind: 'col', x: PORTAL.x - 68, y: PORTAL.sy - 8, w: 14, h: 10 }, { kind: 'col', x: PORTAL.x + 54, y: PORTAL.sy - 8, w: 14, h: 10 });
+  const R = mulberry32(LOCS[4].seed); WORLD.lamps = [];
+  for (let x = 160; x < TW.AX1; x += 260) for (const y of [TW.AY0 - 6, TW.AY1 + 4]) WORLD.lamps.push({ x: x + R() * 30, y, dir: 1, col: R() < 0.5 ? '255,70,120' : '180,90,255', brazier: true });
+  G.twFloorCv = null; // фон арены нарисуется заранее в картинку
+}
+function towerBuildFloorCanvas() {
+  const sc = GFX.level >= 2 ? 0.5 : 0.35, w = TW.AX1 - TW.AX0, h = TW.AY1 - TW.AY0, cv = document.createElement('canvas');
+  cv.width = Math.round(w * sc); cv.height = Math.round(h * sc); const c = cv.getContext('2d'); c.scale(sc, sc);
+  let g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#260e20'); g.addColorStop(0.5, '#3a1630'); g.addColorStop(1, '#260e20'); c.fillStyle = g; c.fillRect(0, 0, w, h);
+  const Rn = mulberry32(777);
+  c.strokeStyle = 'rgba(255,120,180,0.09)'; c.lineWidth = 2; for (let y = 0; y < h; y += 96) for (let x = (y / 96) % 2 ? 48 : 0; x < w; x += 96) c.strokeRect(x + 2, y + 2, 92, 92);
+  for (let i = 0; i < 26; i++) { const x = Rn() * w, y = Rn() * h; c.strokeStyle = `rgba(255,${60 + Rn() * 60 | 0},80,0.16)`; c.lineWidth = 2 + Rn() * 2; c.beginPath(); c.moveTo(x, y); for (let k = 0; k < 4; k++) c.lineTo(x + (Rn() - 0.5) * 160, y + (Rn() - 0.5) * 80); c.stroke(); }
+  const cx = TW.CX - TW.AX0, cy = TW.CY - TW.AY0;
+  for (const [r, a] of [[520, 0.24], [440, 0.14], [300, 0.2]]) { c.strokeStyle = `rgba(200,80,255,${a})`; c.lineWidth = 5; c.beginPath(); c.ellipse(cx, cy, r, r * 0.55, 0, 0, TAU); c.stroke(); }
+  c.font = '700 54px "Yu Gothic","Meiryo",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = 'rgba(255,90,150,0.13)';
+  const runes = '魔塔鬼炎闇呪魂刃門界獄雷'; for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; c.fillText(runes[i], cx + Math.cos(a) * 480, cy + Math.sin(a) * 264); }
+  c.font = '700 260px "Yu Gothic","Meiryo",sans-serif'; c.fillStyle = 'rgba(255,60,120,0.06)'; c.fillText('魔', cx, cy);
+  g = c.createLinearGradient(0, 0, 0, 60); g.addColorStop(0, 'rgba(0,0,0,0.55)'); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(0, 0, w, 60);
+  G.twFloorCv = cv; G.twFloorSc = GFX.level;
+}
+function drawTowerGround(ctx, v, t) {
+  ctx.fillStyle = '#07030a'; ctx.fillRect(v.x0, v.y0, v.x1 - v.x0, v.y1 - v.y0);
+  // холл
+  if (v.x0 < CFG.BASE_X) {
+    const g = ctx.createLinearGradient(0, TW.AY0, 0, TW.AY1); g.addColorStop(0, '#1e0c1e'); g.addColorStop(0.5, '#2c1430'); g.addColorStop(1, '#1e0c1e');
+    ctx.fillStyle = g; ctx.fillRect(Math.max(0, v.x0), TW.AY0, TW.AX0 - Math.max(0, v.x0), TW.AY1 - TW.AY0);
+    ctx.strokeStyle = 'rgba(255,160,220,0.04)'; ctx.lineWidth = 1; ctx.beginPath();
+    for (let x = 0; x < CFG.BASE_X; x += 80) { ctx.moveTo(x, TW.AY0); ctx.lineTo(x, TW.AY1); } for (let y = TW.AY0; y < TW.AY1; y += 80) { ctx.moveTo(0, y); ctx.lineTo(CFG.BASE_X, y); } ctx.stroke();
+    ctx.fillStyle = 'rgba(255,120,190,0.05)'; ctx.fillRect(440, TW.AY0, 120, TW.AY1 - TW.AY0);
+  }
+  // арена — заранее нарисованная картинка
+  if (v.x1 > TW.AX0) { if (!G.twFloorCv || G.twFloorSc !== GFX.level) towerBuildFloorCanvas(); ctx.drawImage(G.twFloorCv, TW.AX0, TW.AY0, TW.AX1 - TW.AX0, TW.AY1 - TW.AY0); }
+  // стены
+  ctx.fillStyle = '#0c050e'; ctx.fillRect(v.x0, v.y0, v.x1 - v.x0, Math.max(0, TW.AY0 - v.y0)); ctx.fillRect(v.x0, TW.AY1, v.x1 - v.x0, Math.max(0, v.y1 - TW.AY1)); if (v.x1 > TW.AX1) ctx.fillRect(TW.AX1, v.y0, v.x1 - TW.AX1, v.y1 - v.y0);
+  ctx.fillStyle = '#1a0a1a'; ctx.fillRect(Math.max(0, v.x0), TW.AY0 - 70, Math.min(TW.AX1, v.x1) - Math.max(0, v.x0), 70);
+  ctx.strokeStyle = 'rgba(200,80,255,0.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, TW.AY0); ctx.lineTo(TW.AX1, TW.AY0); ctx.moveTo(0, TW.AY1); ctx.lineTo(TW.AX1, TW.AY1); ctx.lineTo(TW.AX1, TW.AY0); ctx.stroke();
+  // жаровни на стенах: мягкое свечение без мерцания
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  for (const l of WORLD.lamps) {
+    if (l.x < v.x0 - 120 || l.x > v.x1 + 120 || l.y < v.y0 - 120 || l.y > v.y1 + 120) continue;
+    const pu = 0.85 + 0.15 * Math.sin(t * 1.3 + l.x * 0.01), gg = ctx.createRadialGradient(l.x, l.y, 0, l.x, l.y, 90);
+    gg.addColorStop(0, `rgba(${l.col},${0.26 * pu})`); gg.addColorStop(1, `rgba(${l.col},0)`); ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(l.x, l.y, 90, 0, TAU); ctx.fill();
+    ctx.fillStyle = `rgba(${l.col},0.8)`; ctx.beginPath(); ctx.ellipse(l.x, l.y - 4, 6, 9, 0, 0, TAU); ctx.fill();
+  }
+  ctx.restore();
+  // проход на следующий этаж открыт
+  const tw = G.tw;
+  if (tw && tw.state === 'clear') { ctx.save(); ctx.globalCompositeOperation = 'lighter'; const k = clamp(1 - tw.clearT / 2.4, 0, 1); ctx.strokeStyle = `rgba(255,120,200,${0.5 * k})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(TW.CX, TW.CY, 200 + 300 * k, (200 + 300 * k) * 0.55, 0, 0, TAU); ctx.stroke(); ctx.restore(); }
+}
+// Демоническая аура у ног героини
+function drawTowerAura(ctx, t) { if (!towerIn() || hero.dead) return; ctx.save(); ctx.globalCompositeOperation = 'lighter'; const g = ctx.createRadialGradient(hero.x, hero.y, 0, hero.x, hero.y, 40); g.addColorStop(0, 'rgba(255,60,140,0.22)'); g.addColorStop(1, 'rgba(160,60,255,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(hero.x, hero.y, 40, 14, 0, 0, TAU); ctx.fill(); ctx.restore(); }
+// ---------- HUD башни ----------
+function drawTowerHUD(ctx, sw, sh, t) {
+  const tw = G.tw, R = S.tower.run; if (!tw || !R) return;
+  const left = towerLeft() / 1000, low = left < 120;
+  ctx.textAlign = 'center'; ctx.font = '800 18px "Segoe UI",sans-serif'; ctx.fillStyle = '#ffd0e8'; ctx.shadowColor = '#ff4a8a'; ctx.shadowBlur = 12;
+  ctx.fillText(`魔 Башня демонов · Этаж ${tw.floor}`, sw / 2, 28); ctx.shadowBlur = 0;
+  ctx.font = '700 13px "Segoe UI",sans-serif'; ctx.fillStyle = low ? '#ff9a7a' : '#e8c8ff';
+  ctx.fillText(`⏳ ${mmss(left)}  ·  уровень башни ${R.lvl}  ·  ${tw.kind === 'boss' ? 'этаж босса' : tw.kind === 'mini' ? 'этаж стража' : 'обычный этаж'}`, sw / 2, 48);
+  const w = 280, x = sw / 2 - w / 2, y = 60;
+  if (tw.kind !== 'boss') {
+    ctx.fillStyle = 'rgba(0,0,0,0.5)'; rr(ctx, x, y, w, 10, 5); ctx.fill();
+    const g = ctx.createLinearGradient(x, 0, x + w, 0); g.addColorStop(0, '#b45cff'); g.addColorStop(1, '#ff4a8a'); ctx.fillStyle = g; rr(ctx, x, y, Math.max(4, w * Math.min(1, tw.killed / Math.max(1, tw.need))), 10, 5); ctx.fill();
+    ctx.font = '700 11px "Segoe UI",sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText(tw.state === 'clear' ? 'Этаж пройден ✓' : `Враги: ${Math.min(tw.killed, tw.need)} / ${tw.need}${tw.kind === 'mini' && (tw.boss || tw.bossPending) ? ' · и страж этажа' : ''}`, sw / 2, y + 22);
+  }
+  if (R.mods.length) {
+    const cnt = {}; for (const m of R.mods) cnt[m] = (cnt[m] || 0) + 1;
+    ctx.font = '700 12px "Segoe UI",sans-serif'; ctx.fillStyle = '#d9a8ff'; ctx.fillText('Модификаторы: ' + Object.keys(cnt).map(m => `${TRIAL_MODS[m].icon}${cnt[m] > 1 ? '×' + cnt[m] : ''}`).join('  ') + `  ·  награда +${R.mods.length * 12}%`, sw / 2, tw.kind === 'boss' ? 68 : y + 40);
+  }
+  // панель справа вместо карты
+  const mx = sw - 238, my = 18; glass(ctx, mx - 8, my - 8, 236, 88, 12); ctx.textAlign = 'left';
+  ctx.font = '700 12px "Segoe UI",sans-serif'; ctx.fillStyle = '#ffb0d8'; ctx.fillText('魔 Заход', mx + 4, my + 8);
+  ctx.font = '600 11.5px "Segoe UI",sans-serif'; ctx.fillStyle = '#e8ecff';
+  ctx.fillText(`Убито за заход: ${fmt(R.kills)}`, mx + 4, my + 28); ctx.fillText(`Лучший этаж: ${S.tower.best} · точка: ${S.tower.cp}`, mx + 4, my + 46);
+  const lk = S.tower.kills % 10000; ctx.fillText(`До уровня башни ${Math.min(99, towerMaxLvl() + 1)}: ${fmt(10000 - lk)}`, mx + 4, my + 64);
+  if (G.twEndAt) { const s2 = Math.max(0, Math.ceil((G.twEndAt - performance.now()) / 1000)); ctx.textAlign = 'center'; ctx.font = '800 26px "Segoe UI",sans-serif'; ctx.fillStyle = '#ffb08a'; ctx.fillText(`Возвращение через ${s2}…`, sw / 2, sh * 0.42); }
+}
+// ---------- Враги башни рисуются из кэша: каждый вид и кадр заранее рисуется в картинку ----------
+const SPR = { map: new Map(), res: 0 }, SPR_W = 120, SPR_H = 125, SPR_OX = 55, SPR_OY = 108, MOB3_BASE = { bruiser: 1.2, ninja: 1, caster: 1.02, shaman: 1.05, yokai: 1 };
+const towerMobBase = e => e.dloc === 3 ? (MOB3_BASE[e.type] || 1) : (PAL2[e.type] || PAL2.bruiser).scale;
+function towerSprite(e, st, fr) {
+  const res = clamp(Math.round(dpr * G.cam.zoom * 2) / 2, 1, 2);
+  if (SPR.res !== res) { SPR.map.clear(); SPR.res = res; }
+  const key = `${e.type}|${e.dloc}|${e.elem || ''}|${st}|${fr}`; let c = SPR.map.get(key); if (c) return c;
+  c = document.createElement('canvas'); c.width = Math.ceil(SPR_W * res); c.height = Math.ceil(SPR_H * res);
+  const x = c.getContext('2d'); x.setTransform(res, 0, 0, res, SPR_OX * res, SPR_OY * res);
+  const f = { type: e.type, dloc: e.dloc, loc: 4, elem: e.elem, x: 0, y: 0, z: 1, elite: false, hp: 1, maxHp: 1, spawnT: 1, squash: 0, flash: 0, face: 1, anim: fr / 6 * TAU, moving: st === 'm', state: st === 'w' ? 'windup' : st === 'd' ? 'dash' : 'move', swingT: st === 's' ? 0.12 : 0, muzzle: 0, aim: 0, rib: null, buffT: 0, r: e.r, noIcon: true };
+  const hx = hero.x, hy = hero.y; hero.x = 400; hero.y = -14; // прицел стрелков — прямо перед собой
+  try { if (e.dloc === 3) drawMob3(x, f, fr * 0.35); else drawEnemy(x, Object.assign(f, { tower: false }), fr * 0.35); } finally { hero.x = hx; hero.y = hy; }
+  SPR.map.set(key, c); return c;
+}
+function drawTowerMob(ctx, e, t) {
+  const st = e.state === 'windup' ? 'w' : e.state === 'dash' ? 'd' : e.swingT > 0 ? 's' : e.moving ? 'm' : 'i';
+  const fr = st === 'm' ? Math.floor((((e.anim % TAU) + TAU) % TAU) / TAU * 6) % 6 : 0, spr = towerSprite(e, st, fr);
+  const appear = Math.min(1, e.spawnT / 0.3), base = towerMobBase(e), k = (e.elite ? 1.18 : 1) * (0.6 + 0.4 * appear), sq = e.squash || 0, sc = base * k;
+  if (e.elite) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, 34); g.addColorStop(0, 'rgba(255,210,63,0.32)'); g.addColorStop(1, 'rgba(255,210,63,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(e.x, e.y, 34, 12, 0, 0, TAU); ctx.fill(); ctx.restore(); }
+  if (e.buffT > 0) { ctx.strokeStyle = 'rgba(120,255,150,0.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(e.x, e.y, 22 * sc, 8 * sc, 0, 0, TAU); ctx.stroke(); }
+  if (e.rib) drawRibbon(ctx, e.rib, 4 * sc, 1.5 * sc, '#b3192c');
+  ctx.save(); ctx.translate(e.x, e.y); ctx.scale(e.face * k * (1 + 0.2 * sq), k * (1 - 0.15 * sq)); ctx.globalAlpha = appear;
+  ctx.drawImage(spr, -SPR_OX, -SPR_OY, SPR_W, SPR_H);
+  if (e.flash > 0) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.28 * appear; ctx.drawImage(spr, -SPR_OX, -SPR_OY, SPR_W, SPR_H); } // мягкий светлый оттенок, без белой заливки
+  ctx.restore();
+  const top = e.y - 62 * sc - 6;
+  if (e.dloc === 3) { const ec = ELEM[e.elem || 'fire'].col; ctx.font = '700 9px "Segoe UI",sans-serif'; ctx.textAlign = 'center'; ctx.fillStyle = ec; ctx.fillText(ELEM[e.elem || 'fire'].icon, e.x + 22 * sc, top + 3); }
+  if (e.hp < e.maxHp) { const w = 34 * (e.elite ? 1.3 : 1), bx = e.x - w / 2; ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(bx - 1, top - 1, w + 2, 6); ctx.fillStyle = e.elite ? '#ffcf4a' : '#ff4d6d'; ctx.fillRect(bx, top, Math.max(2, w * e.hp / e.maxHp), 4); }
+  if (e.elite) { ctx.fillStyle = '#ffd23f'; ctx.font = '700 12px "Segoe UI",sans-serif'; ctx.textAlign = 'center'; ctx.fillText('★ ЭЛИТА', e.x, top - 8); }
+}
+// ---------- Портал: вкладка «Башня демонов» ----------
+function towerTabHtml() {
+  const T = S.tower; towerRefill();
+  if (towerIn()) {
+    return `<div class="tvcard cur" style="grid-column:1/-1"><div class="tv-ic">魔</div><b>Выход из Башни демонов</b><small>Заход не заканчивается: пока время не вышло, можно вернуться через портал любой локации без нового заряда. Героиня окажется в безопасной зоне той локации, откуда вошла (${LOCS[(T.run && T.run.fromLoc) || 1].name}).</small><span class="tv-st">⏳ Осталось: <b data-twleft>${mmss(towerLeft() / 1000)}</b> · этаж ${G.tw ? G.tw.floor : T.run.floor}</span><button class="primary" data-act="twexit">Выйти из башни</button></div>`;
+  }
+  if (!T.unlocked) return `<div class="tvcard locked" style="grid-column:1/-1"><div class="tv-ic">魔</div><b>Башня демонов</b><small>Сто этажей демонов, полубоссы и боссы, свой демонический комплект снаряжения.</small><span class="tv-st">🔒 Откроется после входа в Горный пик</span></div>`;
+  const nx = towerNextRefill(), dots = '●'.repeat(T.charges) + '○'.repeat(TW.MAX_CH - T.charges), R = T.run && T.run.endTs > Date.now() ? T.run : null;
+  const nxTxt = T.charges < TW.MAX_CH && nx ? ` · следующий: ${nx.today ? 'сегодня' : 'завтра'} в ${nx.h}:00` : '';
+  let act;
+  if (R) act = `<div class="tv-st">Заход идёт: ⏳ <b data-twleft>${mmss(towerLeft() / 1000)}</b> · этаж ${R.floor} · уровень ${R.lvl}</div><button class="primary big" data-act="twenter">↩ Вернуться в башню</button>`;
+  else {
+    const mx = towerMaxLvl(), lv = clamp(G.twLvl || T.lvlSel || 1, 1, mx), cps = []; for (let c = 1; c <= T.cp; c += 10) cps.push(c);
+    const cp = clamp(G.twCp || T.cp, 1, T.cp);
+    act = `<div class="ctitle" style="margin-top:6px">Уровень башни (жара)</div><div class="mrow"><button data-act="twlvl" data-d="-1" ${lv > 1 ? '' : 'disabled'}>−</button><b style="min-width:70px;text-align:center;align-self:center;font-size:16px">${lv} / ${mx}</b><button data-act="twlvl" data-d="1" ${lv < mx ? '' : 'disabled'}>+</button><small style="align-self:center;color:#9aa3c9">враги сильнее на ${Math.round((lv - 1) * 6)}% · добыча +${Math.round((lv - 1) * 5)}%</small></div>
+      <div class="ctitle" style="margin-top:8px">Начать с этажа</div><div class="mrow">${cps.map(c => `<button class="${c === cp ? 'primary' : ''}" data-act="twcp" data-v="${c}">${c}</button>`).join('')}</div>
+      <button class="primary big" style="margin-top:10px" data-act="twenter" ${T.charges > 0 ? '' : 'disabled'}>魔 Войти в башню · −1 заряд</button>`;
+  }
+  return `<div class="tvcard cur" style="grid-column:1/-1;border-color:#ff4a8a;box-shadow:0 0 26px -8px #ff4a8a"><div class="tv-ic">魔</div><b>Башня демонов</b>
+    <small>30 минут реального времени на заход. Убивай врагов этажа — открывается проход дальше. Каждый 5-й этаж — страж, каждый 10-й — босс и новая контрольная точка. После каждого 5-го этажа добавляется модификатор: врагам тяжелее, награда выше. Внутри — свой демонический комплект, своя кузница и лавка; валюта — демонические души ❖. Из питомцев пускают только пони.</small>
+    <span class="tv-st">Заряды: <b style="color:#ff8ac0;letter-spacing:2px">${dots}</b> ${T.charges}/${TW.MAX_CH}${nxTxt} · лучший этаж: ${T.best} · убито в башне: ${fmt(T.kills)}</span>${act}</div>`;
+}
+function towerTravelClick(b) {
+  const act = b.dataset.act, T = S.tower;
+  if (act === 'twlvl') { G.twLvl = clamp((G.twLvl || T.lvlSel || 1) + +b.dataset.d, 1, towerMaxLvl()); T.lvlSel = G.twLvl; renderTravel(); return true; }
+  if (act === 'twcp') { G.twCp = +b.dataset.v; renderTravel(); return true; }
+  if (act === 'twenter') { closeTravel(); towerEnter(G.twCp || T.cp, G.twLvl || T.lvlSel || 1); return true; }
+  if (act === 'twexit') { closeTravel(); towerExit(false); return true; }
+  return false;
+}
+// ---------- Демоническая лавка ----------
+const towerItemPrice = id => Math.max(1, Math.round(ITEMS[id].price * 0.6 * ZONES4[1].goldM));
+function renderTowerShop() {
+  const R = S.tower.run, b = R ? R.buys : { potion: 0, talisman: 0 };
+  $('#sh-res').innerHTML = `<span class="res g"><i>❖</i>${fmt(S.gold)}</span>`;
+  $('#sh-sub').innerHTML = `Демоническая лавка · цены растут с этажом · лимит покупок на заход`;
+  $('#sh-items').innerHTML = Object.keys(TOWER_SHOP_LIMIT).map(id => {
+    const I = ITEMS[id], p = towerItemPrice(id), left = TOWER_SHOP_LIMIT[id] - (b[id] || 0), ok = S.gold >= p && left > 0;
+    return `<div class="sitem" style="--ic:${I.col}"><div class="si-ic">${I.icon}</div><div class="si-main"><b>${I.name}</b><small>${I.desc}</small><span class="si-own">В сумке: <b>${invN(id)}</b> · клавиша ${I.key} · можно купить за этот заход: <b>${Math.max(0, left)}</b></span></div>
+      <div class="si-buy"><button class="primary" data-act="buy" data-id="${id}" data-n="1" ${ok ? '' : 'disabled'}>Купить<span class="pr g">❖${fmt(p)}</span></button></div></div>`;
+  }).join('');
+}
+function towerBuy(id) {
+  const R = S.tower.run; if (!R || !TOWER_SHOP_LIMIT[id]) return; const p = towerItemPrice(id);
+  if ((R.buys[id] || 0) >= TOWER_SHOP_LIMIT[id]) { toast('Лимит покупок на этот заход исчерпан'); SFX.fail(); return; }
+  if (S.gold < p) { SFX.fail(); return; }
+  S.gold -= p; R.buys[id] = (R.buys[id] || 0) + 1; S.inv[id] = invN(id) + 1; SFX.coin(); toast(`${ITEMS[id].icon} Куплено: ${ITEMS[id].name}`); save(); renderShop();
+}
+// =====================================================================
 //  БЛОК 12. ЧИТ-КОНСОЛЬ
 // =====================================================================
 const cLog = $('#c-log'), cIn = $('#c-in'), cHist = []; let cHistI = 0;
@@ -5479,6 +5956,12 @@ function toggleConsole(force) {
   G.consoleOpen = force === undefined ? !G.consoleOpen : force; $('#console').classList.toggle('hidden', !G.consoleOpen);
   for (const k in keys) keys[k] = false; mouse.down = false;
   if (G.consoleOpen) setTimeout(() => cIn.focus(), 0); else cIn.blur();
+}
+// Консоль скрыта: открывается после 7 нажатий ~ подряд за 3 секунды. Доступ запоминается на устройстве (SET.console), команда lock — закрыть снова.
+const consoleUnlocked = () => !!SET.console;
+function consoleKnock() {
+  const now = performance.now(); G.knock = (G.knock || []).filter(t => now - t < 3000); G.knock.push(now);
+  if (G.knock.length >= 7) { G.knock = []; SET.console = true; saveSet(); toast('⌨ Консоль открыта на этом устройстве · lock — закрыть доступ'); toggleConsole(true); }
 }
 const HELP = `Команды:
   gold [N]            — добавить йены (по умолч. 10000)
@@ -5502,7 +5985,9 @@ const HELP = `Команды:
   killall             — убить всех врагов вокруг
   speed [множитель]   — скорость игры (0.1–10)
   tp [0-4]            — телепорт в район (0 — база)
-  heal · boss (боссы сразу) · auto (авто-охота) · save · reset (сброс) · clear`;
+  heal · boss (боссы сразу) · auto (авто-охота) · save · reset (сброс) · clear
+  tower · twfloor [N] · twclear · twtime [сек] · twkills [N] · twcp [N] · dsouls [N] — Башня демонов
+  lock                — снова спрятать консоль (откроется 7 нажатиями ~ за 3 с)`;
 function updateResetBtn() { const b = $('#c-reset'); if (!b) return; const armed = G.resetArmT && performance.now() < G.resetArmT; b.textContent = armed ? '⚠ Точно сбросить? Нажми ещё раз' : '⟲ Сброс прогресса'; b.style.background = armed ? 'linear-gradient(180deg,#ff5a6e,#b3122a)' : ''; b.style.color = armed ? '#fff' : ''; }
 function runCmd(line) {
   line = line.trim(); if (!line) return; clog('> ' + line, 'cmd'); cHist.push(line); cHistI = cHist.length;
@@ -5550,6 +6035,14 @@ function runCmd(line) {
       updateResetBtn(); break;
     }
     case 'clear': cLog.innerHTML = ''; break;
+    case 'tower': fixTower(); S.tower.unlocked = true; S.tower.charges = TW.MAX_CH; clog('魔 Башня открыта, заряды: 2', 'ok'); break;
+    case 'twfloor': { if (!towerIn() || !G.tw) return clog('Сначала войди в башню', 'err'); const f = clamp(has ? n | 0 : G.tw.floor + 1, 1, TW.FLOORS); towerStartFloor(f); hero.x = TW.AX0 + 110; hero.y = TW.CY; clog(`Этаж ${f}`, 'ok'); break; }
+    case 'twclear': { if (!towerIn() || !G.tw) return clog('Сначала войди в башню', 'err'); for (const e of G.enemies) if (!e.dead) killEnemy(e); G.tw.killed = G.tw.need; G.tw.bossPending = false; clog('Этаж зачищен', 'ok'); break; }
+    case 'twtime': { if (!S.tower.run) return clog('Нет активного захода', 'err'); S.tower.run.endTs = Date.now() + (has ? n : 60) * 1000; clog(`До конца захода: ${mmss(towerLeft() / 1000)}`, 'ok'); break; }
+    case 'twkills': S.tower.kills = has ? n : 50000; clog(`Убито в башне: ${S.tower.kills} · уровень ${towerMaxLvl()}`, 'ok'); break;
+    case 'twcp': S.tower.cp = clamp(has ? n | 0 : 91, 1, 91); fixTower(); clog(`Контрольная точка: ${S.tower.cp}`, 'ok'); break;
+    case 'dsouls': if (!towerIn()) return clog('Демонические души — только внутри башни', 'err'); S.gold += has ? n : 100000; clog(`❖ = ${fmt(S.gold)}`, 'ok'); break;
+    case 'lock': SET.console = false; saveSet(); toggleConsole(false); toast('⌨ Консоль спрятана'); return;
     default: clog(`Неизвестная команда «${cmd}». Набери help`, 'err');
   }
   save(); if (G.forgeOpen) renderForge();
@@ -5630,7 +6123,7 @@ function updateTouchUI() {
   const sh = (id, on) => { const el = $('#t-' + id); if (el) el.classList.toggle('hidden', !on); };
   sh('oni', !!S.oni); sh('use', !!(G.inPortal || (G.inForgeCircle && !G.forgeOpen) || (G.inBoardCircle && !G.boardOpen)));
   $('#t-use').textContent = G.inPortal ? '⛩' : G.inForgeCircle ? '⚒' : '📜';
-  sh('home', S.loc !== 3 && !!recallMode());
+  sh('home', S.loc !== 3 && !towerIn() && !!recallMode()); sh('tree', !towerIn()); sh('pets', !towerIn());
   $('#t-home').textContent = recallMode() === 'back' ? '↩' : '🏠';
   $('#t-auto').classList.toggle('on', !!G.autoHunt);
   const dcd = hero.dashCd > 0 ? hero.dashCd / ST.dashCd : 0; $('#t-dash').style.setProperty('--cd', (dcd * 360).toFixed(0) + 'deg');
@@ -5677,6 +6170,7 @@ function renderMenu() {
   const c = ctrlMode(), fs = SET.fs !== false;
   $('#mn-ctrl').innerHTML = [['auto', '🤖 Авто'], ['touch', '📱 Сенсор'], ['pc', '⌨ Клавиатура']].map(([k, n]) => `<button class="${c === k ? 'primary' : ''}" data-act="ctrl" data-v="${k}">${n}</button>`).join('');
   $('#mn-info').innerHTML = `Сейчас: <b>${G.touchUI ? 'сенсорное управление' : 'клавиатура и мышь'}</b>${c === 'auto' ? ' (определено автоматически)' : ''}`;
+  $('#mn-ctrl').insertAdjacentHTML('beforeend', `<button data-act="autoboss" class="${SET.autoBoss !== false ? 'primary' : ''}">${SET.autoBoss !== false ? '✓' : '✗'} Авто-охота сражается с боссами</button>`);
   $('#mn-fs').textContent = fs ? '✓ Во весь экран при первом касании' : '✗ Во весь экран при первом касании';
   $('#mn-snd').textContent = S.muted ? '🔇 Звук выключен' : '🔊 Звук включён';
   $('#mn-gfx').innerHTML = [['auto', '🤖 Авто'], ['high', 'Высокое'], ['mid', 'Среднее'], ['low', 'Низкое']].map(([k, n]) => `<button class="${GFX.mode === k ? 'primary' : ''}" data-act="gfx" data-v="${k}">${n}</button>`).join('') + `<button data-act="fps">${GFX.showFps ? '✓' : '✗'} Показывать FPS</button><button data-act="calm" class="${CALM ? 'primary' : ''}">${CALM ? '✓' : '✗'} Снизить яркие эффекты</button>`;
@@ -5688,6 +6182,7 @@ $('#menu').addEventListener('click', async ev => {
   else if (act === 'ctrl') { SET.ctrl = b.dataset.v; saveSet(); G.touchUI = null; applyTouchMode(b.dataset.v === 'touch' || (b.dataset.v === 'auto' && (IS_TOUCH_DEVICE || (G.lastTouch && performance.now() - G.lastTouch < 60000)))); save(); renderMenu(); }
   else if (act === 'gfx') { GFX.mode = b.dataset.v; SET.gfx = GFX.mode; if (GFX.mode === 'auto') { delete SET.gfxAuto; GFX.level = IS_TOUCH_DEVICE ? 1 : 2; } else GFX.level = { high: 2, mid: 1, low: 0 }[GFX.mode]; saveSet(); resize(); renderMenu(); }
   else if (act === 'calm') { CALM = SET.calm = !CALM; if (CALM) { G.flash = 0; G.shake = 0; } saveSet(); renderMenu(); }
+  else if (act === 'autoboss') { SET.autoBoss = SET.autoBoss === false; saveSet(); G.autoTarget = null; renderMenu(); }
   else if (act === 'fps') { GFX.showFps = !GFX.showFps; SET.fps = GFX.showFps; saveSet(); renderMenu(); }
   else if (act === 'fsnow') goFullscreen(false);
   else if (act === 'fsauto') { SET.fs = !(SET.fs !== false); saveSet(); renderMenu(); }
@@ -5707,12 +6202,31 @@ $('#menu').addEventListener('click', async ev => {
   else if (act === 'restore') {
     let raw = null; try { raw = localStorage.getItem(CFG.SAVE_KEY + '_backup'); } catch (e) { }
     if (!raw) { msg('Резервной копии нет'); return; }
-    if (!G.restoreArm || performance.now() > G.restoreArm) { G.restoreArm = performance.now() + 8000; msg('Вернуть прогресс, который был до последней загрузки кода? Нажми ещё раз.'); return; }
+    if (!G.restoreArm || performance.now() > G.restoreArm) { G.restoreArm = performance.now() + 8000; msg('Вернуть прогресс, который был до последнего сброса или загрузки кода? Нажми ещё раз.'); return; }
     S = Object.assign(defaultSave(), JSON.parse(raw)); save(); G.noSaveOnUnload = true; setTimeout(() => location.reload(), 300);
   }
 });
 $('#mn-filein').addEventListener('change', async e => { const f = e.target.files[0]; if (!f) return; $('#mn-code').value = (await f.text()).trim(); msg('Файл прочитан — нажми «Загрузить»'); e.target.value = ''; });
 function msg(h) { $('#mn-msg').innerHTML = h; }
+// Сброс прогресса из меню: удержание кнопки 3 секунды, перед сбросом — резервная копия
+(() => {
+  const b = $('#mn-reset'), HOLD = 3000; let t0 = 0, raf = 0;
+  const label = () => { b.textContent = '⟲ Удерживай 3 секунды, чтобы сбросить прогресс'; };
+  const stop = () => { t0 = 0; cancelAnimationFrame(raf); b.style.setProperty('--hold', '0%'); label(); };
+  const tick = () => {
+    if (!t0) return; const k = (performance.now() - t0) / HOLD; b.style.setProperty('--hold', Math.min(100, k * 100).toFixed(1) + '%');
+    b.textContent = `⟲ Держи… ${Math.max(0, Math.ceil((1 - k) * 3))}`;
+    if (k >= 1) { stop(); menuReset(); return; } raf = requestAnimationFrame(tick);
+  };
+  b.addEventListener('pointerdown', e => { e.preventDefault(); if (t0) return; t0 = performance.now(); try { b.setPointerCapture(e.pointerId); } catch (er) { } SFX.warn(); tick(); });
+  for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, () => { if (t0) { stop(); msg('Сброс отменён — нужно держать кнопку 3 секунды'); } });
+  b.addEventListener('contextmenu', e => e.preventDefault());
+})();
+function menuReset() {
+  if (typeof towerIn === 'function' && towerIn()) towerSwapOut();
+  try { localStorage.setItem(CFG.SAVE_KEY + '_backup', JSON.stringify(S)); } catch (e) { }
+  resetProgress(); toggleMenu(false); banner('Новое начало', 'Прогресс сброшен · резервная копия сохранена в меню'); SFX.boom();
+}
 
 // ---------- Код сохранения: NR1.<контрольная сумма>.<сжатые данные base64url> ----------
 const b64u = bytes => { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
@@ -5740,7 +6254,7 @@ async function readSaveCode(code) {
 // =====================================================================
 addEventListener('keydown', e => {
   SFX.init();
-  if (e.code === 'Backquote' || e.code === 'F1') { e.preventDefault(); toggleConsole(); return; }
+  if (e.code === 'Backquote' || e.code === 'F1') { e.preventDefault(); if (consoleUnlocked()) toggleConsole(); else if (e.code === 'Backquote') consoleKnock(); return; }
   if (G.consoleOpen) { if (e.code === 'Escape') toggleConsole(false); return; }
   if (e.target && e.target.tagName === 'SELECT' && e.code.startsWith('Arrow')) return;
   if (e.code === 'KeyO' || (e.code === 'Escape' && (G.menuOpen || !(G.forgeOpen || G.boardOpen || G.soulOpen || G.shopOpen || G.treeOpen || G.travelOpen || G.petsOpen)))) { toggleMenu(); return; }
@@ -5781,7 +6295,7 @@ function update(dt) {
   G.time += dt;
   updateHero(dt);
   updateRecall(dt);
-  if (!G.petShots) G.petShots = []; updatePet(dt); updatePetShots(dt); updateNurseryCircle();
+  if (!G.petShots) G.petShots = []; updatePet(dt); updatePetShots(dt); if (!towerIn()) updateNurseryCircle();
   updateSpawns(dt);
   for (let i = 0; i < G.enemies.length; i++) { const e = G.enemies[i]; if (!e.dead) updateEnemy(e, dt); }
   separateEnemies();
@@ -5791,11 +6305,12 @@ function update(dt) {
   updateLoot(dt);
   updateParticles(dt);
   updateQuests(dt);
+  if (towerIn()) towerUpdate(dt);
   // атмосфера: лепестки сакуры, брызги дождя, искры горна
   const v = G.view;
   for (const tr of WORLD.trees) if (tr.x > v.x0 && tr.x < v.x1 && tr.y > v.y0 && tr.y < v.y1 + 100 && Math.random() < dt * 1.2) P('petal', tr.x + rand(-30, 30) * tr.s, tr.y - rand(50, 80) * tr.s, rand(10, 40), rand(15, 35), rand(3, 5), rand(2, 3.5), '');
   if (WORLD.theme === 'temple' && Math.random() < dt * 7) P('glow', rand(v.x0, v.x1), rand(v.y0, v.y1), rand(-12, 12), rand(-26, -6), rand(2, 4), rand(2.5, 4.5), pick(['95,240,200', '255,106,213', '255,200,120']));
-  if (Math.random() < dt * 25) P('splash', rand(v.x0, v.x1), rand(v.y0, v.y1), 0, 0, 0.45, rand(4, 9), '');
+  if (WORLD.theme !== 'tower' && Math.random() < dt * 25) P('splash', rand(v.x0, v.x1), rand(v.y0, v.y1), 0, 0, 0.45, rand(4, 9), '');
   if (v.x0 < 700 && Math.random() < dt * 10) P('fire', FORGE.x + rand(-14, 14), FORGE.sy - 20, rand(-15, 15), rand(-90, -50), 0.7, 5, '255,150,60');
   if (v.x0 < 700 && Math.random() < dt * 3) P('smoke', FORGE.x + 31, FORGE.sy - 140, rand(-6, 6), rand(-30, -15), 2.2, 10, '60,55,65');
   const tx = hero.x, ty = hero.y - 20, hw = innerWidth / 2 / G.cam.zoom, hh = innerHeight / 2 / G.cam.zoom;
@@ -5812,9 +6327,14 @@ function frame(now) {
   let dt = real * G.speed * (G.menuOpen ? 0 : 1); if (G.hitStop > 0) { G.hitStop -= real; dt *= 0.06; } if (G.flash > 0) G.flash = Math.max(0, G.flash - real * 2.5);
   const steps = Math.max(1, Math.ceil(dt / 0.02)), sdt = dt / steps;
   for (let i = 0; i < steps; i++) update(sdt);
-  render(real); gfxMonitor(real); updatePreview(real); drawSoulOrb(real); if (G.fadeT > 0) G.fadeT -= real * 1.1;
+  // окна: мир под окном рисуется реже, превью в окнах на среднем/низком — ~30 к/с
+  const big = bigWindow(), lo = GFX.level < 2; G.uiFrame = (G.uiFrame || 0) + 1; G.rAcc = (G.rAcc || 0) + real; G.pAcc = (G.pAcc || 0) + real;
+  if (!big || G.uiFrame % (lo ? 4 : 2) === 0) { render(G.rAcc); G.rAcc = 0; }
+  gfxMonitor(real);
+  if (!lo || G.uiFrame % 2 === 0) { updatePreview(G.pAcc); drawSoulOrb(G.pAcc); if (G.petsOpen) drawPetsPreview(G.time); G.pAcc = 0; }
+  if (G.fadeT > 0) G.fadeT -= real * 1.1;
   if (G.forgeOpen) updateRes(false, real);
-  uiT -= real; if (G.boardOpen && uiT <= 0) { uiT = 0.5; updateBoardSub(); }
+  uiT -= real; if (uiT <= 0) { uiT = 0.5; if (G.boardOpen) updateBoardSub(); if (G.travelOpen) document.querySelectorAll('[data-twleft]').forEach(el => el.textContent = mmss(towerLeft() / 1000)); }
   requestAnimationFrame(frame);
 }
 function init() {
