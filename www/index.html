@@ -272,11 +272,31 @@ body.touch-ui #joy-zone::after{content:'Двигай пальцем здесь';
 .titem.empty{opacity:.35}
 #t-potion{right:calc(190px + env(safe-area-inset-right))}#t-talisman{right:calc(244px + env(safe-area-inset-right))}#t-stone{right:calc(298px + env(safe-area-inset-right))}#t-scroll{right:calc(352px + env(safe-area-inset-right))}
 .ttop{width:42px;height:42px;font-size:18px;top:calc(16px * var(--ui,1))}
-#t-soul,#t-tree{left:calc(338px * var(--ui,1))}#t-soul{top:calc(16px * var(--ui,1) + 50px)}#t-tree{top:calc(16px * var(--ui,1) + 100px)}
+#t-soul,#t-tree,#t-pets{left:calc(338px * var(--ui,1))}#t-pets{top:calc(16px * var(--ui,1) + 150px)}#t-soul{top:calc(16px * var(--ui,1) + 50px)}#t-tree{top:calc(16px * var(--ui,1) + 100px)}
 #rotate-hint{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(5,6,12,.92);text-align:center;padding:24px;pointer-events:auto}
 #rotate-hint .ph{font-size:56px;animation:rot 1.6s ease-in-out infinite}@keyframes rot{50%{transform:rotate(90deg)}}
 body:not(.touch-ui) #rotate-hint{display:none}
 @media (max-height:520px){#forge,#board,#soul,#shop,#tree,#travel,#menu{max-height:97vh;padding:10px 12px;border-radius:14px}.f-head{gap:8px}.f-title{font-size:18px!important}.f-emblem{width:38px!important;height:38px!important;font-size:18px!important}}
+
+#pets{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1180px,97vw);max-height:94vh;overflow:auto;z-index:11;border-radius:22px;padding:18px 20px;
+  background:linear-gradient(165deg,rgba(40,18,36,.95),rgba(16,10,22,.96) 55%,rgba(8,8,18,.97)) padding-box,linear-gradient(115deg,#ffb0d8,#ff6ad5,#ffd76a,#ffb0d8) border-box;border:2px solid transparent;box-shadow:0 30px 90px rgba(0,0,0,.65)}
+.pt-emblem{background:radial-gradient(circle at 30% 25%,#ffd8ec,#a83a7a 72%);color:#fff2f8;box-shadow:0 0 24px rgba(255,140,200,.5)}
+.pt-title{background:linear-gradient(90deg,#fff2f8,#ffb0d8 45%,#ffd76a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pt-body{display:grid;grid-template-columns:1fr 1.15fr 1.25fr;gap:16px}
+.pslots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.pslot{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.3);cursor:pointer;text-align:center}
+.pslot .pic{font-size:26px}.pslot b{font-size:13px;color:#fff}.pslot small{font-size:10.5px;color:#c5cbe8}
+.pslot.sel{border-color:var(--pc);box-shadow:0 0 18px -6px var(--pc)}.pslot.act{background:linear-gradient(160deg,color-mix(in srgb,var(--pc) 22%,transparent),rgba(0,0,0,.3))}
+.pslot.empty{cursor:default;border-style:dashed}.pslot.empty .pic{color:#6a7090}.pslot.locked{cursor:default;opacity:.5}
+.egg{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;border:1px solid color-mix(in srgb,var(--pc) 40%,transparent);background:rgba(0,0,0,.28);margin-bottom:6px}.egg>span{font-size:26px}.egg>div{flex:1}.egg b{font-size:12.5px}.egg small{font-size:11px;color:#c5cbe8}
+#pt-canvas{width:100%;max-width:360px;height:auto;display:block;margin:0 auto;border-radius:16px;background:rgba(0,0,0,.25)}
+.pform{font-size:12.5px;color:#c5cbe8;margin:2px 0 6px}
+.ptier{display:grid;grid-template-columns:52px 1fr 1fr;gap:6px;align-items:stretch;margin-bottom:6px}.pt-lv{display:grid;place-items:center;font-size:11.5px;font-weight:800;color:#ffd76a;border-radius:10px;background:rgba(0,0,0,.3)}
+.popt{text-align:left;padding:7px 9px;border-radius:10px;line-height:1.25}.popt b{display:block;font-size:12.5px}.popt small{display:block;font-size:11px;opacity:.85;font-weight:500}
+.popt.chosen{border-color:#7dffb0;background:linear-gradient(160deg,rgba(125,255,176,.22),rgba(0,0,0,.3));opacity:1!important;color:#fff}.popt.other{opacity:.35}
+.ptier.locked .popt{opacity:.45}
+.nqgrid{display:grid;grid-template-columns:1fr;gap:10px}.bnote.nqn{background:linear-gradient(170deg,#fff3f8,#f2dce8);color:#3a1a2e}
+@media (max-width:980px){.pt-body{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -372,6 +392,18 @@ body:not(.touch-ui) #rotate-hint{display:none}
   </div>
 </div>
 
+<div id="pets" class="hidden">
+  <div class="f-inner">
+    <div class="f-head">
+      <div class="f-emblem pt-emblem">育</div>
+      <div><div class="f-title pt-title">Питомник</div><div class="f-sub">Питомцы бессмертны и собирают лут в круге авто-охоты · P — открыть отовсюду</div></div>
+      <div class="f-res" id="pt-res"></div>
+      <button class="x" data-act="close" title="Закрыть (Esc / P)">✕</button>
+    </div>
+    <div class="btabs" id="pt-tabs"></div>
+    <div class="pt-body"><div id="pt-left"></div><div id="pt-mid"></div><div id="pt-right"></div></div>
+  </div>
+</div>
 <button id="btn-menu" title="Меню (O)">☰</button>
 <div id="menu" class="hidden">
   <div class="m-head"><div class="f-title" style="font-size:22px;font-weight:800">Меню · пауза</div><button class="x" data-act="close" title="Закрыть (Esc)">✕</button></div>
@@ -384,6 +416,8 @@ body:not(.touch-ui) #rotate-hint{display:none}
   <div id="mn-msg"></div>
   <h3>🎮 Управление</h3>
   <div class="mrow" id="mn-ctrl"></div><div class="note" id="mn-info" style="margin-top:6px"></div>
+  <h3>⚙ Графика</h3>
+  <div class="mrow" id="mn-gfx"></div><div class="note" id="mn-gfxinfo" style="margin-top:6px"></div>
   <h3>📱 Экран и звук</h3>
   <div class="mrow"><button data-act="fsnow">⛶ Во весь экран</button><button data-act="fsauto" id="mn-fs"></button><button data-act="snd" id="mn-snd"></button></div>
   <div class="note" style="margin-top:10px">Телефон: левая половина экрана — джойстик, справа — рывок, авто-охота, предметы. ПК: WASD/мышь, Space, T, H, L, U, Q, 1–4, O — меню, ~ — консоль.</div>
@@ -401,6 +435,7 @@ body:not(.touch-ui) #rotate-hint{display:none}
   <button class="tbtn titem" id="t-scroll" data-tact="scroll">🕊<b>0</b></button>
   <button class="tbtn ttop" id="t-soul" data-tact="soul">魂</button>
   <button class="tbtn ttop" id="t-tree" data-tact="tree">🌳</button>
+  <button class="tbtn ttop" id="t-pets" data-tact="pets">🐾</button>
 </div>
 <div id="rotate-hint" class="hidden"><div class="ph">📱</div><b style="font-size:18px">Поверни телефон горизонтально</b><span style="color:#9aa3c9">Так видно больше поля боя</span><button class="primary" id="rotate-ok">Играть вертикально</button></div>
 <div id="console" class="hidden">
@@ -631,7 +666,7 @@ function applyClassText() {
   ARMOR_RANKS.forEach((r, i) => { r.name = src.a[i][0]; r.desc = src.a[i][1]; });
 }
 const ONI_SUPER_T = 10, ONI_SUPER_CD = 360, ONI_MASKS = ['Рог Юки-онны', 'Клык Райдзю', 'Глаз Ямамбы', 'Корона Сютэн-додзи'];
-const oniEnergyGain = () => 0.6 * (1 + JKEYS.reduce((a, k) => a + ((S[k] && S[k].lvl) || 0), 0) * 0.12); // за удар
+const oniEnergyGain = () => 0.6 * (1 + JKEYS.reduce((a, k) => a + ((S[k] && S[k].lvl) || 0), 0) * 0.12) * (1 + ((PFX && PFX.oniE) || 0)); // за удар
 
 // ---- Древняя кузница: уровень = убийства в Горном пике ----
 const AFORGE_KILLS = [300, 2500, 8000, 20000];
@@ -673,6 +708,502 @@ const invN = id => (S.inv && S.inv[id]) || 0;
 
 const locMaxZone = () => clamp((S.loc === 3 ? S.maxZone3 : S.loc === 2 ? S.maxZone2 : S.maxZone) || 1, 1, 4);
 const bossKillsArr = () => S.loc === 3 ? S.bossKills3 : S.loc === 2 ? S.bossKills2 : S.bossKills;
+// =====================================================================
+//  БЛОК 11.11. ПИТОМЦЫ И ПИТОМНИК
+//  Питомцы бессмертны, враги их не трогают. Собирают лут в круге авто-охоты
+//  (или вокруг героини), растут до 50 уровня, эволюционируют на 15 и 35,
+//  на 5/10/20/30/40/50 уровнях — выбор одной из двух веток.
+// =====================================================================
+const NURSERY = { x: 180, y: 1760, r: 78, sy: 1640 };
+const PET_MAX_LVL = 50, PET_EVO = [15, 35], PET_TIERS = [5, 10, 20, 30, 40, 50], PET_SLOTS_MAX = 6;
+const PET_SP = {
+  cat:     { name: 'Неоновый кот Бакэнэко', short: 'Кот',      icon: '🐱', col: '#ff6ad5', col2: '#8fd8ff', hatch: 40,  role: 'золото и сбор лута',          home: 'Неоновый Токио', forms: ['Котёнок', 'Неоновый кот', 'Нэкомата'] },
+  kitsune: { name: 'Лисёнок-кицунэ',        short: 'Кицунэ',   icon: '🦊', col: '#ff8a3d', col2: '#ffd76a', hatch: 250, role: 'лисьи огни и откат навыков',  home: 'Храмовый квартал', forms: ['Лисёнок', 'Двухвостая кицунэ', 'Небесная кицунэ'] },
+  tanuki:  { name: 'Снежный тануки',        short: 'Тануки',   icon: '🦝', col: '#9a7a5a', col2: '#9fe6ff', hatch: 600, role: 'находит зелья, талисманы и камни', home: 'Горный пик (1–2 район)', forms: ['Тануки-малыш', 'Тануки-хитрец', 'Тануки-мудрец'] },
+  panda:   { name: 'Бамбуковая панда',      short: 'Панда',    icon: '🐼', col: '#f4f4f4', col2: '#7dffb0', hatch: 900, role: 'лечение, щит и снятие проклятий', home: 'Горный пик (3–4 район)', forms: ['Пандочка', 'Панда-страж', 'Нефритовая панда'] },
+  imp:     { name: 'Бесёнок-они',           short: 'Бесёнок',  icon: '👹', col: '#ff4a3a', col2: '#ffb340', hatch: 400, role: 'энергия и Ярость Они',        home: 'только у класса Они', forms: ['Бесёнок', 'Огненный бес', 'Маленький владыка'] },
+  pony:    { name: 'Радужный пони',         short: 'Пони',     icon: '🦄', col: '#ffd0f0', col2: '#b48cff', hatch: 300, role: 'удача',                       home: 'сверхредкое радужное яйцо', forms: ['Жеребёнок', 'Звёздный пони', 'Радужный единорог'], ultra: true },
+};
+const PET_ORDER = ['cat', 'kitsune', 'tanuki', 'panda', 'imp', 'pony'];
+const T5 = (feet) => [{ n: 'Зоркий нюх', d: 'Радиус сбора лута +40%', fx: { pickR: 0.4 } }, { n: feet, d: 'Скорость питомца +40%', fx: { pspeed: 0.4 } }];
+// ветки: на каждом уровне вариант A — «доход/удобство», B — «бой/защита»; ценность подобрана примерно равной
+const PET_TREE = {
+  cat: [T5('Лёгкие лапки'),
+    [{ n: 'Нюх на монеты', d: 'Золото +6%', fx: { gold: 0.06 } }, { n: 'Кошачья лапка', d: 'Раз в 6 с бьёт врага: 60% твоего урона', fx: { atkDmg: 0.6, atkN: 1 } }],
+    [{ n: 'Двойная монетка', d: '6% шанс, что монета засчитается дважды', fx: { doubleCoin: 0.06 } }, { n: 'Царапки', d: 'Лапка бьёт +2 цели · крит героини +3%', fx: { atkN: 2, crit: 0.03 } }],
+    [{ n: 'Кошелёк', d: 'Золото +8%', fx: { gold: 0.08 } }, { n: 'Острые когти', d: 'Урон лапки +60%', fx: { atkDmg: 0.6 } }],
+    [{ n: 'Охотник за элитой', d: 'Элитные враги роняют на 50% больше золота', fx: { eliteGold: 0.5 } }, { n: 'Кошачья грация', d: 'Шанс крита героини +5%', fx: { crit: 0.05 } }],
+    [{ n: 'Золотая лихорадка', d: 'Раз в 60 с: 8 с всё золото ×2', fx: { ult: 'goldrush' } }, { n: 'Девять жизней', d: 'Раз в 120 с спасает от смертельного удара', fx: { ult: 'ninelives' } }]],
+  kitsune: [T5('Лёгкие лапки'),
+    [{ n: 'Лисий огонь', d: 'Раз в 6 с огонёк на 80% твоего урона', fx: { atkDmg: 0.8, atkN: 1 } }, { n: 'Тихая мудрость', d: 'Откат навыков −4%', fx: { cdr: 0.04 } }],
+    [{ n: 'Жгучее пламя', d: 'Огонёк поджигает: ещё 40% урона за 3 с', fx: { atkBurn: 0.4 } }, { n: 'Медитация', d: 'Откат навыков ещё −4%', fx: { cdr: 0.04 } }],
+    [{ n: 'Тройной огонь', d: 'Огоньки летят в 3 цели', fx: { atkN: 2 } }, { n: 'Лисья память', d: 'Опыт души ✦ +10%', fx: { xp: 0.1 } }],
+    [{ n: 'Синее пламя', d: 'Урон огоньков +80%', fx: { atkDmg: 0.8 } }, { n: 'Тайная сила', d: 'Урон способностей героини +10%', fx: { skill: 0.1 } }],
+    [{ n: 'Огненный вихрь', d: 'Раз в 45 с: 6 с вихрь вокруг героини, 40% урона каждые 0,5 с', fx: { ult: 'firestorm' } }, { n: 'Лисья хитрость', d: 'Уклонение героини +6%', fx: { dodge: 0.06 } }]],
+  tanuki: [T5('Пухлые лапки'),
+    [{ n: 'Карман с зельями', d: 'При убийстве 1,5% шанс найти 🧪 зелье', fx: { itemPotion: 0.015 } }, { n: 'Карман с талисманами', d: 'При убийстве 1% шанс найти 📜 талисман', fx: { itemTalisman: 0.01 } }],
+    [{ n: 'Камушек', d: 'При убийстве 0,8% шанс найти 💠 камень', fx: { itemStone: 0.008 } }, { n: 'Блестяшки', d: 'Шанс нефрита и душ +6%', fx: { jade: 0.06 } }],
+    [{ n: 'Лист удачи', d: '8% шанс, что враг уронит ещё монет', fx: { extraLoot: 0.08 } }, { n: 'Хитрый торг', d: 'Золото +6%', fx: { gold: 0.06 } }],
+    [{ n: 'Большой мешок', d: 'Все находки тануки ×2', fx: { itemMul: 1 } }, { n: 'Духовные камушки', d: 'Души ◆ +10%', fx: { souls: 0.1 } }],
+    [{ n: 'Котелок удачи', d: 'Раз в 90 с достаёт случайный предмет лавки', fx: { ult: 'cauldron' } }, { n: 'Пузо-барабан', d: 'Раз в 40 с отбрасывает врагов вокруг: 100% урона', fx: { ult: 'drum' } }]],
+  panda: [T5('Мягкие лапки'),
+    [{ n: 'Бамбуковый чай', d: 'Раз в 8 с лечит героиню на 3% HP', fx: { healPct: 0.03 } }, { n: 'Мягкий бок', d: 'Раз в 12 с щит на 8% HP', fx: { shieldPct: 0.08 } }],
+    [{ n: 'Чистые лапки', d: 'Раз в 25 с снимает одно проклятие', fx: { cleanse: 1 } }, { n: 'Толстая шкура', d: 'Сопротивление огню, льду, грому и яду +8%', fx: { elem: 0.08 } }],
+    [{ n: 'Целебный чай', d: 'Лечение +2% (всего 5%)', fx: { healPct: 0.02 } }, { n: 'Плюшевый щит', d: 'Щит +6% (всего 14%)', fx: { shieldPct: 0.06 } }],
+    [{ n: 'Оберег', d: 'Сопротивление проклятиям +15%', fx: { curseRes: 0.15 } }, { n: 'Бамбуковый блок', d: 'Шанс блока +6%', fx: { block: 0.06 } }],
+    [{ n: 'Бамбуковая роща', d: 'Раз в 60 с: 6 с лечит 4% HP в секунду', fx: { ult: 'grove' } }, { n: 'Каменная стойка', d: 'Раз в 50 с: 3 с получаемый урон −60%', fx: { ult: 'stance' } }]],
+  imp: [T5('Перепончатые крылышки'),
+    [{ n: 'Жар ярости', d: 'Энергия Они +15%', fx: { oniE: 0.15 } }, { n: 'Когти бесёнка', d: 'Раз в 6 с бьёт врага: 70% твоего урона', fx: { atkDmg: 0.7, atkN: 1 } }],
+    [{ n: 'Нетерпение', d: 'Откат Ярости Они −30 с', fx: { superCd: 30 } }, { n: 'Жадные когти', d: 'Каждый удар когтей даёт +2 энергии Они', fx: { atkEnergy: 2 } }],
+    [{ n: 'Пламя души', d: 'Энергия Они ещё +15%', fx: { oniE: 0.15 } }, { n: 'Тройной удар', d: 'Когти бьют 3 цели', fx: { atkN: 2 } }],
+    [{ n: 'Долгая ярость', d: 'Ярость Они длится +2 с', fx: { superDur: 2 } }, { n: 'Адские когти', d: 'Крит. урон героини +15%', fx: { critDmg: 0.15 } }],
+    [{ n: 'Адское пламя', d: 'Во время Ярости бесёнок дышит огнём: 60% урона каждые 0,5 с', fx: { ult: 'hellfire' } }, { n: 'Рогатая удача', d: 'После Ярости возвращается 30% энергии', fx: { ult: 'refund' } }]],
+  pony: [T5('Быстрые копытца'),
+    [{ n: 'Блеск гривы', d: 'Шанс нефрита и душ +8%', fx: { jade: 0.08 } }, { n: 'Звёздная пыль', d: 'Опыт души ✦ +10%', fx: { xp: 0.1 } }],
+    [{ n: 'Чутьё на маски', d: 'Шанс куска маски Они ×1,25', fx: { mask: 0.25 } }, { n: 'Счастливая подкова', d: 'Шанс радужного яйца ×1,5', fx: { eggChance: 0.5 } }],
+    [{ n: 'Сундучок', d: 'Золото +5% и души ◆ +5%', fx: { gold: 0.05, souls: 0.05 } }, { n: 'Радужный след', d: 'Скорость героини +8%', fx: { heroSpd: 0.08 } }],
+    [{ n: 'Звёздный магнит', d: 'Радиус магнита героини +25%', fx: { magnet: 0.25 } }, { n: 'Удачная звезда', d: 'Шанс крита героини +4%', fx: { crit: 0.04 } }],
+    [{ n: 'Звездопад', d: 'Раз в 60 с: 10 звёзд по врагам, 80% урона каждая', fx: { ult: 'stars' } }, { n: 'Радуга', d: 'Раз в 90 с лечит 30% HP и снимает проклятия', fx: { ult: 'rainbow' } }]],
+};
+const PET_ULT_CD = { goldrush: 60, ninelives: 120, firestorm: 45, cauldron: 90, drum: 40, grove: 60, stance: 50, hellfire: 0, refund: 0, stars: 60, rainbow: 90 };
+
+// ---------- Состояние ----------
+function defaultPets() { return { owned: {}, active: null, slots: 1, eggs: [], nq: { offers: [], active: null, done: 0 }, pity: 0, intro: false }; }
+function fixPets() {
+  if (!S.pets || typeof S.pets !== 'object') S.pets = defaultPets();
+  const P0 = S.pets, d = defaultPets(); for (const k in d) if (P0[k] === undefined) P0[k] = d[k];
+  if (typeof P0.owned !== 'object' || !P0.owned) P0.owned = {};
+  for (const id of Object.keys(P0.owned)) { if (!PET_SP[id]) { delete P0.owned[id]; continue; } const p = P0.owned[id]; p.lvl = clamp(p.lvl | 0, 1, PET_MAX_LVL); p.xp = Math.max(0, +p.xp || 0); if (!Array.isArray(p.picks)) p.picks = []; p.picks = p.picks.slice(0, 6).map(v => v === 0 || v === 1 ? v : null); }
+  P0.slots = clamp(P0.slots | 0, 1, PET_SLOTS_MAX);
+  if (P0.active && !P0.owned[P0.active]) P0.active = null;
+  if (!Array.isArray(P0.eggs)) P0.eggs = []; P0.eggs = P0.eggs.filter(e => e && PET_SP[e.sp]).map(e => ({ sp: e.sp, k: Math.max(0, e.k | 0) }));
+  if (!P0.nq || !Array.isArray(P0.nq.offers)) P0.nq = { offers: [], active: null, done: 0 };
+  P0.nq.offers = P0.nq.offers.filter(q => q && PET_SP[q.egg]); if (P0.nq.active && !PET_SP[P0.nq.active.egg]) P0.nq.active = null;
+  P0.pity = Math.max(0, P0.pity | 0);
+}
+const petNeed = lvl => Math.round(15 * Math.pow(1.11, lvl));
+const petForm = lvl => lvl >= PET_EVO[1] ? 2 : lvl >= PET_EVO[0] ? 1 : 0;
+const activePet = () => S.pets && S.pets.active ? S.pets.owned[S.pets.active] : null;
+function petFx() {
+  const fx = {}, id = S.pets && S.pets.active, p = id && S.pets.owned[id]; if (!p) return fx;
+  PET_TREE[id].forEach((tier, i) => { const c = p.picks[i]; if ((c === 0 || c === 1) && p.lvl >= PET_TIERS[i]) { const o = tier[c].fx; for (const k in o) { if (k === 'ult') fx.ult = o.ult; else fx[k] = (fx[k] || 0) + o[k]; } } });
+  return fx;
+}
+var PFX = {};
+function refreshPetFx() { PFX = petFx(); }
+// бонусы питомца к характеристикам (вызывается из computeStats)
+function applyPetStats(st) {
+  const f = PFX || {};
+  st.goldMul *= 1 + (f.gold || 0); st.xpMul *= 1 + (f.xp || 0); st.luck *= 1 + (f.jade || 0);
+  st.critChance = Math.min(1, st.critChance + (f.crit || 0)); st.critDmg += f.critDmg || 0;
+  st.cdr = Math.min(0.6, st.cdr + (f.cdr || 0)); st.dashCd = 1.5 * (1 - st.cdr); st.skillMul *= 1 + (f.skill || 0);
+  st.dodge = Math.min(0.6, st.dodge + (f.dodge || 0)); st.block = Math.min(0.6, st.block + (f.block || 0));
+  st.speed *= 1 + (f.heroSpd || 0); st.magnet *= 1 + (f.magnet || 0); st.curseRes = Math.min(0.9, st.curseRes + (f.curseRes || 0));
+  if (f.elem) for (const k of ['fire', 'ice', 'thunder', 'poison']) st.res[k] = Math.min(0.8, st.res[k] + f.elem);
+  st.soulMul = 1 + (f.souls || 0);
+}
+function petGainXp(v, id = S.pets && S.pets.active) {
+  const p = id && S.pets.owned[id]; if (!p || p.lvl >= PET_MAX_LVL) return;
+  p.xp += v;
+  while (p.lvl < PET_MAX_LVL && p.xp >= petNeed(p.lvl)) {
+    p.xp -= petNeed(p.lvl); const f0 = petForm(p.lvl); p.lvl++; const f1 = petForm(p.lvl);
+    if (f1 > f0) { banner(`${PET_SP[id].icon} Эволюция!`, `${PET_SP[id].forms[f0]} → ${PET_SP[id].forms[f1]}`); SFX.up(); if (G.pet) { burst(G.pet.x, G.pet.y - 16, 40, hexRGB(PET_SP[id].col2), 260, 0.8, 3, 'glow'); P('ring', G.pet.x, G.pet.y, 0, 0, 0.7, 120, hexRGB(PET_SP[id].col2)); } }
+    else if (PET_TIERS.includes(p.lvl)) { toast(`${PET_SP[id].icon} ${PET_SP[id].short} достиг ${p.lvl} ур. — выбери новый навык в Питомнике (P)`); SFX.up(); }
+    else if (G.pet && id === S.pets.active) spawnText(G.pet.x, G.pet.y - 44, `${PET_SP[id].icon} ур. ${p.lvl}`, PET_SP[id].col2, 13, true);
+    refreshPetFx(); refreshStats();
+  }
+  if (p.lvl >= PET_MAX_LVL) p.xp = 0;
+  if (G.petsOpen && (G.petsRT = (G.petsRT || 0) + 1) % 8 === 0) renderPets();
+}
+
+// ---------- Поведение в мире ----------
+function spawnPetEntity() {
+  const id = S.pets.active; if (!id) { G.pet = null; return; }
+  G.pet = { sp: id, x: hero.x - 40, y: hero.y + 10, vx: 0, vy: 0, face: 1, target: null, hop: 0, happyT: 0, idleT: 0, moving: false, atkT: 3, healT: 4, shieldT: 6, cleanseT: 10, ultT: 8, ultOn: 0, tickT: 0, blink: 2 };
+}
+function updatePet(dt) {
+  if (!S.pets || !S.pets.active) { G.pet = null; return; }
+  if (!G.pet || G.pet.sp !== S.pets.active) spawnPetEntity();
+  const p = G.pet, f = PFX, pd = activePet(), h = hero;
+  const sp = 250 * (1 + (f.pspeed || 0)) * (1 + petForm(pd.lvl) * 0.1), pick = 18 * (1 + (f.pickR || 0));
+  if (dist(p.x, p.y, h.x, h.y) > 1100 || G.recall) { p.x = h.x - 40; p.y = h.y + 10; p.target = null; }
+  // область сбора
+  let cx = h.x, cy = h.y, R = 340;
+  if (G.autoHunt && G.autoAnchor) { cx = G.autoAnchor.x; cy = G.autoAnchor.y; R = AUTO_LEASH + 60; }
+  if (p.target && (p.target.attract || !G.loot.includes(p.target))) p.target = null;
+  if (!p.target && !h.dead && h.x >= CFG.BASE_X - 100) {
+    let best = null, bd = 1e9;
+    for (const l of G.loot) { if (l.attract || l.t < 0.4 || dist(l.x, l.y, cx, cy) > R) continue; const dd = dist(l.x, l.y, p.x, p.y) * (l.type === 'gold' ? 1 : 0.5); if (dd < bd) { bd = dd; best = l; } }
+    p.target = best;
+  }
+  let tx, ty;
+  if (p.target) { tx = p.target.x; ty = p.target.y; }
+  else { tx = h.x - h.face * 42; ty = h.y + 14; }
+  const dx = tx - p.x, dy = ty - p.y, d = Math.hypot(dx, dy);
+  const want = p.target ? 0 : 26;
+  if (d > want + 2) { const k = Math.min(1, (d - want) / 60), s = sp * (p.target ? 1 : Math.max(0.35, k)) * (d > 400 ? 1.8 : 1); p.vx = lerp(p.vx, dx / d * s, Math.min(1, dt * 10)); p.vy = lerp(p.vy, dy / d * s, Math.min(1, dt * 10)); }
+  else { p.vx *= Math.max(0, 1 - dt * 10); p.vy *= Math.max(0, 1 - dt * 10); }
+  p.x += p.vx * dt; p.y += p.vy * dt; const spd = Math.hypot(p.vx, p.vy); p.moving = spd > 20;
+  if (Math.abs(p.vx) > 15) p.face = p.vx > 0 ? 1 : -1;
+  p.hop += dt * (p.moving ? 14 : 0); if (p.happyT > 0) p.happyT -= dt; p.blink -= dt; if (p.blink < -0.12) p.blink = rand(2, 5);
+  p.idleT = (!h.moving && !p.moving && !p.target && !G.autoHunt) ? p.idleT + dt : 0;
+  if (p.target && dist(p.x, p.y, p.target.x, p.target.y) < pick) {
+    const l = p.target; l.attract = true; l.petPick = true; p.target = null; p.happyT = 0.7;
+    petGainXp(2 * LOC_FACTOR[S.loc]); nqEvent('collect', zoneAt(l.x));
+    if (Math.random() < 0.35) P('glow', p.x, p.y - 16, rand(-20, 20), -60, 0.5, 5, hexRGB(PET_SP[p.sp].col2));
+  }
+  // атака
+  if (f.atkDmg > 0 && !h.dead) {
+    p.atkT -= dt;
+    if (p.atkT <= 0) {
+      const n = 1 + (f.atkN || 1) - 1, ts = G.enemies.filter(e => !e.dead && e.spawnT > 0.3 && dist(e.x, e.y, p.x, p.y) < 420).sort((a, b) => dist(a.x, a.y, p.x, p.y) - dist(b.x, b.y, p.x, p.y)).slice(0, Math.max(1, n));
+      if (ts.length) { p.atkT = 6; p.happyT = 0.4; for (const e of ts) G.petShots.push({ x: p.x, y: p.y - 18, e, sp: 560, col: PET_SP[p.sp].col2 }); }
+      else p.atkT = 0.5;
+    }
+  }
+  // лечение / щит / очищение
+  if (f.healPct && !h.dead) { p.healT -= dt; if (p.healT <= 0) { p.healT = 8; if (h.hp < ST.maxHp) { heal(ST.maxHp * f.healPct); spawnText(h.x, h.y - 90, '🍵 +' + fmt(ST.maxHp * f.healPct), '#7dffb0', 13); burst(h.x, h.y - 30, 10, '125,255,176', 140, 0.5, 3, 'glow'); } } }
+  if (f.shieldPct && !h.dead) { p.shieldT -= dt; if (p.shieldT <= 0) { p.shieldT = 12; hero.shield = Math.max(hero.shield || 0, ST.maxHp * f.shieldPct); ST.shieldMax = Math.max(ST.shieldMax || 0, hero.shield); P('ring', h.x, h.y - 28, 0, 0, 0.4, 40, '255,255,255'); } }
+  if (f.cleanse && !h.dead) { p.cleanseT -= dt; if (p.cleanseT <= 0) { p.cleanseT = 25; const ids = Object.keys(CURSES).filter(k => curseN(k) > 0); if (ids.length) { const id = pick2(ids); S.curses[id]--; refreshStats(); spawnText(h.x, h.y - 96, `🐼 снято: ${CURSES[id].name}`, '#7dffb0', 13); } } }
+  updatePetUlt(dt, p, f);
+}
+const pick2 = a => a[Math.floor(Math.random() * a.length)];
+function petHitArea(x, y, r, mul, col) { for (const e of G.enemies) if (!e.dead && dist(e.x, e.y, x, y) < r) dealDamage(e, ST.dmg * mul, { small: true, noProc: true, noKb: true, col }); }
+function updatePetUlt(dt, p, f) {
+  const u = f.ult; if (!u || hero.dead) return;
+  if (p.ultOn > 0) {
+    p.ultOn -= dt; p.tickT -= dt;
+    if (u === 'firestorm' && p.tickT <= 0) { p.tickT = 0.5; petHitArea(hero.x, hero.y, 170, 0.4, '#ffb070'); for (let i = 0; i < 6; i++) { const a = rand(TAU); P('fire', hero.x + Math.cos(a) * 150, hero.y + Math.sin(a) * 60, -Math.sin(a) * 120, Math.cos(a) * 50 - 40, 0.5, 8, '255,140,60'); } }
+    if (u === 'grove' && p.tickT <= 0) { p.tickT = 1; heal(ST.maxHp * 0.04); burst(hero.x, hero.y - 20, 6, '125,255,150', 120, 0.6, 3, 'glow'); }
+    if (p.ultOn <= 0) { G.goldRush = 0; G.petStance = 0; }
+    return;
+  }
+  if (u === 'hellfire') { if (G.oniSuperT > 0) { p.tickT -= dt; if (p.tickT <= 0) { p.tickT = 0.5; petHitArea(p.x, p.y, 180, 0.6, '#ff7a3a'); burst(p.x, p.y - 16, 10, '255,90,50', 220, 0.4, 4, 'glow'); } } return; }
+  if (u === 'refund' || u === 'ninelives') { p.ultT = Math.max(0, p.ultT - dt); return; }
+  p.ultT -= dt; if (p.ultT > 0) return;
+  const inFight = G.enemies.some(e => !e.dead && dist(e.x, e.y, hero.x, hero.y) < 500);
+  if (!inFight && u !== 'cauldron') { p.ultT = 1; return; }
+  p.ultT = PET_ULT_CD[u]; p.happyT = 1;
+  const nm = PET_TREE[p.sp][5].find(o => o.fx.ult === u).n; spawnText(p.x, p.y - 48, `${PET_SP[p.sp].icon} ${nm}!`, PET_SP[p.sp].col2, 15, true);
+  if (u === 'goldrush') { p.ultOn = 8; G.goldRush = 8; }
+  else if (u === 'firestorm') { p.ultOn = 6; p.tickT = 0; }
+  else if (u === 'grove') { p.ultOn = 6; p.tickT = 0; }
+  else if (u === 'stance') { p.ultOn = 3; G.petStance = 3; P('ring', hero.x, hero.y - 28, 0, 0, 0.6, 60, '200,255,220'); }
+  else if (u === 'cauldron') { const id = pick2(['potion', 'potion', 'talisman', 'stone']); S.inv[id] = invN(id) + 1; toast(`${PET_SP[p.sp].icon} Тануки достал из котелка: ${ITEMS[id].icon} ${ITEMS[id].name}`); }
+  else if (u === 'drum') { for (const e of G.enemies) if (!e.dead && dist(e.x, e.y, hero.x, hero.y) < 220) { dealDamage(e, ST.dmg, { small: true, noProc: true, col: '#ffd76a' }); if (!e.boss) { const a = Math.atan2(e.y - hero.y, e.x - hero.x); e.kx += Math.cos(a) * 700; e.ky += Math.sin(a) * 700; } } P('ring', hero.x, hero.y, 0, 0, 0.5, 230, '255,215,110'); G.shake = 8; SFX.boom(); }
+  else if (u === 'stars') { const ts = G.enemies.filter(e => !e.dead && dist(e.x, e.y, hero.x, hero.y) < 480); for (let i = 0; i < 10 && ts.length; i++) { const e = ts[i % ts.length]; setTimeout(() => { if (e.dead) return; addBolt(e.x + rand(-30, 30), e.y - 320, e.x, e.y - 20, '255,220,255', 3); dealDamage(e, ST.dmg * 0.8, { small: true, noProc: true, col: '#ffd0f0' }); }, i * 90); } }
+  else if (u === 'rainbow') { heal(ST.maxHp * 0.3); cleanseAll('talisman'); burst(hero.x, hero.y - 30, 40, '255,200,255', 280, 0.9, 3, 'glow'); }
+}
+// «Девять жизней» кота: вызывается перед смертью
+function petSaveLife() {
+  if (PFX.ult !== 'ninelives' || !G.pet || G.pet.ultT > 0) return false;
+  G.pet.ultT = PET_ULT_CD.ninelives; hero.hp = ST.maxHp * 0.2; hero.iframe = 1.5; hero.dead = false;
+  banner('🐱 Девять жизней!', 'Кот спас героиню от гибели'); burst(hero.x, hero.y - 30, 40, '255,106,213', 300, 0.8, 3, 'glow'); SFX.up();
+  return true;
+}
+function petOnKill(e) {
+  if (!S.pets) return;
+  if (S.pets.eggs.length) { for (const eg of S.pets.eggs) eg.k++; tryHatch(); }
+  if (e.elite && !e.boss) nqEvent('elite', e.z);
+  if (e.boss) nqEvent('boss', e.z);
+  if (!S.pets.active) return;
+  petGainXp(0.5 * LOC_FACTOR[e.loc || 1] * (e.elite ? 3 : 1) * (e.boss ? 20 : 1));
+  const f = PFX, mul = 1 + (f.itemMul || 0);
+  const find = (id, ch) => { if (ch && Math.random() < ch * mul) { S.inv[id] = invN(id) + 1; spawnText(e.x, e.y - 60, `${PET_SP.tanuki.icon} ${ITEMS[id].icon}`, '#ffd76a', 15, true); } };
+  find('potion', f.itemPotion); find('talisman', f.itemTalisman); find('stone', f.itemStone);
+  if (f.extraLoot && !e.boss && Math.random() < f.extraLoot) for (let i = 0; i < 2; i++) dropLoot('gold', e.x, e.y, Math.max(1, Math.round(e.gold / 2)));
+}
+function updatePetShots(dt) {
+  for (let i = G.petShots.length - 1; i >= 0; i--) {
+    const s = G.petShots[i], e = s.e; if (!e || e.dead) { G.petShots.splice(i, 1); continue; }
+    const dx = e.x - s.x, dy = (e.y - 24) - s.y, d = Math.hypot(dx, dy); s.x += dx / d * s.sp * dt; s.y += dy / d * s.sp * dt;
+    if (d < 16) {
+      G.petShots.splice(i, 1); const f = PFX; dealDamage(e, ST.dmg * (f.atkDmg || 0.5), { small: true, noProc: true, noKb: true, col: s.col });
+      if (f.atkBurn) { e.burnDps = Math.max(e.burnDps, ST.dmg * f.atkBurn / 3); e.burnT = 3; }
+      if (f.atkEnergy && S.oni && !(G.oniSuperT > 0)) S.oniE = Math.min(100, (S.oniE || 0) + f.atkEnergy);
+      burst(e.x, e.y - 24, 6, hexRGB(s.col), 140, 0.3, 3, 'glow');
+    }
+  }
+}
+function drawPetShots(ctx) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; for (const s of G.petShots) { const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, 10); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.4, hexA(s.col, 0.8)); g.addColorStop(1, hexA(s.col, 0)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(s.x, s.y, 10, 0, TAU); ctx.fill(); } ctx.restore(); }
+
+// ---------- Отрисовка питомцев (милые, чиби-пропорции) ----------
+function petEyes(ctx, x, y, r, happy, sleep, blink, col = '#1a1424') {
+  if (sleep || blink) { ctx.strokeStyle = col; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.arc(x, y + 0.4, r * 0.8, 0.2, Math.PI - 0.2); ctx.stroke(); return; }
+  if (happy) { ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(x, y + 0.8, r * 0.85, Math.PI + 0.3, -0.3); ctx.stroke(); return; }
+  ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(x, y, r * 0.8, r, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x + r * 0.25, y - r * 0.35, r * 0.38, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.arc(x - r * 0.25, y + r * 0.35, r * 0.16, 0, TAU); ctx.fill();
+}
+function petBlush(ctx, x, y) { ctx.fillStyle = 'rgba(255,120,160,0.45)'; ctx.beginPath(); ctx.ellipse(x, y, 1.8, 1.1, 0, 0, TAU); ctx.fill(); }
+function drawPetBody(ctx, sp, form, t, st) {
+  const S0 = PET_SP[sp], c = S0.col, c2 = S0.col2, mv = st.moving, ph = st.hop, hap = st.happy, slp = st.sleep, bl = st.blink;
+  const legs = (col, x0 = -5, x1 = 5) => { ctx.fillStyle = col; for (const [lx, off] of [[x0 - 1, 0], [x0 + 2.5, Math.PI], [x1 - 2, Math.PI], [x1 + 1.5, 0]]) { const s = mv ? Math.sin(ph + off) * 1.5 : 0; ctx.beginPath(); ctx.ellipse(lx + s, -1.2, 1.7, 1.6, 0, 0, TAU); ctx.fill(); } };
+  const aura = (col, r) => { ctx.save(); ctx.globalCompositeOperation = 'lighter'; const g = ctx.createRadialGradient(0, -12, 0, 0, -12, r); g.addColorStop(0, hexA(col, 0.35)); g.addColorStop(1, hexA(col, 0)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, -12, r, 0, TAU); ctx.fill(); ctx.restore(); };
+  const sw = Math.sin(t * 3) * 0.15;
+  if (sp === 'cat') {
+    if (form >= 2) aura(c2, 26);
+    const tails = form >= 2 ? 2 : 1;
+    for (let k = 0; k < tails; k++) { ctx.strokeStyle = k ? c2 : '#2a2238'; ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-7, -7); ctx.quadraticCurveTo(-14 - k * 2, -10 + sw * 10, -12 + k * 3, -18 - k * 2); ctx.stroke(); if (form >= 2) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = hexA(c, 0.6); ctx.lineWidth = 1; ctx.stroke(); ctx.restore(); } }
+    legs('#2a2238');
+    ctx.fillStyle = '#2a2238'; ctx.beginPath(); ctx.ellipse(0, -7, 8, 5.8, 0, 0, TAU); ctx.fill();
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = hexA(c, 0.85); ctx.lineWidth = 0.9; ctx.beginPath(); ctx.moveTo(-4, -11.5); ctx.lineTo(-3, -8); ctx.moveTo(0, -12.5); ctx.lineTo(0.5, -9); ctx.stroke(); ctx.restore();
+    ctx.fillStyle = '#2a2238'; ctx.beginPath(); ctx.arc(5, -15, 7.2, 0, TAU); ctx.fill();
+    for (const ex of [0.5, 8]) { ctx.fillStyle = '#2a2238'; ctx.beginPath(); ctx.moveTo(ex - 2.6, -19.5); ctx.lineTo(ex, -26); ctx.lineTo(ex + 2.6, -19.5); ctx.fill(); ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(ex - 1.3, -20); ctx.lineTo(ex, -23.6); ctx.lineTo(ex + 1.3, -20); ctx.fill(); }
+    petEyes(ctx, 3, -15.5, 1.9, hap, slp, bl, c2); petEyes(ctx, 8, -15.5, 1.9, hap, slp, bl, c2);
+    ctx.fillStyle = '#ff9ad5'; ctx.beginPath(); ctx.moveTo(10, -13.2); ctx.lineTo(11.2, -12.4); ctx.lineTo(10, -11.8); ctx.fill();
+    ctx.strokeStyle = 'rgba(240,240,255,0.7)'; ctx.lineWidth = 0.4; for (const yy of [-12.6, -11.4]) { ctx.beginPath(); ctx.moveTo(11, yy); ctx.lineTo(14.5, yy - 0.6); ctx.stroke(); }
+    if (form >= 1) { ctx.fillStyle = '#ff3a6a'; ctx.fillRect(1.5, -9.8, 7, 1.4); ctx.fillStyle = '#ffd76a'; ctx.beginPath(); ctx.arc(5, -8.4, 1.3, 0, TAU); ctx.fill(); }
+  } else if (sp === 'kitsune') {
+    const tails = form >= 2 ? 5 : form >= 1 ? 2 : 1;
+    if (form >= 2) aura(c2, 28);
+    for (let k = 0; k < tails; k++) { const a = -2.6 + (k - (tails - 1) / 2) * 0.32 + sw; ctx.save(); ctx.translate(-6, -8); ctx.rotate(a); const g = ctx.createLinearGradient(0, 0, 14, 0); g.addColorStop(0, c); g.addColorStop(0.7, c); g.addColorStop(1, '#fff6ea'); ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(8, 0, 9, 4, 0, 0, TAU); ctx.fill(); ctx.restore(); }
+    if (form >= 2) for (let k = 0; k < 3; k++) { const a = t * 2 + k * TAU / 3; glowDot(ctx, Math.cos(a) * 16, -14 + Math.sin(a) * 6, 4, '#8fd8ff', 0.9); }
+    legs('#3a1a10');
+    ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(0, -7, 7.6, 5.6, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#fff6ea'; ctx.beginPath(); ctx.ellipse(3, -6, 3.5, 3.4, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.arc(5, -15, 7, 0, TAU); ctx.fill();
+    for (const ex of [0.5, 8.2]) { ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(ex - 2.8, -19); ctx.lineTo(ex, -27.5); ctx.lineTo(ex + 2.8, -19); ctx.fill(); ctx.fillStyle = '#3a1a10'; ctx.beginPath(); ctx.moveTo(ex - 1.2, -20); ctx.lineTo(ex, -24); ctx.lineTo(ex + 1.2, -20); ctx.fill(); }
+    ctx.fillStyle = '#fff6ea'; ctx.beginPath(); ctx.moveTo(6, -14); ctx.quadraticCurveTo(13, -14, 12, -11); ctx.quadraticCurveTo(8, -9.5, 4, -11.5); ctx.closePath(); ctx.fill();
+    petEyes(ctx, 3.2, -16, 1.8, hap, slp, bl); petEyes(ctx, 8, -16, 1.8, hap, slp, bl);
+    ctx.fillStyle = '#1a1010'; ctx.beginPath(); ctx.arc(12, -12.6, 0.9, 0, TAU); ctx.fill();
+    if (form >= 1) { ctx.fillStyle = '#d42640'; ctx.beginPath(); ctx.moveTo(5.6, -21); ctx.lineTo(6.4, -19); ctx.lineTo(5.6, -18.2); ctx.lineTo(4.8, -19); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#c41e3a'; ctx.fillRect(1, -9.6, 8, 1.4); }
+    petBlush(ctx, 2, -12.8); petBlush(ctx, 9.4, -12.8);
+  } else if (sp === 'tanuki') {
+    if (form >= 2) aura(c2, 26);
+    ctx.save(); ctx.translate(-7, -7); ctx.rotate(-2.4 + sw); ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(6, 0, 7, 4, 0, 0, TAU); ctx.fill(); ctx.fillStyle = '#3a2a1a'; for (const q of [3, 7, 11]) ctx.fillRect(q, -3.6, 1.6, 7.2); ctx.restore();
+    legs('#3a2a1a');
+    ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(0, -8, 8.4, 7, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#f2e6d0'; ctx.beginPath(); ctx.ellipse(2, -6.4, 5, 4.6, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.arc(4.5, -17, 7, 0, TAU); ctx.fill();
+    for (const ex of [0, 8.5]) { ctx.fillStyle = '#3a2a1a'; ctx.beginPath(); ctx.arc(ex, -22.5, 2.4, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = '#3a2a1a'; ctx.beginPath(); ctx.ellipse(2.4, -17, 2.8, 2.2, -0.2, 0, TAU); ctx.ellipse(7.6, -17, 2.8, 2.2, 0.2, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#f2e6d0'; ctx.beginPath(); ctx.ellipse(5.2, -13.8, 3.6, 2.4, 0, 0, TAU); ctx.fill();
+    petEyes(ctx, 2.6, -17.2, 1.6, hap, slp, bl, '#fff'); petEyes(ctx, 7.6, -17.2, 1.6, hap, slp, bl, '#fff');
+    ctx.fillStyle = '#1a1010'; ctx.beginPath(); ctx.arc(6.2, -14.4, 1, 0, TAU); ctx.fill();
+    petBlush(ctx, 1, -14); petBlush(ctx, 9.6, -14);
+    if (form >= 1) { ctx.fillStyle = '#5fd88a'; ctx.beginPath(); ctx.ellipse(4, -24.6, 4.5, 1.8, -0.3, 0, TAU); ctx.fill(); ctx.strokeStyle = '#2a8a4a'; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(0, -23.4); ctx.lineTo(8, -25.8); ctx.stroke(); }
+    if (form >= 2) { ctx.fillStyle = '#e8c070'; ctx.beginPath(); ctx.ellipse(4.5, -23.5, 9, 2.4, 0, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.ellipse(4.5, -25, 4, 2.8, 0, Math.PI, 0); ctx.fill(); ctx.fillStyle = '#c8a050'; ctx.beginPath(); ctx.ellipse(-6, -8, 2.4, 3.2, 0, 0, TAU); ctx.fill(); glowDot(ctx, -6, -9, 5, c2, 0.6); }
+  } else if (sp === 'panda') {
+    if (form >= 2) aura(c2, 26);
+    legs('#1a1a22', -5, 5);
+    ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(0, -8, 8.6, 7.2, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#1a1a22'; ctx.beginPath(); ctx.ellipse(5.5, -6.5, 2.6, 3.8, -0.3, 0, TAU); ctx.ellipse(-4.5, -6.8, 2.6, 3.6, 0.3, 0, TAU); ctx.ellipse(-1, -12.6, 7.4, 2.2, 0, Math.PI, TAU); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.arc(4.5, -17, 7.4, 0, TAU); ctx.fill();
+    for (const ex of [-0.5, 9.5]) { ctx.fillStyle = '#1a1a22'; ctx.beginPath(); ctx.arc(ex, -22.8, 2.8, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = '#1a1a22'; ctx.beginPath(); ctx.ellipse(2, -17.4, 2.6, 3.2, -0.5, 0, TAU); ctx.ellipse(7.8, -17.4, 2.6, 3.2, 0.5, 0, TAU); ctx.fill();
+    petEyes(ctx, 2.2, -17.6, 1.5, hap, slp, bl, '#fff'); petEyes(ctx, 7.6, -17.6, 1.5, hap, slp, bl, '#fff');
+    ctx.fillStyle = '#1a1a22'; ctx.beginPath(); ctx.ellipse(5, -13.6, 1.4, 0.9, 0, 0, TAU); ctx.fill();
+    petBlush(ctx, 0.6, -14); petBlush(ctx, 9.8, -14);
+    if (form >= 1) { ctx.strokeStyle = '#5fd88a'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(9, -10); ctx.lineTo(15, -20); ctx.stroke(); ctx.fillStyle = '#7dffb0'; ctx.beginPath(); ctx.ellipse(15.5, -21, 2.6, 1.2, -0.8, 0, TAU); ctx.fill(); ctx.strokeStyle = '#2a8a4a'; ctx.lineWidth = 0.5; for (const yy of [-13, -16.5]) { ctx.beginPath(); ctx.moveTo(10.2 + (yy + 10) * -0.6, yy); ctx.lineTo(11.6 + (yy + 10) * -0.6, yy); ctx.stroke(); } }
+    if (form >= 2) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = hexA(c2, 0.7); ctx.lineWidth = 0.7; ctx.beginPath(); ctx.arc(0, -7, 3.5, 0, TAU); ctx.moveTo(-2, -7); ctx.lineTo(2, -7); ctx.stroke(); ctx.restore(); ctx.fillStyle = '#ffd76a'; ctx.beginPath(); ctx.moveTo(1, -24); ctx.lineTo(2.4, -27.5); ctx.lineTo(4.5, -25); ctx.lineTo(6.6, -27.5); ctx.lineTo(8, -24); ctx.closePath(); ctx.fill(); }
+  } else if (sp === 'imp') {
+    const fl = -6 + Math.sin(t * 4) * 1.6; ctx.translate(0, fl);
+    if (form >= 1) aura(c, 24 + form * 4);
+    for (const s of [-1, 1]) { ctx.save(); ctx.translate(-2, -12); ctx.scale(s < 0 ? 1 : 0.8, 1); ctx.rotate(-0.6 + Math.sin(t * 10) * 0.3 * s); ctx.fillStyle = '#5a1018'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-8, -8, -12 - form * 2, -4); ctx.quadraticCurveTo(-8, -2, -10, 2); ctx.quadraticCurveTo(-5, 1, 0, 2); ctx.closePath(); ctx.fill(); ctx.restore(); }
+    ctx.strokeStyle = c; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(-5, -6); ctx.quadraticCurveTo(-12, -2 + sw * 10, -11, -9); ctx.stroke(); ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(-11, -9); ctx.lineTo(-13.4, -11.5); ctx.lineTo(-9.6, -11); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(1, -8, 5.5, 5, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = '#ff7a5a'; ctx.beginPath(); ctx.ellipse(2, -7, 3, 2.8, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.arc(3, -16, 7, 0, TAU); ctx.fill();
+    for (const [hx, d] of [[-1, -1], [7, 1]]) { ctx.fillStyle = form >= 2 ? '#ffd76a' : '#f2ece0'; ctx.beginPath(); ctx.moveTo(hx - 1.6, -21); ctx.quadraticCurveTo(hx + d * 1.5, -25, hx + d * (2.5 + form), -27 - form * 1.5); ctx.quadraticCurveTo(hx + d * 0.5, -23, hx + 1.6, -21.5); ctx.closePath(); ctx.fill(); }
+    if (form >= 2) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; for (let k = 0; k < 4; k++) { const fx = -2 + k * 3, fh = 4 + Math.sin(t * 12 + k) * 1.5; ctx.fillStyle = 'rgba(255,150,60,0.7)'; ctx.beginPath(); ctx.moveTo(fx - 1.4, -21.5); ctx.quadraticCurveTo(fx, -21.5 - fh, fx + 0.4, -22 - fh); ctx.quadraticCurveTo(fx + 0.8, -21.5 - fh * 0.5, fx + 1.4, -21.5); ctx.fill(); } ctx.restore(); }
+    petEyes(ctx, 1, -16.5, 1.9, hap, slp, bl, '#ffd76a'); petEyes(ctx, 6, -16.5, 1.9, hap, slp, bl, '#ffd76a');
+    ctx.fillStyle = '#1a0a0c'; ctx.beginPath(); ctx.arc(3.6, -12.6, 1.4, 0, Math.PI); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(2.8, -12.6); ctx.lineTo(3.2, -11.6); ctx.lineTo(3.6, -12.6); ctx.fill();
+    if (form >= 1) { ctx.fillStyle = '#ffd76a'; ctx.fillRect(-3, -6.5, 1.6, 2); ctx.fillRect(5, -6.5, 1.6, 2); }
+  } else if (sp === 'pony') {
+    if (form >= 1) aura(c2, 26 + form * 3);
+    const hue = (t * 70) % 360, rb = k => `hsl(${(hue + k * 50) % 360},95%,70%)`;
+    for (let k = 0; k < 4; k++) { ctx.strokeStyle = rb(k); ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-7, -9 + k * 0.8); ctx.quadraticCurveTo(-13, -8 + k + sw * 8, -12 + k * 0.5, -2 + k * 0.6); ctx.stroke(); }
+    ctx.fillStyle = c; for (const [lx, off] of [[-5, 0], [-2, Math.PI], [3, Math.PI], [6, 0]]) { const s = mv ? Math.sin(ph + off) * 2 : 0; ctx.fillRect(lx - 1.2 + s * 0.4, -6, 2.4, 6 - Math.abs(s) * 0.5); ctx.fillStyle = '#b48cff'; ctx.fillRect(lx - 1.3 + s * 0.4, -1.4, 2.6, 1.4); ctx.fillStyle = c; }
+    ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(0, -9, 8, 5.2, 0, 0, TAU); ctx.fill();
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; for (const [sx, sy] of [[-3, -10], [-0.5, -8]]) { ctx.fillStyle = rb(2); ctx.beginPath(); for (let q = 0; q < 5; q++) { const a = q * TAU / 5 - Math.PI / 2; ctx.lineTo(sx + Math.cos(a) * 1.4, sy + Math.sin(a) * 1.4); ctx.lineTo(sx + Math.cos(a + TAU / 10) * 0.6, sy + Math.sin(a + TAU / 10) * 0.6); } ctx.closePath(); ctx.fill(); } ctx.restore();
+    if (form >= 1) { ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.ellipse(-2, -14, 5, 2.4, -0.7 + Math.sin(t * 8) * 0.2, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(4, -12); ctx.quadraticCurveTo(5, -18, 7, -19); ctx.lineTo(9, -15); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(8.5, -19, 5.4, 4.6, 0.2, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.ellipse(12.4, -17, 3.2, 2.6, 0.3, 0, TAU); ctx.fill();
+    ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(6, -22.5); ctx.lineTo(6.6, -26.5); ctx.lineTo(8.6, -23); ctx.fill();
+    for (let k = 0; k < 4; k++) { ctx.fillStyle = rb(k); ctx.beginPath(); ctx.ellipse(5 - k * 1.4, -21 + k * 2.4, 2.8, 1.8, -0.6, 0, TAU); ctx.fill(); }
+    if (form >= 2) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = '#fff6c8'; ctx.beginPath(); ctx.moveTo(9.4, -23); ctx.lineTo(11.6, -31); ctx.lineTo(11.4, -22.6); ctx.closePath(); ctx.fill(); glowDot(ctx, 11.4, -30, 6, '#ffd0f0', 0.9); ctx.restore(); }
+    petEyes(ctx, 9.6, -19.6, 1.9, hap, slp, bl, '#5a3a9a');
+    ctx.fillStyle = '#c87aa0'; ctx.beginPath(); ctx.arc(14, -16.8, 0.6, 0, TAU); ctx.fill();
+    petBlush(ctx, 11.2, -16.8);
+  }
+  if (slp) { ctx.fillStyle = 'rgba(220,230,255,0.85)'; ctx.font = '700 6px sans-serif'; const z = (t * 0.8) % 1; ctx.fillText('z', 10 + z * 4, -24 - z * 8); ctx.font = '700 4.5px sans-serif'; ctx.fillText('z', 14 + z * 3, -30 - z * 6); }
+}
+function drawPet(ctx, t) {
+  const p = G.pet; if (!p) return; const pd = activePet(); if (!pd) return;
+  const form = petForm(pd.lvl), sc = (1.35 + form * 0.18), hopY = p.moving ? -Math.abs(Math.sin(p.hop)) * 3 : 0;
+  ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(p.x, p.y + 1, 9 * sc, 3.2 * sc, 0, 0, TAU); ctx.fill();
+  ctx.save(); ctx.translate(p.x, p.y + hopY); ctx.scale(sc * p.face, sc); ctx.lineJoin = 'round';
+  drawPetBody(ctx, p.sp, form, t, { moving: p.moving, hop: p.hop, happy: p.happyT > 0, sleep: p.idleT > 5, blink: p.blink < 0 });
+  ctx.restore();
+  if (p.happyT > 0.5) { ctx.fillStyle = '#ff7ab0'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('♥', p.x + 8 * p.face, p.y - 40 * sc / 1.35 - (0.7 - p.happyT) * 30); }
+  if (G.petStance > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = 'rgba(200,255,220,0.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(hero.x, hero.y - 28, 24, 36, 0, 0, TAU); ctx.stroke(); ctx.restore(); }
+}
+
+// ---------- Яйца и Питомник ----------
+function eggFor(z) {
+  if (S.oni && Math.random() < 0.35) return 'imp';
+  if (S.loc === 1) return 'cat'; if (S.loc === 2) return 'kitsune'; return z <= 2 ? 'tanuki' : 'panda';
+}
+function giveEgg(sp, quiet) {
+  const P0 = S.pets;
+  if (P0.owned[sp] || P0.eggs.some(e => e.sp === sp)) { // дубликат → лакомство
+    const id = P0.owned[sp] ? sp : P0.active; if (id && P0.owned[id]) { const p = P0.owned[id]; petGainXp(petNeed(p.lvl) * 0.6, id); }
+    toast(`${PET_SP[sp].icon} Ещё одно яйцо «${PET_SP[sp].short}» превратилось в большое лакомство для питомца`); return;
+  }
+  P0.eggs.push({ sp, k: 0 }); if (!quiet) { banner(`🥚 Яйцо: ${PET_SP[sp].name}`, `Вылупится через ${PET_SP[sp].hatch} убийств${freeSlots() > 0 ? '' : ' · нужен свободный слот в Питомнике'}`); SFX.up(); }
+  tryHatch();
+}
+const freeSlots = () => S.pets.slots - Object.keys(S.pets.owned).length;
+function tryHatch() {
+  const P0 = S.pets;
+  for (let i = 0; i < P0.eggs.length; i++) {
+    const e = P0.eggs[i]; if (e.k < PET_SP[e.sp].hatch || freeSlots() <= 0) continue;
+    P0.eggs.splice(i, 1); i--; P0.owned[e.sp] = { lvl: 1, xp: 0, picks: [] };
+    if (!P0.active) { P0.active = e.sp; spawnPetEntity(); refreshPetFx(); refreshStats(); }
+    banner(`${PET_SP[e.sp].icon} Вылупился ${PET_SP[e.sp].short}!`, `${PET_SP[e.sp].name} · ${PET_SP[e.sp].role}`); SFX.up(); G.flash = 0.2; save();
+    if (G.petsOpen) renderPets();
+  }
+}
+const NQ_TEXT = { collect: (n, z) => `Питомец соберёт ${n} предметов лута в районе ${z}`, elite: (n, z) => `Победи ${n} элитных врагов в районе ${z}`, boss: (n, z) => `Победи босса района ${z}` };
+function genNQ() {
+  const mz = locMaxZone(), z = Math.random() < 0.6 ? mz : randi(1, mz), type = pick2(['collect', 'collect', 'elite', 'boss']);
+  const need = type === 'collect' ? 120 + 80 * z : type === 'elite' ? 4 + 3 * z : 1;
+  return { type, z, loc: S.loc, need, have: 0, egg: eggFor(z), gold: Math.round(40 * 12 * ZONES[z].goldM * z), done: false };
+}
+function ensureNQ() { const Q = S.pets.nq; Q.offers = Q.offers.filter(q => (q.loc || 1) === S.loc); while (Q.offers.length < 3) Q.offers.push(genNQ()); }
+function nqEvent(type, z) {
+  const q = S.pets && S.pets.nq.active; if (!q || q.done || q.type !== type || q.z !== z || (q.loc || 1) !== S.loc) return;
+  if (type === 'collect' && !S.pets.active) return;
+  q.have++; if (q.have >= q.need) { q.done = true; toast(`🐾 Задание Питомника выполнено — забери награду в Питомнике`); SFX.up(); }
+  if (G.petsOpen && G.petsTab === 'nq') renderPets();
+}
+const SLOT_REQ = [null, null, { lvl: 5, txt: 'питомец 5 ур. и 1 выполненное задание Питомника' }, { tot: 25, txt: 'сумма уровней питомцев ≥ 25' }, { tot: 60, txt: 'сумма уровней питомцев ≥ 60' }, { tot: 100, txt: 'сумма уровней питомцев ≥ 100' }, { tot: 150, txt: 'сумма уровней питомцев ≥ 150' }];
+function slotReqMet(n) {
+  const r = SLOT_REQ[n]; if (!r) return false; const ps = Object.values(S.pets.owned), tot = ps.reduce((a, p) => a + p.lvl, 0);
+  if (r.lvl) return ps.some(p => p.lvl >= r.lvl) && S.pets.nq.done >= 1; return tot >= r.tot;
+}
+
+// ---------- Панель Питомника ----------
+function openPets() { if (G.petsOpen) return; G.petsOpen = true; $('#pets').classList.remove('hidden');
+  if (!S.pets.intro) { S.pets.intro = true; giveEgg('cat', true); banner('🐾 Питомник', 'Хранительница дарит тебе первое яйцо — Неоновый котёнок!'); }
+  if (!G.petSel) G.petSel = S.pets.active || Object.keys(S.pets.owned)[0] || null; ensureNQ(); renderPets(); SFX.click(); }
+function closePets() { if (!G.petsOpen) return; G.petsOpen = false; $('#pets').classList.add('hidden'); save(); }
+function togglePets() { G.petsOpen ? closePets() : openPets(); }
+const treatPrice = () => Math.round(150 * shopGM());
+const respecPrice = () => 20 * LOC_FACTOR[S.loc];
+function renderPets() {
+  if (!G.petsOpen) return; const P0 = S.pets, tab = G.petsTab || 'pets';
+  $('#pt-res').innerHTML = `<span class="res g"><i>¥</i>${fmt(S.gold)}</span><span class="res j"><i>✧</i>${fmt(S.jade)}</span>`;
+  $('#pt-tabs').innerHTML = `<button class="btab ${tab === 'pets' ? 'active' : ''}" data-act="ptab" data-tab="pets">🐾 Питомцы</button><button class="btab ${tab === 'nq' ? 'active' : ''}" data-act="ptab" data-tab="nq">📜 Задания Питомника <small>яйца и новые слоты</small></button>`;
+  if (tab === 'nq') { renderNQ(); return; }
+  const owned = Object.keys(P0.owned);
+  let slots = '';
+  for (let i = 0; i < PET_SLOTS_MAX; i++) {
+    const id = owned[i];
+    if (id) { const p = P0.owned[id]; slots += `<div class="pslot ${G.petSel === id ? 'sel' : ''} ${P0.active === id ? 'act' : ''}" data-act="psel" data-id="${id}" style="--pc:${PET_SP[id].col2}"><span class="pic">${PET_SP[id].icon}</span><b>${PET_SP[id].short}</b><small>ур. ${p.lvl}${P0.active === id ? ' · с тобой' : ''}</small></div>`; }
+    else if (i < P0.slots) slots += `<div class="pslot empty"><span class="pic">＋</span><small>свободный слот</small></div>`;
+    else slots += `<div class="pslot locked"><span class="pic">🔒</span><small>слот ${i + 1}</small></div>`;
+  }
+  const eggs = P0.eggs.map(e => `<div class="egg" style="--pc:${PET_SP[e.sp].col2}"><span>${PET_SP[e.sp].ultra ? '🌈' : '🥚'}</span><div><b>${PET_SP[e.sp].ultra ? 'Радужное яйцо' : 'Яйцо: ' + PET_SP[e.sp].short}</b><div class="heat"><i style="width:${Math.min(100, e.k / PET_SP[e.sp].hatch * 100)}%"></i></div><small>${Math.min(e.k, PET_SP[e.sp].hatch)}/${PET_SP[e.sp].hatch} убийств${e.k >= PET_SP[e.sp].hatch && freeSlots() <= 0 ? ' · нужен свободный слот!' : ''}</small></div></div>`).join('') || '<div class="note">Яиц пока нет. Их дают задания Питомника — у каждого района своё яйцо.</div>';
+  $('#pt-left').innerHTML = `<div class="ctitle">Слоты Питомника ${owned.length}/${P0.slots}</div><div class="pslots">${slots}</div><div class="ctitle">Яйца в инкубаторе</div>${eggs}`;
+  const id = G.petSel && P0.owned[G.petSel] ? G.petSel : null;
+  if (!id) { $('#pt-mid').innerHTML = '<div class="note" style="margin-top:40px">Здесь появится твой питомец. Пока он вылупляется, продолжай сражаться — яйцо греется от каждой победы.</div>'; $('#pt-right').innerHTML = ''; return; }
+  const p = P0.owned[id], S0 = PET_SP[id], f = petForm(p.lvl), need = petNeed(p.lvl);
+  $('#pt-mid').innerHTML = `<canvas id="pt-canvas" width="360" height="300"></canvas>
+    <div class="iname" style="color:${S0.col2}">${S0.icon} ${S0.name}</div>
+    <div class="pform">Облик: <b>${S0.forms[f]}</b>${f < 2 ? ` · эволюция на ${PET_EVO[f]} ур.` : ' · высший облик'}</div>
+    <div class="ctitle">Уровень ${p.lvl}/${PET_MAX_LVL}${p.lvl < PET_MAX_LVL ? ` · опыт ${fmt(p.xp)}/${fmt(need)}` : ''}</div><div class="heat"><i style="width:${p.lvl < PET_MAX_LVL ? p.xp / need * 100 : 100}%"></i></div>
+    <div class="desc">Специальность: <b>${S0.role}</b>. Опыт питомец получает за собранный лут и победы рядом с героиней.</div>
+    <div class="mrow">${P0.active === id ? '<button disabled>✓ Сопровождает героиню</button>' : `<button class="primary" data-act="pact" data-id="${id}">Взять с собой</button>`}
+      <button data-act="ptreat" data-id="${id}" ${S.gold >= treatPrice() && p.lvl < PET_MAX_LVL ? '' : 'disabled'}>🍡 Лакомство +20% уровня<span class="pr g">¥${fmt(treatPrice())}</span></button></div>`;
+  const rows = PET_TREE[id].map((tier, i) => {
+    const req = PET_TIERS[i], c = p.picks[i], open = p.lvl >= req, ult = i === 5;
+    return `<div class="ptier ${open ? '' : 'locked'}"><div class="pt-lv">${ult ? '★ ' : ''}${req} ур.</div>${tier.map((o, k) => `<button class="popt ${c === k ? 'chosen' : ''} ${c !== undefined && c !== null && c !== k ? 'other' : ''}" data-act="ppick" data-id="${id}" data-i="${i}" data-k="${k}" ${open && (c === undefined || c === null) ? '' : 'disabled'}><b>${o.n}</b><small>${o.d}</small></button>`).join('')}</div>`;
+  }).join('');
+  const any = p.picks.some(v => v === 0 || v === 1);
+  $('#pt-right').innerHTML = `<div class="ctitle">Навыки · выбери одну ветку на каждом уровне</div>${rows}<div class="mrow" style="margin-top:8px"><button data-act="presp" data-id="${id}" ${any && S.jade >= respecPrice() ? '' : 'disabled'}>↺ Сбросить выбор<span class="pr j">✧${respecPrice()}</span></button></div>`;
+}
+function renderNQ() {
+  const P0 = S.pets, Q = P0.nq; ensureNQ();
+  const card = (q, i, act) => `<div class="bnote nqn" style="--r:${[-1.2, 0.8, -0.5][i % 3]}deg"><div class="hanko">🐾</div><div class="nz">${ZONES[q.z].short} · ${'★'.repeat(q.z)}${'☆'.repeat(4 - q.z)}</div><h4>${NQ_TEXT[q.type](q.need, ZONES[q.z].short)}</h4>
+    <div class="nd">Награда: ${PET_SP[q.egg].icon} <b>яйцо «${PET_SP[q.egg].short}»</b> · ¥${fmt(q.gold)}</div>
+    ${act ? `<div class="qbar"><i style="width:${Math.min(100, q.have / q.need * 100)}%"></i></div><div class="nd">${q.have}/${q.need}</div>${q.done ? '<button class="primary" data-act="nqclaim">Забрать награду</button>' : '<button data-act="nqdrop">Отказаться</button>'}` : `<button class="primary" data-act="nqtake" data-i="${i}" ${Q.active ? 'disabled title="Сначала заверши текущее задание"' : ''}>Взять задание</button>`}</div>`;
+  const nextSlot = P0.slots + 1;
+  const slotCard = nextSlot <= PET_SLOTS_MAX ? `<div class="card itemcard" style="--rc:#ffd76a"><div class="iname" style="color:#ffd76a">🏠 Расширить Питомник → слот ${nextSlot}</div><div class="desc">Условие: <b>${SLOT_REQ[nextSlot].txt}</b></div><button class="primary big" data-act="nqslot" ${slotReqMet(nextSlot) ? '' : 'disabled'}>${slotReqMet(nextSlot) ? 'Построить новый домик' : 'Условие ещё не выполнено'}</button></div>` : '<div class="note">Питомник полностью расширен — 6 слотов.</div>';
+  $('#pt-left').innerHTML = `<div class="ctitle">Активное задание</div>${Q.active ? card(Q.active, 0, true) : '<div class="note">Нет активного задания. Возьми одно справа — задания Питомника сложные, зато дают яйца.</div>'}${slotCard}`;
+  $('#pt-mid').innerHTML = `<div class="ctitle">Задания · ${LOCS[S.loc].name}</div><div class="nqgrid">${Q.offers.map((q, i) => card(q, i, false)).join('')}</div>`;
+  $('#pt-right').innerHTML = `<div class="note">Яйца зависят от места: Токио — 🐱 кот, Храмовый квартал — 🦊 кицунэ, Горный пик — 🦝 тануки (1–2 район) и 🐼 панда (3–4 район)${S.oni ? ', а у класса Они иногда попадается 👹 бесёнок' : ''}. Повторное яйцо становится большим лакомством.</div><div class="note">✨ Говорят, хранительнице иногда приносят <b>радужные яйца</b>… никто не знает, откуда.</div>`;
+}
+$('#pets').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return; const act = b.dataset.act, P0 = S.pets;
+  if (act === 'close') { closePets(); return; }
+  if (act === 'ptab') G.petsTab = b.dataset.tab;
+  else if (act === 'psel') G.petSel = b.dataset.id;
+  else if (act === 'pact') { P0.active = b.dataset.id; spawnPetEntity(); refreshPetFx(); refreshStats(); toast(`${PET_SP[P0.active].icon} ${PET_SP[P0.active].short} теперь с тобой`); }
+  else if (act === 'ptreat') { const c = treatPrice(); if (S.gold < c) return; S.gold -= c; const p = P0.owned[b.dataset.id]; petGainXp(petNeed(p.lvl) * 0.2, b.dataset.id); SFX.coin(); }
+  else if (act === 'ppick') { const p = P0.owned[b.dataset.id], i = +b.dataset.i, k = +b.dataset.k; if (p.lvl < PET_TIERS[i] || (p.picks[i] === 0 || p.picks[i] === 1)) return; p.picks[i] = k; refreshPetFx(); refreshStats(); SFX.up(); toast(`${PET_SP[b.dataset.id].icon} Навык: ${PET_TREE[b.dataset.id][i][k].n}`); }
+  else if (act === 'presp') { const c = respecPrice(); if (S.jade < c) return; S.jade -= c; P0.owned[b.dataset.id].picks = []; refreshPetFx(); refreshStats(); SFX.click(); }
+  else if (act === 'nqtake') { if (P0.nq.active) return; P0.nq.active = P0.nq.offers.splice(+b.dataset.i, 1)[0]; ensureNQ(); SFX.up(); }
+  else if (act === 'nqdrop') { P0.nq.active = null; SFX.click(); }
+  else if (act === 'nqclaim') {
+    const q = P0.nq.active; if (!q || !q.done) return; P0.nq.active = null; P0.nq.done++; S.gold += q.gold; SFX.coin(); giveEgg(q.egg);
+    P0.pity++; const ch = 0.02 * (1 + (PFX.eggChance || 0));
+    if (!P0.owned.pony && !P0.eggs.some(e => e.sp === 'pony') && (Math.random() < ch || P0.pity >= 40)) { P0.pity = 0; setTimeout(() => { giveEgg('pony', true); banner('🌈 РАДУЖНОЕ ЯЙЦО!', 'Хранительница не верит своим глазам… внутри что-то сияет'); G.flash = 0.5; SFX.boom(); }, 1600); }
+  }
+  else if (act === 'nqslot') { const n = P0.slots + 1; if (n > PET_SLOTS_MAX || !slotReqMet(n)) return; P0.slots = n; banner('🏠 Питомник расширен', `Теперь слотов: ${n}`); SFX.up(); tryHatch(); }
+  save(); renderPets();
+});
+function drawPetsPreview(t) {
+  const cv = document.getElementById('pt-canvas'); if (!cv || !G.petsOpen) return; const c = cv.getContext('2d'), id = G.petSel; if (!id || !S.pets.owned[id]) return;
+  c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cv.width, cv.height);
+  const g = c.createRadialGradient(180, 200, 10, 180, 200, 170); g.addColorStop(0, hexA(PET_SP[id].col2, 0.25)); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.fillRect(0, 0, 360, 300);
+  c.fillStyle = 'rgba(0,0,0,0.35)'; c.beginPath(); c.ellipse(180, 252, 70, 14, 0, 0, TAU); c.fill();
+  const f = petForm(S.pets.owned[id].lvl); c.save(); c.translate(180, 250 - Math.abs(Math.sin(t * 3)) * 6); c.scale(5.2, 5.2); c.lineJoin = 'round';
+  drawPetBody(c, id, f, t, { moving: true, hop: t * 6, happy: Math.sin(t * 0.7) > 0.6, sleep: false, blink: (t % 3.5) < 0.12 }); c.restore();
+}
+function drawNurseryCircle(ctx, t) {
+  const { x, y, r } = NURSERY, act = G.inNurseryCircle ? 1 : 0.55;
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r * 1.3); g.addColorStop(0, `rgba(255,140,200,${0.18 * act})`); g.addColorStop(1, 'rgba(255,140,200,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 1.3, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.strokeStyle = `rgba(255,160,210,${0.75 * act})`; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.font = '13px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = `rgba(255,190,225,${0.8 * act})`;
+  for (let i = 0; i < 6; i++) { const a = t * 0.3 + i * TAU / 6; ctx.fillText('🐾', x + Math.cos(a) * (r - 22), y + Math.sin(a) * (r - 22)); }
+  ctx.restore();
+}
+function drawNurseryStructure(ctx, t) {
+  const x = NURSERY.x, y = NURSERY.sy;
+  ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(x, y + 2, 72, 13, 0, 0, TAU); ctx.fill();
+  let g = ctx.createLinearGradient(0, y - 70, 0, y); g.addColorStop(0, '#f2d8b8'); g.addColorStop(1, '#c8a080'); ctx.fillStyle = g; rr(ctx, x - 54, y - 64, 108, 64, 4); ctx.fill();
+  ctx.fillStyle = '#6a3a2a'; ctx.beginPath(); ctx.moveTo(x - 66, y - 60); ctx.lineTo(x, y - 106); ctx.lineTo(x + 66, y - 60); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#ff8ac0'; ctx.beginPath(); ctx.moveTo(x - 62, y - 62); ctx.lineTo(x, y - 100); ctx.lineTo(x + 62, y - 62); ctx.lineTo(x + 56, y - 60); ctx.lineTo(x, y - 94); ctx.lineTo(x - 56, y - 60); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#4a2a1a'; ctx.beginPath(); ctx.moveTo(x - 14, y); ctx.lineTo(x - 14, y - 30); ctx.arc(x, y - 30, 14, Math.PI, 0); ctx.lineTo(x + 14, y); ctx.closePath(); ctx.fill();
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; const lg = ctx.createRadialGradient(x, y - 22, 0, x, y - 22, 26); lg.addColorStop(0, 'rgba(255,200,150,0.5)'); lg.addColorStop(1, 'rgba(255,200,150,0)'); ctx.fillStyle = lg; ctx.beginPath(); ctx.arc(x, y - 22, 26, 0, TAU); ctx.fill(); ctx.restore();
+  for (const wx of [x - 36, x + 36]) { ctx.fillStyle = 'rgba(255,220,170,0.75)'; ctx.beginPath(); ctx.arc(wx, y - 38, 9, 0, TAU); ctx.fill(); ctx.strokeStyle = '#6a3a2a'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(wx - 9, y - 38); ctx.lineTo(wx + 9, y - 38); ctx.moveTo(wx, y - 47); ctx.lineTo(wx, y - 29); ctx.stroke(); }
+  ctx.font = '18px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🐾', x, y - 76);
+  // заборчик и лежанка
+  ctx.fillStyle = '#e8c8a0'; for (let k = 0; k < 6; k++) { ctx.fillRect(x + 62 + k * 7, y - 14, 4, 14); } ctx.fillRect(x + 60, y - 10, 46, 3);
+  ctx.fillStyle = '#ff9ac8'; ctx.beginPath(); ctx.ellipse(x - 76, y - 4, 16, 6, 0, 0, TAU); ctx.fill(); ctx.fillStyle = '#ffd0e4'; ctx.beginPath(); ctx.ellipse(x - 76, y - 5, 11, 3.6, 0, 0, TAU); ctx.fill();
+  // спящий котик-хранитель на лежанке
+  ctx.save(); ctx.translate(x - 76, y - 6); ctx.scale(1.1, 1.1); drawPetBody(ctx, 'cat', 0, t, { moving: false, hop: 0, happy: false, sleep: true, blink: false }); ctx.restore();
+  ctx.fillStyle = '#16121a'; rr(ctx, x - 30, y - 124, 60, 15, 2); ctx.fill(); ctx.font = '700 10px "Yu Gothic","Meiryo",sans-serif'; ctx.fillStyle = '#ffb0d8'; ctx.fillText('育舎 Питомник', x, y - 116.5);
+}
+function updateNurseryCircle() {
+  const d = dist(hero.x, hero.y, NURSERY.x, NURSERY.y);
+  if (d < NURSERY.r) { if (!G.inNurseryCircle) { G.inNurseryCircle = true; openPets(); } }
+  else if (d > NURSERY.r + 16 && G.inNurseryCircle) { G.inNurseryCircle = false; closePets(); }
+}
+
+// ---------- Качество графики: 2 — высокое, 1 — среднее, 0 — низкое ----------
+var GFX = (() => {
+  let st = {}; try { st = JSON.parse(localStorage.getItem('neonRonin_settings')) || {}; } catch (e) { }
+  const touch = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || (navigator.maxTouchPoints || 0) > 0;
+  const weak = touch || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+  const mode = ['auto', 'high', 'mid', 'low'].includes(st.gfx) ? st.gfx : 'auto';
+  const level = mode === 'high' ? 2 : mode === 'mid' ? 1 : mode === 'low' ? 0 : (st.gfxAuto !== undefined ? st.gfxAuto : (weak ? 1 : 2));
+  return { mode, level, showFps: !!st.fps, fps: 60, acc: 0, n: 0, calm: 0 };
+})();
+const GFX_NAMES = ['низкое', 'среднее', 'высокое'];
+const gfxScale = () => GFX.level >= 2 ? Math.min(2, window.devicePixelRatio || 1) : GFX.level === 1 ? 1 : 0.85;
 function setMaxZone(z) { if (S.loc === 3) { if (z > (S.maxZone3 || 1)) S.maxZone3 = z; } else if (S.loc === 2) { if (z > (S.maxZone2 || 1)) S.maxZone2 = z; } else if (z > (S.maxZone || 1)) S.maxZone = z; }
 
 // ---- Развитие души ----
@@ -762,6 +1293,7 @@ function computeStats() {
   st.res = { fire: Math.min(0.8, (bark + treeVal('fire')) / 100), ice: Math.min(0.8, (bark + treeVal('ice')) / 100), thunder: Math.min(0.8, (bark + treeVal('thunder')) / 100), poison: Math.min(0.8, treeVal('poison') / 100), dark: 0 };
   st.curseRes = Math.min(0.9, treeVal('curse') / 100);
   st.acc = treeVal('eye') / 100; st.pen = Math.min(0.8, treeVal('pierce') / 100);
+  applyPetStats(st);
   return st;
 }
 
@@ -794,7 +1326,7 @@ function fixSlots() {
   if (!S.look || typeof S.look !== 'object') S.look = { w: 0, a: 0 }; S.unlock2 = !!S.unlock2 || S.bossKills.every(k => k > 0); S.unlock3 = !!S.unlock3 || (S.unlock2 && S.bossKills2.every(k => k > 0)); if ((S.loc === 2 && !S.unlock2) || (S.loc === 3 && !S.unlock3)) S.loc = 1;
   if (S.recallPt && !(S.recallPt.loc >= 1 && S.recallPt.loc <= 3 && isFinite(S.recallPt.x) && isFinite(S.recallPt.y) && S.recallPt.x >= CFG.BASE_X && (S.recallPt.loc === 1 || (S.recallPt.loc === 2 && S.unlock2) || (S.recallPt.loc === 3 && S.unlock3)))) S.recallPt = null;
   if (!S.quests || !Array.isArray(S.quests.offers) || !Array.isArray(S.quests.active)) S.quests = { offers: [], active: [], refreshT: 180, done: 0 };
-  applyClassText();
+  applyClassText(); fixPets(); refreshPetFx();
   if (!Array.isArray(S.quests.trials)) S.quests.trials = []; S.quests.trials = S.quests.trials.filter(q => q && Array.isArray(q.mods)); for (const q of S.quests.active) if (q.trial && !Array.isArray(q.mods)) q.mods = [];
 }
 function loadSave() {
@@ -932,6 +1464,7 @@ function genWorld(loc = 1) {
   WORLD.obstacles.push({ kind: 'col', x: FORGE.x - 55, y: FORGE.sy - 50, w: 110, h: 50 }); // горн
   WORLD.obstacles.push({ kind: 'col', x: BOARD.x - 52, y: BOARD.sy - 14, w: 104, h: 16 }); // доска
   WORLD.obstacles.push({ kind: 'col', x: SHOP.x - 58, y: SHOP.sy - 40, w: 116, h: 40 }); // лавка
+  WORLD.obstacles.push({ kind: 'col', x: NURSERY.x - 56, y: NURSERY.sy - 40, w: 112, h: 40 }); // питомник
   WORLD.obstacles.push({ kind: 'col', x: PORTAL.x - 68, y: PORTAL.sy - 8, w: 14, h: 10 }, { kind: 'col', x: PORTAL.x + 54, y: PORTAL.sy - 8, w: 14, h: 10 }); // портал
   if (temple || mountain) { // большие тории вдоль главной улицы
     let side = 0;
@@ -942,7 +1475,7 @@ function genWorld(loc = 1) {
       WORLD.gates.push({ x: gx, y: gy, s, col }); WORLD.obstacles.push({ kind: 'col', x: gx - 85 * s - 8, y: gy - 8, w: 16, h: 10 }, { kind: 'col', x: gx + 85 * s - 8, y: gy - 8, w: 16, h: 10 });
     }
   }
-  for (const [tx, ty, s] of [[170, 1240, 1.2], [930, 1580, 1.1], [870, 2560, 1.2], [210, 2580, 1.1], [180, 880, 1.15], [820, 860, 1.1], [190, 500, 1.15], [820, 520, 1.1], [200, 2980, 1.15], [800, 3020, 1.1], [150, 1720, 1.2]]) WORLD.trees.push(mkTree(tx, ty, s, R));
+  for (const [tx, ty, s] of [[170, 1240, 1.2], [930, 1580, 1.1], [870, 2560, 1.2], [210, 2580, 1.1], [180, 880, 1.15], [820, 860, 1.1], [190, 500, 1.15], [820, 520, 1.1], [200, 2980, 1.15], [800, 3020, 1.1]]) WORLD.trees.push(mkTree(tx, ty, s, R));
   for (let i = 0; i < 95; i++) for (let tries = 0; tries < 10; tries++) {
     const tx = CFG.BASE_X + 150 + R() * (W - CFG.BASE_X - 300), ty = 520 + R() * (H - 1040);
     if (pointBlocked(tx, ty, 50) || WORLD.arenas.some(a => dist(tx, ty, a.x, a.y) < 380) || Math.abs(ty - MID) < 300) continue;
@@ -992,7 +1525,7 @@ let ST = computeStats();
 function refreshStats() { ST = computeStats(); hero.hp = Math.min(hero.hp, ST.maxHp); hero.shield = Math.min(hero.shield, ST.shieldMax); }
 
 // ---------- Эффекты / частицы ----------
-function P(type, x, y, vx, vy, life, size, color) { if (G.particles.length > 1000) return {}; const o = { type, x, y, vx, vy, life, max: life, size, color, rot: Math.random() * TAU, vr: rand(-4, 4) }; G.particles.push(o); return o; }
+function P(type, x, y, vx, vy, life, size, color) { if (G.particles.length > [160, 420, 1000][GFX.level] || (GFX.level < 2 && Math.random() < (GFX.level ? 0.35 : 0.65))) return {}; const o = { type, x, y, vx, vy, life, max: life, size, color, rot: Math.random() * TAU, vr: rand(-4, 4) }; G.particles.push(o); return o; }
 function burst(x, y, n, color, speed = 200, life = 0.5, size = 3, type = 'spark') { for (let i = 0; i < n; i++) { const a = rand(TAU), s = rand(speed * 0.3, speed); P(type, x, y, Math.cos(a) * s, Math.sin(a) * s, rand(life * 0.5, life), rand(size * 0.5, size), color); } }
 function spawnText(x, y, txt, col, size = 15, crit = false) { if (G.texts.length > 120) G.texts.shift(); G.texts.push({ x, y, txt, col, size, crit, life: crit ? 1.1 : 0.85, max: crit ? 1.1 : 0.85, vx: rand(-20, 20) }); }
 function addBolt(x1, y1, x2, y2, col, w = 3) {
@@ -1099,7 +1632,7 @@ function shadowDance(src) {
   if (list.length) SFX.zap();
 }
 function killEnemy(e) {
-  if (e.dead) return; e.dead = true; S.kills++; questEvent('kill', e); gainXp(e.xp || 0); onKill3(e); gainOniEnergy(3);
+  if (e.dead) return; e.dead = true; S.kills++; questEvent('kill', e); gainXp(e.xp || 0); onKill3(e); gainOniEnergy(3); petOnKill(e);
   const s = e.boss ? 2.2 : 1;
   burst(e.x, e.y - 25, e.boss ? 70 : 16, e.boss ? hexRGB(e.col2) : '255,90,120', 260 * s, 0.6, 3);
   burst(e.x, e.y - 20, e.boss ? 26 : 7, '30,30,48', 110, 0.9, 12, 'smoke');
@@ -1111,7 +1644,7 @@ function killEnemy(e) {
     G.bossTimers[e.z] = 45; bossKillsArr()[e.z - 1]++; checkUnlock(); G.shake = 16; G.hitStop = 0.14; G.flash = 0.18; SFX.boom();
     banner('БОСС ПОВЕРЖЕН', `${e.name} · +${e.souls} ◆ душ · +¥${fmt(e.gold)}`); save();
   } else {
-    const n = randi(1, 3); for (let i = 0; i < n; i++) dropLoot('gold', e.x, e.y, Math.max(1, Math.round(e.gold / n)));
+    const n = randi(1, 3); for (let i = 0; i < n; i++) dropLoot('gold', e.x, e.y, Math.max(1, Math.round(e.gold * (e.elite ? 1 + (PFX.eliteGold || 0) : 1) / n)));
     if (e.elite || Math.random() < 0.025 * ST.luck) dropLoot('soul', e.x, e.y, (ZONES[e.z].soulV || e.z) * (e.elite ? 2 : 1));
     if (e.elite) { dropLoot('jade', e.x, e.y, 1); if (Math.random() < 0.5 * ST.luck) dropLoot('jade', e.x, e.y, 1); }
     else if (Math.random() < 0.03 * ST.luck * (e.loc === 3 ? 2 : e.loc === 2 ? 1.5 : 1)) dropLoot('jade', e.x, e.y, 1);
@@ -1124,6 +1657,7 @@ function damageHero(amount, src, elem) {
   elem = elem || (src && src.elem) || null;
   if (auraWeak(src)) amount *= 1.5;
   if (mountainWeak()) amount *= 1.4;
+  if (G.petStance > 0) amount *= 0.4;
   amount *= ST.frail || 1;
   if (elem && ST.res && ST.res[elem]) amount *= 1 - ST.res[elem];
   if (ST.block > 0 && Math.random() < ST.block) { amount *= 0.4; spawnText(hero.x, hero.y - 84, 'Блок', '#ffd76a', 13); P('ring', hero.x, hero.y - 28, 0, 0, 0.25, 30, '255,215,110'); }
@@ -1135,7 +1669,7 @@ function damageHero(amount, src, elem) {
   if (hero.hp <= 0) heroDie();
 }
 function heroDie() {
-  if (tryRevive()) return;
+  if (petSaveLife() || tryRevive()) return;
   hero.dead = true; hero.deadT = 2.8; hero.hp = 0; SFX.death(); G.shake = 12;
   burst(hero.x, hero.y - 30, 40, '255,90,120', 300, 0.8, 3); burst(hero.x, hero.y - 20, 14, '30,30,48', 100, 1, 14, 'smoke');
   G.telegraphs.length = 0; G.eprojectiles.length = 0;
@@ -1350,9 +1884,9 @@ function updateLoot(dt) {
     } else { const f = Math.max(0, 1 - dt * 4); l.vx *= f; l.vy *= f; }
     l.x += l.vx * dt; l.y += l.vy * dt;
     if (!hero.dead && l.t > 0.35 && d < 22) {
-      if (l.type === 'gold') { const gv = Math.max(1, Math.round(l.val * ST.goldMul)); S.gold += gv; G.goldPop += gv; SFX.coin(); questEvent('gold', gv); }
+      if (l.type === 'gold') { const gv = Math.max(1, Math.round(l.val * ST.goldMul * (G.goldRush > 0 ? 2 : 1) * (PFX.doubleCoin && Math.random() < PFX.doubleCoin ? 2 : 1))); petGainXp(0.3); S.gold += gv; G.goldPop += gv; SFX.coin(); questEvent('gold', gv); }
       else if (l.type === 'jade') { S.jade += l.val; spawnText(hero.x, hero.y - 80, `+${l.val} ✧`, '#7dffb0', 16, true); SFX.soul(); burst(hero.x, hero.y - 30, 10, '110,255,170', 160, 0.5, 3, 'glow'); questEvent('jade', l.val); }
-      else { S.souls += l.val; spawnText(hero.x, hero.y - 80, `+${l.val} ◆`, '#d6a6ff', 16, true); SFX.soul(); burst(hero.x, hero.y - 30, 10, '200,140,255', 160, 0.5, 3, 'glow'); }
+      else { const sv2 = Math.max(1, Math.round(l.val * (ST.soulMul || 1))); S.souls += sv2; spawnText(hero.x, hero.y - 80, `+${sv2} ◆`, '#d6a6ff', 16, true); SFX.soul(); burst(hero.x, hero.y - 30, 10, '200,140,255', 160, 0.5, 3, 'glow'); }
       G.loot.splice(i, 1); continue;
     }
     if (l.t > 60) G.loot.splice(i, 1);
@@ -1808,6 +2342,7 @@ function drawGround(ctx, v, t) {
   }
   // лужи с неоновыми отражениями
   for (const p of WORLD.puddles) {
+    if (GFX.level === 0) break;
     if (p.x + p.rx < v.x0 || p.x - p.rx > v.x1 || p.y + p.rx < v.y0 || p.y - p.rx > v.y1) continue;
     ctx.save(); ctx.translate(p.x, p.y); ctx.scale(1, p.ry);
     ctx.fillStyle = 'rgba(4,6,16,0.5)'; ctx.beginPath(); ctx.arc(0, 0, p.rx, 0, TAU); ctx.fill();
@@ -3131,7 +3666,7 @@ function drawHUD(ctx, sw, sh, t) {
   });
   // подсказки
   ctx.textAlign = 'left'; ctx.font = '500 12px "Segoe UI",sans-serif'; ctx.fillStyle = G.touchUI ? 'rgba(0,0,0,0)' : 'rgba(200,210,240,0.55)';
-  ctx.fillText('WASD/стрелки или ЛКМ — бег · атака автоматическая · Space — рывок · T — авто-охота · H — домой · L — древо · 1–4 — предметы · Q — Они · M — звук · O — меню · ~/F1 — консоль', 18, sh - 16);
+  ctx.fillText('WASD/стрелки или ЛКМ — бег · атака автоматическая · Space — рывок · T — авто-охота · H — домой · L — древо · P — питомцы · 1–4 — предметы · Q — Они · M — звук · O — меню · ~/F1 — консоль', 18, sh - 16);
   if (G.helpT > 0) {
     const a = Math.min(1, G.helpT); ctx.globalAlpha = a; const w = 470, x = 18, y = 178; glass(ctx, x, y, w, 112);
     ctx.fillStyle = '#ffcf8a'; ctx.font = '700 14px "Segoe UI",sans-serif'; ctx.fillText('Путь Ронина', x + 14, y + 20);
@@ -3160,12 +3695,13 @@ function drawHUD(ctx, sw, sh, t) {
 // =====================================================================
 //  БЛОК 10. ГЛАВНЫЙ РЕНДЕР
 // =====================================================================
-const canvas = $('#game'), ctx = canvas.getContext('2d');
+const canvas = $('#game'), ctx = canvas.getContext('2d', { alpha: false });
+(() => { const d = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, 'shadowBlur'); if (d && d.set) Object.defineProperty(ctx, 'shadowBlur', { configurable: true, get() { return d.get.call(this); }, set(v) { d.set.call(this, GFX.level >= 2 ? v : 0); } }); })();
 let dpr = 1, vignette = null;
 const rain = []; for (let i = 0; i < 150; i++) rain.push({ x: Math.random(), y: Math.random(), s: rand(0.6, 1.2) });
 function resize() {
   const W = Math.max(1, innerWidth | 0), H = Math.max(1, innerHeight | 0);
-  dpr = Math.min(2, window.devicePixelRatio || 1); canvas.width = Math.max(1, Math.floor(W * dpr)); canvas.height = Math.max(1, Math.floor(H * dpr));
+  dpr = gfxScale(); canvas.width = Math.max(1, Math.floor(W * dpr)); canvas.height = Math.max(1, Math.floor(H * dpr));
   G.cam.zoom = clamp(Math.min(W / 1180, H / 700), G.touchUI ? 0.5 : 0.7, 1.6);
   G.ui = clamp(Math.min(W / 1180, H / 720), 0.55, 1); document.documentElement.style.setProperty('--ui', G.ui);
   vignette = document.createElement('canvas'); vignette.width = W; vignette.height = H; const v = vignette.getContext('2d');
@@ -3183,7 +3719,7 @@ function render(realDt) {
   ctx.setTransform(dpr * z, 0, 0, dpr * z, dpr * (sw / 2 - G.cam.x * z + shx), dpr * (sh / 2 - G.cam.y * z + shy));
   const hw = sw / 2 / z, hh = sh / 2 / z; const v = G.view = { x0: G.cam.x - hw - 60, x1: G.cam.x + hw + 60, y0: G.cam.y - hh - 60, y1: G.cam.y + hh + 300 };
   drawGround(ctx, v, t);
-  if (v.x0 < CFG.BASE_X + 200) { drawForgeCircle(ctx, t); drawBoardCircle(ctx, t); drawPortalCircle(ctx, t); drawShopCircle(ctx, t); }
+  if (v.x0 < CFG.BASE_X + 200) { drawForgeCircle(ctx, t); drawBoardCircle(ctx, t); drawPortalCircle(ctx, t); drawShopCircle(ctx, t); drawNurseryCircle(ctx, t); }
   for (const A of WORLD.arenas) if (A.x > v.x0 - 400 && A.x < v.x1 + 400) drawArena(ctx, A, t);
   drawAutoAnchor(ctx, t);
   drawTelegraphs(ctx, t);
@@ -3202,17 +3738,20 @@ function render(realDt) {
   if (v.x0 < 1100 && PORTAL.sy > v.y0 - 200 && PORTAL.sy < v.y1 + 260) L.push({ y: PORTAL.sy, k: 10, o: null });
   for (const gt of WORLD.gates) if (inV(gt.x, gt.y, 260)) L.push({ y: gt.y, k: 11, o: gt });
   if (v.x0 < 400 && SHOP.sy > v.y0 - 200 && SHOP.sy < v.y1 + 200) L.push({ y: SHOP.sy, k: 12, o: null });
+  if (v.x0 < 400 && NURSERY.sy > v.y0 - 200 && NURSERY.sy < v.y1 + 200) L.push({ y: NURSERY.sy, k: 14, o: null });
+  if (G.pet) L.push({ y: G.pet.y, k: 13, o: null });
   if (!hero.dead) L.push({ y: hero.y, k: 8, o: hero });
   L.sort((a, b) => a.y - b.y);
   for (const it of L) {
     switch (it.k) {
       case 0: drawBuilding(ctx, it.o, t); break; case 1: drawProp(ctx, it.o, t); break; case 2: drawLampPost(ctx, it.o, t); break;
       case 3: drawTree(ctx, it.o, t); break; case 4: drawToro(ctx, it.o, t); break; case 5: drawEnemy(ctx, it.o, t); break;
-      case 6: drawTorii(ctx, it.o, t); break; case 7: drawForgeStructure(ctx, t); break; case 8: drawHero(ctx, hero, lookRank('w'), lookRank('a'), t); break; case 9: drawBoardStructure(ctx, t); break; case 10: drawPortalStructure(ctx, t); break; case 11: drawGate(ctx, it.o, t); break; case 12: drawShopStructure(ctx, t); break;
+      case 6: drawTorii(ctx, it.o, t); break; case 7: drawForgeStructure(ctx, t); break; case 8: drawHero(ctx, hero, lookRank('w'), lookRank('a'), t); break; case 9: drawBoardStructure(ctx, t); break; case 10: drawPortalStructure(ctx, t); break; case 11: drawGate(ctx, it.o, t); break; case 12: drawShopStructure(ctx, t); break; case 13: drawPet(ctx, t); break; case 14: drawNurseryStructure(ctx, t); break;
     }
   }
   drawBarrier(ctx, v, t);
   drawRecall(ctx, t);
+  if (G.petShots && G.petShots.length) drawPetShots(ctx);
   drawProjectiles(ctx);
   drawParticles(ctx);
   drawTexts(ctx);
@@ -3220,9 +3759,10 @@ function render(realDt) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   if (WORLD.theme === 'mountain') drawSnowOverlay(ctx, sw, sh, realDt, t);
   ctx.strokeStyle = WORLD.theme === 'mountain' ? 'rgba(0,0,0,0)' : 'rgba(160,190,255,0.16)'; ctx.lineWidth = 1; ctx.beginPath();
-  for (const r of rain) { r.y += realDt * 1.4 * r.s; r.x -= realDt * 0.12 * r.s; if (r.y > 1) { r.y -= 1; r.x = Math.random() * 1.1; } if (r.x < 0) r.x += 1.1; const x = r.x * sw, y = r.y * sh; ctx.moveTo(x, y); ctx.lineTo(x - 4 * r.s, y + 16 * r.s); }
+  const rainN = GFX.level === 2 ? rain.length : GFX.level === 1 ? rain.length >> 1 : 0;
+  for (let ri = 0; ri < rainN; ri++) { const r = rain[ri]; r.y += realDt * 1.4 * r.s; r.x -= realDt * 0.12 * r.s; if (r.y > 1) { r.y -= 1; r.x = Math.random() * 1.1; } if (r.x < 0) r.x += 1.1; const x = r.x * sw, y = r.y * sh; ctx.moveTo(x, y); ctx.lineTo(x - 4 * r.s, y + 16 * r.s); }
   ctx.stroke();
-  if (vignette && vignette.width > 1 && vignette.height > 1) ctx.drawImage(vignette, 0, 0, sw, sh);
+  if (GFX.level > 0 && vignette && vignette.width > 1 && vignette.height > 1) ctx.drawImage(vignette, 0, 0, sw, sh);
   if (G.flash > 0) { ctx.fillStyle = `rgba(255,250,235,${Math.min(0.4, G.flash * 0.9)})`; ctx.fillRect(0, 0, sw, sh); }
   if (G.fadeT > 0) { ctx.fillStyle = `rgba(6,4,14,${Math.min(1, G.fadeT)})`; ctx.fillRect(0, 0, sw, sh); }
   if (!hero.dead && hero.hp < ST.maxHp * 0.3) { const a = (0.3 - hero.hp / ST.maxHp) * (0.8 + 0.2 * Math.sin(t * 6)); const g = ctx.createRadialGradient(sw / 2, sh / 2, Math.min(sw, sh) * 0.3, sw / 2, sh / 2, Math.max(sw, sh) * 0.7); g.addColorStop(0, 'rgba(255,0,40,0)'); g.addColorStop(1, `rgba(255,0,40,${a})`); ctx.fillStyle = g; ctx.fillRect(0, 0, sw, sh); }
@@ -3230,6 +3770,8 @@ function render(realDt) {
   drawHUD(ctx, sw / U, sh / U, t);
   drawHUD3(ctx, sw / U, sh / U, t);
   ctx.restore();
+  if (G.petsOpen) drawPetsPreview(t);
+  drawFps(ctx, sw, sh);
 }
 
 // =====================================================================
@@ -4236,7 +4778,8 @@ function drawAncientForgeStructure(ctx, t) {
 const snow = []; for (let i = 0; i < 170; i++) snow.push({ x: Math.random(), y: Math.random(), s: rand(0.5, 1.3), p: rand(TAU) });
 function drawSnowOverlay(ctx, sw, sh, realDt, t) {
   ctx.fillStyle = 'rgba(235,245,255,0.75)';
-  for (const f of snow) {
+  const snowN = [50, 100, 170][GFX.level];
+  for (let si = 0; si < snowN; si++) { const f = snow[si];
     f.y += realDt * 0.06 * f.s; f.x += realDt * (0.012 + Math.sin(t * 0.8 + f.p) * 0.01) * f.s; if (f.y > 1) { f.y -= 1; f.x = Math.random(); } if (f.x > 1.05) f.x -= 1.1;
     ctx.globalAlpha = 0.35 + 0.5 * f.s / 1.3; ctx.beginPath(); ctx.arc(f.x * sw, f.y * sh, 0.9 + f.s * 1.3, 0, TAU); ctx.fill();
   }
@@ -4476,7 +5019,7 @@ function updateHeroStatus(dt) {
   if (G.potionCd > 0) G.potionCd -= dt;
   if (G.scrollCd > 0) G.scrollCd -= dt;
   if (S.oniCd > 0) S.oniCd = Math.max(0, S.oniCd - dt);
-  if (G.oniSuperT > 0) { G.oniSuperT -= dt; if (Math.random() < dt * 30) P('fire', h.x + rand(-16, 16), h.y - rand(4, 60), rand(-10, 10), rand(-90, -40), 0.6, 7, Math.random() < 0.5 ? '255,60,50' : '255,170,60'); if (G.oniSuperT <= 0) { refreshStats(); toast('👹 Ярость Они угасла'); } }
+  if (G.oniSuperT > 0) { G.oniSuperT -= dt; if (Math.random() < dt * 30) P('fire', h.x + rand(-16, 16), h.y - rand(4, 60), rand(-10, 10), rand(-90, -40), 0.6, 7, Math.random() < 0.5 ? '255,60,50' : '255,170,60'); if (G.oniSuperT <= 0) { refreshStats(); if (PFX.ult === 'refund') { S.oniE = 30; toast('👹 Ярость угасла · бесёнок вернул 30% энергии'); } else toast('👹 Ярость Они угасла'); } }
   S.scrollRestock = (S.scrollRestock || SCROLL_RESTOCK) - dt; if (S.scrollRestock <= 0) { S.scrollRestock = SCROLL_RESTOCK; S.scrollStock = 1; if (G.shopOpen) renderShop(); }
   if (h.dead) return;
   if (h.slowT > 0) h.slowT -= dt;
@@ -4662,7 +5205,7 @@ function onKill3(e) {
   if (e.boss) {
     if (!Array.isArray(S.masks)) S.masks = [false, false, false, false];
     const i = e.z - 1;
-    if (!S.masks[i] && Math.random() < (G.maskRate || 0.01)) {
+    if (!S.masks[i] && Math.random() < (G.maskRate || 0.01) * (1 + (PFX.mask || 0))) {
       S.masks[i] = true; dropLoot('soul', e.x, e.y, 1);
       banner('👹 Кусок маски Они!', `${ONI_MASKS[i]} · собрано ${S.masks.filter(Boolean).length}/4`); SFX.boom(); G.flash = 0.3;
       if (S.masks.every(Boolean)) setTimeout(() => banner('Маска Они собрана!', 'В Древней кузнице можно пробудить класс Они'), 3400);
@@ -4700,7 +5243,7 @@ function tryOniSuper() {
   if (G.oniSuperT > 0) return;
   if (S.oniCd > 0) { toast(`👹 Ярость Они перезаряжается: ${mmss(S.oniCd)}`); SFX.fail(); return; }
   if ((S.oniE || 0) < 100) { toast(`👹 Не хватает энергии Они: ${Math.floor(S.oniE || 0)}/100 — бей врагов (бижутерия ускоряет набор)`); SFX.fail(); return; }
-  S.oniE = 0; S.oniCd = ONI_SUPER_CD; const k = hero.hp / ST.maxHp; G.oniSuperT = ONI_SUPER_T; refreshStats(); hero.hp = ST.maxHp * k;
+  S.oniE = 0; S.oniCd = Math.max(60, ONI_SUPER_CD - (PFX.superCd || 0)); const k = hero.hp / ST.maxHp; G.oniSuperT = ONI_SUPER_T + (PFX.superDur || 0); refreshStats(); hero.hp = ST.maxHp * k;
   banner('👹 ЯРОСТЬ ОНИ', `+50% ко всем характеристикам на ${ONI_SUPER_T} с`); G.flash = 0.35; G.shake = 12; SFX.boom();
   burst(hero.x, hero.y - 30, 60, '255,60,50', 380, 0.9, 4, 'glow'); P('ring', hero.x, hero.y, 0, 0, 0.7, 220, '255,80,60');
 }
@@ -4814,7 +5357,7 @@ function drawRecall(ctx, t) {
   ctx.fillText(r.mode === 'home' ? 'Телепорт домой…' : 'Возвращение…', hero.x, hero.y - 92);
 }
 function travelTo(loc) {
-  closeForge(); closeBoard(); closeShop(); closeTravel(); if (G.soulOpen) toggleSoul(false); if (G.treeOpen) toggleTree(false); G.inForgeCircle = G.inBoardCircle = G.inShopCircle = false; G.oniSuperT = 0;
+  closeForge(); closeBoard(); closeShop(); closeTravel(); if (G.soulOpen) toggleSoul(false); if (G.treeOpen) toggleTree(false); G.inForgeCircle = G.inBoardCircle = G.inShopCircle = false; G.oniSuperT = 0; closePets(); G.inNurseryCircle = false; G.petShots = []; G.pet = null; G.goldRush = 0; G.petStance = 0;
   setupLocation(loc);
   G.enemies.length = 0; G.loot.length = 0; G.telegraphs.length = 0; G.eprojectiles.length = 0; G.waves.length = 0; G.particles.length = 0; G.texts.length = 0;
   G.bosses = [null, null, null, null, null]; G.bossTimers = [0, 0, 0, 0, 0]; G.curZone = -1; G.autoHunt = false; G.autoAnchor = null;
@@ -4927,6 +5470,8 @@ const HELP = `Команды:
   quests              — выполнить все взятые задания
   rank_weapon [1-12]  — ранг катаны          rank_armor [1-12] — ранг одежды (5–8 храм, 9–12 горы)
   unlock              — открыть Храмовый квартал   unlock3 — открыть Горный пик   loc [1|2|3] — перейти
+  pet [вид|all]       — выдать питомца (cat kitsune tanuki panda imp pony)   petlvl [N] — уровень активного
+  egg [вид]           — выдать прогретое яйцо (по умолчанию pony)
   dew [N]             — роса жизни 💧        items [N] — по N всех предметов лавки
   kills3 [N]          — убийства в горах (уровень Древней кузницы)
   masks               — все 4 куска маски Они   oni — сразу пробудить класс Они
@@ -4970,6 +5515,9 @@ function runCmd(line) {
     case 'kills3': S.kills3 = has ? n : 20000; clog(`Убито в горах: ${S.kills3} · Древняя кузница ур. ${aforgeLevel()}`, 'ok'); break;
     case 'masks': S.masks = [true, true, true, true]; clog('Маска Они собрана — пробуди класс в Древней кузнице (или команда oni)', 'ok'); break;
     case 'oni': S.masks = [true, true, true, true]; oniAwaken(); clog('Класс Они пробуждён', 'ok'); break;
+    case 'pet': { const id = a1; const ids = id === 'all' || !id ? PET_ORDER : [id]; for (const k of ids) { if (!PET_SP[k]) return clog('Питомцы: ' + PET_ORDER.join(', ') + ', all', 'err'); if (!S.pets.owned[k]) S.pets.owned[k] = { lvl: 1, xp: 0, picks: [] }; } S.pets.slots = Math.max(S.pets.slots, Object.keys(S.pets.owned).length); S.pets.intro = true; if (!S.pets.active) S.pets.active = ids[0]; refreshPetFx(); refreshStats(); clog('Питомцы выданы', 'ok'); if (G.petsOpen) renderPets(); break; }
+    case 'petlvl': { const pd = activePet(); if (!pd) return clog('Нет активного питомца', 'err'); pd.lvl = clamp(has ? n | 0 : 50, 1, PET_MAX_LVL); pd.xp = 0; refreshPetFx(); refreshStats(); clog(`Уровень питомца: ${pd.lvl}`, 'ok'); if (G.petsOpen) renderPets(); break; }
+    case 'egg': { const id = a1 || 'pony'; if (!PET_SP[id]) return clog('Яйца: ' + PET_ORDER.join(', '), 'err'); S.pets.intro = true; giveEgg(id); S.pets.eggs.forEach(e => { if (e.sp === id) e.k = PET_SP[id].hatch; }); tryHatch(); clog('Яйцо выдано и прогрето', 'ok'); break; }
     case 'energy': S.oniE = 100; S.oniCd = 0; clog('Энергия Они полна', 'ok'); break;
     case 'curse': tryCurse(99); break;
     case 'cleanse': cleanseAll('talisman'); break;
@@ -4994,7 +5542,7 @@ cIn.addEventListener('keydown', e => {
   else if (e.code === 'ArrowDown') { cHistI = Math.min(cHist.length, cHistI + 1); cIn.value = cHist[cHistI] || ''; e.preventDefault(); }
 });
 (() => {
-  const Q = [['¥ +10K', 'gold 10000'], ['¥ +1M', 'gold 1000000'], ['◆ +100', 'souls 100'], ['✧ +50', 'jade 50'], ['Бижутерия 10', 'jewel 10'], ['Задания ✓', 'quests'], ['⛩ Открыть храм', 'unlock'], ['Локация ⇄', 'loc'], ['✦ +1M', 'xp 1000000'], ['Душа 60%', 'soul 60'], ['Катана Р8', 'rank_weapon 8'], ['Одежда Р8', 'rank_armor 8'], ['🏔 Открыть горы', 'unlock3'], ['Душа 80%', 'soul 80'], ['💧 +50', 'dew 50'], ['Предметы +5', 'items 5'], ['Катана Р12', 'rank_weapon 12'], ['Одежда Р12', 'rank_armor 12'], ['Древняя кузница 4', 'kills3 20000'], ['Маски Они', 'masks'], ['Энергия Они', 'energy'], ['Катана Р1', 'rank_weapon 1'], ['Р2', 'rank_weapon 2'], ['Р3', 'rank_weapon 3'], ['Р4', 'rank_weapon 4'],
+  const Q = [['¥ +10K', 'gold 10000'], ['¥ +1M', 'gold 1000000'], ['◆ +100', 'souls 100'], ['✧ +50', 'jade 50'], ['Бижутерия 10', 'jewel 10'], ['Задания ✓', 'quests'], ['⛩ Открыть храм', 'unlock'], ['Локация ⇄', 'loc'], ['✦ +1M', 'xp 1000000'], ['Душа 60%', 'soul 60'], ['Катана Р8', 'rank_weapon 8'], ['Одежда Р8', 'rank_armor 8'], ['🏔 Открыть горы', 'unlock3'], ['Душа 80%', 'soul 80'], ['💧 +50', 'dew 50'], ['Предметы +5', 'items 5'], ['Катана Р12', 'rank_weapon 12'], ['Одежда Р12', 'rank_armor 12'], ['Древняя кузница 4', 'kills3 20000'], ['Маски Они', 'masks'], ['Энергия Они', 'energy'], ['🐾 Все питомцы', 'pet all'], ['Питомец 50 ур.', 'petlvl 50'], ['🌈 Яйцо пони', 'egg pony'], ['Катана Р1', 'rank_weapon 1'], ['Р2', 'rank_weapon 2'], ['Р3', 'rank_weapon 3'], ['Р4', 'rank_weapon 4'],
     ['Одежда Р1', 'rank_armor 1'], ['Р2', 'rank_armor 2'], ['Р3', 'rank_armor 3'], ['Р4', 'rank_armor 4'], ['Кузница 10', 'forge 10'], ['God', 'god'], ['Kill all', 'killall'],
     ['×1', 'speed 1'], ['×2', 'speed 2'], ['×4', 'speed 4'], ['ТП база', 'tp 0'], ['ТП 1', 'tp 1'], ['ТП 2', 'tp 2'], ['ТП 3', 'tp 3'], ['ТП 4', 'tp 4'], ['Боссы', 'boss'], ['Help', 'help']];
   $('#c-quick').innerHTML = Q.map(([l, c]) => `<button data-cmd="${c}">${l}</button>`).join('') + '<button class="danger" id="c-reset" data-cmd="reset">⟲ Сброс прогресса</button>';
@@ -5043,7 +5591,7 @@ const touchDir = { x: 0, y: 0, mag: 0 };
 const TOUCH_ACT = {
   dash: () => tryDash(), auto: () => toggleAuto(), home: () => startRecall(), oni: () => tryOniSuper(),
   use: () => { if (G.inPortal) tryTravel(); else if (G.inForgeCircle && !G.forgeOpen) openForge(); else if (G.inBoardCircle && !G.boardOpen) openBoard(); },
-  soul: () => toggleSoul(), tree: () => toggleTree(), menu: () => toggleMenu(),
+  soul: () => toggleSoul(), tree: () => toggleTree(), pets: () => togglePets(), menu: () => toggleMenu(),
   potion: () => useItem('potion'), talisman: () => useItem('talisman'), stone: () => useItem('stone'), scroll: () => useItem('scroll'),
 };
 document.querySelectorAll('[data-tact]').forEach(b => {
@@ -5072,6 +5620,26 @@ function updateTouchUI() {
   $('#rotate-hint').classList.toggle('hidden', !(innerHeight > innerWidth && !G.rotateDismissed));
 }
 
+
+// ---------- Монитор FPS: в режиме «Авто» снижает качество, если игра тормозит ----------
+function gfxMonitor(real) {
+  GFX.acc += real; GFX.n++;
+  if (GFX.acc < 2.5) return;
+  GFX.fps = GFX.n / GFX.acc; GFX.acc = 0; GFX.n = 0;
+  if (document.hidden || G.menuOpen || G.time < 4) return;
+  if (GFX.mode === 'auto' && GFX.fps < 42 && GFX.level > 0) {
+    GFX.calm++; if (GFX.calm < 2) return; GFX.calm = 0;
+    GFX.level--; SET.gfxAuto = GFX.level; saveSet(); resize();
+    toast(`⚙ Графика переключена на «${GFX_NAMES[GFX.level]}», чтобы игра шла плавнее (меню ☰ → Графика)`);
+  } else GFX.calm = 0;
+}
+function drawFps(ctx, sw, sh) {
+  if (!GFX.showFps) return; const f = Math.round(GFX.fps);
+  ctx.font = '700 12px "Segoe UI",sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'top';
+  ctx.fillStyle = 'rgba(0,0,0,0.55)'; rr(ctx, sw - 92, sh - 26, 80, 18, 6); ctx.fill();
+  ctx.fillStyle = f >= 50 ? '#7dffb0' : f >= 35 ? '#ffd76a' : '#ff6a7a'; ctx.fillText(`${f} FPS · ${['Н', 'С', 'В'][GFX.level]}`, sw - 18, sh - 23);
+}
+
 // ---------- Полный экран ----------
 function goFullscreen(silent) {
   const el = document.documentElement;
@@ -5092,11 +5660,15 @@ function renderMenu() {
   $('#mn-info').innerHTML = `Сейчас: <b>${G.touchUI ? 'сенсорное управление' : 'клавиатура и мышь'}</b>${c === 'auto' ? ' (определено автоматически)' : ''}`;
   $('#mn-fs').textContent = fs ? '✓ Во весь экран при первом касании' : '✗ Во весь экран при первом касании';
   $('#mn-snd').textContent = S.muted ? '🔇 Звук выключен' : '🔊 Звук включён';
+  $('#mn-gfx').innerHTML = [['auto', '🤖 Авто'], ['high', 'Высокое'], ['mid', 'Среднее'], ['low', 'Низкое']].map(([k, n]) => `<button class="${GFX.mode === k ? 'primary' : ''}" data-act="gfx" data-v="${k}">${n}</button>`).join('') + `<button data-act="fps">${GFX.showFps ? '✓' : '✗'} Показывать FPS</button>`;
+  $('#mn-gfxinfo').innerHTML = `Сейчас: <b>${GFX_NAMES[GFX.level]}</b> · ${Math.round(GFX.fps)} FPS. Низкое: меньше пикселей и частиц, без дождя, отражений и свечения — для слабых планшетов.${GFX.mode === 'auto' ? ' В режиме «Авто» качество снижается само, если игра тормозит.' : ''}`;
 }
 $('#menu').addEventListener('click', async ev => {
   const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return; const act = b.dataset.act;
   if (act === 'close') toggleMenu(false);
   else if (act === 'ctrl') { SET.ctrl = b.dataset.v; saveSet(); G.touchUI = null; applyTouchMode(b.dataset.v === 'touch' || (b.dataset.v === 'auto' && (IS_TOUCH_DEVICE || (G.lastTouch && performance.now() - G.lastTouch < 60000)))); save(); renderMenu(); }
+  else if (act === 'gfx') { GFX.mode = b.dataset.v; SET.gfx = GFX.mode; if (GFX.mode === 'auto') { delete SET.gfxAuto; GFX.level = IS_TOUCH_DEVICE ? 1 : 2; } else GFX.level = { high: 2, mid: 1, low: 0 }[GFX.mode]; saveSet(); resize(); renderMenu(); }
+  else if (act === 'fps') { GFX.showFps = !GFX.showFps; SET.fps = GFX.showFps; saveSet(); renderMenu(); }
   else if (act === 'fsnow') goFullscreen(false);
   else if (act === 'fsauto') { SET.fs = !(SET.fs !== false); saveSet(); renderMenu(); }
   else if (act === 'snd') { S.muted = !S.muted; save(); renderMenu(); }
@@ -5151,9 +5723,9 @@ addEventListener('keydown', e => {
   if (e.code === 'Backquote' || e.code === 'F1') { e.preventDefault(); toggleConsole(); return; }
   if (G.consoleOpen) { if (e.code === 'Escape') toggleConsole(false); return; }
   if (e.target && e.target.tagName === 'SELECT' && e.code.startsWith('Arrow')) return;
-  if (e.code === 'KeyO' || (e.code === 'Escape' && (G.menuOpen || !(G.forgeOpen || G.boardOpen || G.soulOpen || G.shopOpen || G.treeOpen || G.travelOpen)))) { toggleMenu(); return; }
+  if (e.code === 'KeyO' || (e.code === 'Escape' && (G.menuOpen || !(G.forgeOpen || G.boardOpen || G.soulOpen || G.shopOpen || G.treeOpen || G.travelOpen || G.petsOpen)))) { toggleMenu(); return; }
   if (G.menuOpen) return;
-  if (e.code === 'Escape') { if (G.forgeOpen) closeForge(); if (G.boardOpen) closeBoard(); if (G.soulOpen) toggleSoul(false); if (G.shopOpen) closeShop(); if (G.treeOpen) toggleTree(false); if (G.travelOpen) closeTravel(); return; }
+  if (e.code === 'Escape') { if (G.forgeOpen) closeForge(); if (G.boardOpen) closeBoard(); if (G.soulOpen) toggleSoul(false); if (G.shopOpen) closeShop(); if (G.treeOpen) toggleTree(false); if (G.travelOpen) closeTravel(); if (G.petsOpen) closePets(); return; }
   keys[e.code] = true;
   if (e.code === 'Space') { e.preventDefault(); tryDash(); }
   if (e.code === 'KeyE' && G.inForgeCircle && !G.forgeOpen) openForge();
@@ -5164,6 +5736,7 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyT') toggleAuto();
   if (e.code === 'KeyH') startRecall();
   if (e.code === 'KeyL') toggleTree();
+  if (e.code === 'KeyP') togglePets();
   if (e.code === 'KeyQ') tryOniSuper();
   if (e.code === 'Digit1') useItem('potion'); if (e.code === 'Digit2') useItem('talisman'); if (e.code === 'Digit3') useItem('stone'); if (e.code === 'Digit4') useItem('scroll');
   if (e.code.startsWith('Arrow')) e.preventDefault();
@@ -5188,6 +5761,7 @@ function update(dt) {
   G.time += dt;
   updateHero(dt);
   updateRecall(dt);
+  if (!G.petShots) G.petShots = []; updatePet(dt); updatePetShots(dt); updateNurseryCircle();
   updateSpawns(dt);
   for (let i = 0; i < G.enemies.length; i++) { const e = G.enemies[i]; if (!e.dead) updateEnemy(e, dt); }
   separateEnemies();
@@ -5218,7 +5792,7 @@ function frame(now) {
   let dt = real * G.speed * (G.menuOpen ? 0 : 1); if (G.hitStop > 0) { G.hitStop -= real; dt *= 0.06; } if (G.flash > 0) G.flash = Math.max(0, G.flash - real * 2.5);
   const steps = Math.max(1, Math.ceil(dt / 0.02)), sdt = dt / steps;
   for (let i = 0; i < steps; i++) update(sdt);
-  render(real); updatePreview(real); drawSoulOrb(real); if (G.fadeT > 0) G.fadeT -= real * 1.1;
+  render(real); gfxMonitor(real); updatePreview(real); drawSoulOrb(real); if (G.fadeT > 0) G.fadeT -= real * 1.1;
   if (G.forgeOpen) updateRes(false, real);
   uiT -= real; if (G.boardOpen && uiT <= 0) { uiT = 0.5; updateBoardSub(); }
   requestAnimationFrame(frame);
