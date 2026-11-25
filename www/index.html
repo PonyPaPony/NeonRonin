@@ -15,7 +15,7 @@ canvas#game{display:block;position:fixed;inset:0;width:100%;height:100%;cursor:c
 html,body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 .hidden{display:none!important}
 /* ---------- Кузница ---------- */
-#forge,#board,#soul,#shop,#tree,#travel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(960px,96vw);max-height:93vh;overflow:auto;z-index:10;border-radius:22px;
+#forge,#board,#soul,#shop,#tree,#travel,#village{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(960px,96vw);max-height:93vh;overflow:auto;z-index:10;border-radius:22px;
  border:1.5px solid transparent;
  background:linear-gradient(165deg,rgba(40,22,34,.9),rgba(12,12,26,.93) 55%,rgba(8,10,22,.95)) padding-box,
   linear-gradient(115deg,#ff9b45,#ff3f8e,#7a5cff,#3ff4ff,#ff9b45,#ff3f8e) border-box;
@@ -75,6 +75,23 @@ button.big{padding:10px 16px;font-size:14px;border-radius:12px}
 .card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;margin-bottom:14px}
 .itemcard{position:relative;overflow:hidden;border-color:color-mix(in srgb,var(--rc) 45%,transparent);background:radial-gradient(130% 160% at 0% 0%,color-mix(in srgb,var(--rc) 22%,transparent),transparent 55%),linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
 .itemcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--rc),transparent);box-shadow:0 0 14px var(--rc)}
+#village{width:min(940px,96vw);background:linear-gradient(165deg,rgba(16,26,40,.93),rgba(10,12,24,.95) 55%,rgba(8,10,22,.96)) padding-box,linear-gradient(115deg,#8fe8ff,#ffd27a,#ff9ad0,#8fe8ff) border-box;border:2px solid transparent;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.vl-emblem{background:radial-gradient(circle at 35% 30%,#ffe7b0,#d9893a 60%,#6a3410)!important}
+.vl-body{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-top:12px}
+@media (max-width:720px){.vl-body{grid-template-columns:1fr}}
+#vl-map{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+#vl-map button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:8px 10px;text-align:left;font-size:12.5px;min-height:58px}
+#vl-map button .vi{font-size:20px}#vl-map button .vs{font-size:11px;color:#9aa3c9}
+#vl-map button.sel{outline:2px solid #8fe8ff}#vl-map button.done{border-color:rgba(255,215,110,.6)}#vl-map button.bld .vs{color:#ffd27a}
+#vl-queue .vq{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.05);margin-bottom:6px;font-size:13px}
+#vl-queue .vq b{color:#ffd27a}
+#vl-card{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13.5px;line-height:1.45}
+#vl-card h4{margin:0 0 2px;font-size:17px}#vl-card .who{color:#8fe8ff;margin-bottom:8px}
+#vl-card .st{padding:5px 8px;border-radius:8px;margin:3px 0;color:#aab2d6}#vl-card .st.cur{background:rgba(143,232,255,.12);color:#eaf8ff}#vl-card .st.got{color:#ffd76a}
+#vl-card .why{margin-top:8px;color:#ffb36b}#vl-card .vb{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+@media (max-height:520px){#vl-map{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}#vl-map button{min-height:44px;padding:5px 8px;font-size:11.5px}#vl-map button .vi{font-size:16px}.vl-body{gap:10px;margin-top:6px}}
+.b-herald{margin-top:4px;color:#ffe2a8;font-size:13px}.b-herald b{color:#8fe8ff}
+.vl-shards{font-size:15px;line-height:1.6}.vl-shards .gems{font-size:30px;letter-spacing:6px}
 .ctitle{font-size:11.5px;text-transform:uppercase;letter-spacing:1.4px;color:#9aa3c9;margin-bottom:8px}
 .iname{font-size:21px;font-weight:800;letter-spacing:.2px}
 .stars{color:var(--rc);letter-spacing:2px;font-size:13px;text-shadow:0 0 8px var(--rc);margin-top:2px}
@@ -239,6 +256,11 @@ button.hold{touch-action:none;background:linear-gradient(90deg,rgba(255,220,120,
 #toasts{position:fixed;right:18px;bottom:110px;display:flex;flex-direction:column;align-items:flex-end;max-width:min(420px,60vw);gap:6px;pointer-events:none;z-index:30}
 .toast{padding:8px 18px;border-radius:999px;background:rgba(10,12,26,.82);border:1px solid rgba(255,255,255,.14);font-size:14px;backdrop-filter:blur(6px);animation:tin .25s ease,tout .5s ease 2.2s forwards}
 @keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+#vl-say{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:14px;max-width:min(620px,92vw);padding:14px 16px;border-radius:18px;background:rgba(12,14,30,.92);border:1px solid rgba(140,220,255,.35);box-shadow:0 8px 30px rgba(0,0,0,.45);font-size:14.5px;line-height:1.4}
+#vl-say.hidden{display:none}
+#vl-say .vs-ic{font-size:34px;flex:none}
+#vl-say .vs-tx b{color:#8fe8ff;display:block;margin-bottom:3px}
+#vl-say button{flex:none}
 @keyframes tout{to{opacity:0;transform:translateY(-6px)}}
 
 /* ---------- меню и перенос сохранения ---------- */
@@ -278,10 +300,10 @@ body.touch-ui #joy-zone::after{content:'Двигай пальцем здесь';
 #rotate-hint{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(5,6,12,.92);text-align:center;padding:24px;pointer-events:auto}
 #rotate-hint .ph{font-size:56px;animation:rot 1.6s ease-in-out infinite}@keyframes rot{50%{transform:rotate(90deg)}}
 body:not(.touch-ui) #rotate-hint{display:none}
-@media (max-height:520px){#forge,#board,#soul,#shop,#tree,#travel,#menu{max-height:97vh;padding:10px 12px;border-radius:14px}.f-head{gap:8px}.f-title{font-size:18px!important}.f-emblem{width:38px!important;height:38px!important;font-size:18px!important}}
+@media (max-height:520px){#forge,#board,#soul,#shop,#tree,#travel,#village,#menu{max-height:97vh;padding:10px 12px;border-radius:14px}.f-head{gap:8px}.f-title{font-size:18px!important}.f-emblem{width:38px!important;height:38px!important;font-size:18px!important}}
 
 /* ---------- лёгкие окна (качество «среднее» и «низкое»): без размытия фона и бесконечных анимаций ---------- */
-body.gfx-lo #forge,body.gfx-lo #board,body.gfx-lo #soul,body.gfx-lo #shop,body.gfx-lo #tree,body.gfx-lo #travel,body.gfx-lo #pets,body.gfx-lo #menu,body.gfx-lo #console{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:fpop .25s ease-out!important;box-shadow:0 16px 40px rgba(0,0,0,.6)!important}
+body.gfx-lo #village,body.gfx-lo #forge,body.gfx-lo #board,body.gfx-lo #soul,body.gfx-lo #shop,body.gfx-lo #tree,body.gfx-lo #travel,body.gfx-lo #pets,body.gfx-lo #menu,body.gfx-lo #console{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:fpop .25s ease-out!important;box-shadow:0 16px 40px rgba(0,0,0,.6)!important}
 body.gfx-lo .f-emblem,body.gfx-lo .pip.on::after,body.gfx-lo .pip.next,body.gfx-lo button.primary,body.gfx-lo button.soul,body.gfx-lo button.soulb,body.gfx-lo .slot.t4,body.gfx-lo .slot.t5,body.gfx-lo .slot.filled .s-icon::before,body.gfx-lo .quest.done,body.gfx-lo .heat i::after,body.gfx-lo .toast,body.gfx-lo .tbtn{animation:none!important}
 body.gfx-lo .toast{backdrop-filter:none;background:rgba(10,12,26,.94)}
 body.gfx-lo .tbtn{backdrop-filter:none}
@@ -355,6 +377,21 @@ body.in-tower .tab.active{background:linear-gradient(180deg,rgba(255,70,140,.5),
   </div>
 </div>
 
+<div id="village" class="hidden">
+  <div class="f-inner">
+    <div class="f-head">
+      <div class="f-emblem vl-emblem">村</div>
+      <div><div class="f-title vl-title">Деревня Аки</div><div class="f-sub" id="vl-sub"></div></div>
+      <div class="f-res" id="vl-res"></div>
+      <button class="x" data-act="close" title="Закрыть (Esc / V)">✕</button>
+    </div>
+    <div class="vl-body">
+      <div><div class="ctitle">Участки</div><div id="vl-map"></div><div class="ctitle" style="margin-top:12px">Стройка</div><div id="vl-queue"></div></div>
+      <div id="vl-card"></div>
+    </div>
+  </div>
+</div>
+
 <div id="soul" class="hidden">
   <div class="f-inner">
     <div class="f-head">
@@ -422,6 +459,7 @@ body.in-tower .tab.active{background:linear-gradient(180deg,rgba(255,70,140,.5),
 <button id="btn-menu" title="Меню (O)">☰</button>
 <div id="menu" class="hidden">
   <div class="m-head"><div class="f-title" style="font-size:22px;font-weight:800">Меню · пауза</div><button class="x" data-act="close" title="Закрыть (Esc)">✕</button></div>
+  <div class="mrow" style="margin:4px 0 6px"><button class="primary" data-act="village">🏯 Деревня</button></div>
   <h3>💾 Перенос сохранения</h3>
   <div class="note">Код хранит весь прогресс героини. Создай код здесь, отправь его себе (в мессенджер или файлом) и на новом устройстве вставь в это же поле → «Загрузить».</div>
   <div class="mrow" style="margin:8px 0"><button class="primary" data-act="export">🔑 Создать код</button><button data-act="copy">📋 Копировать</button><button data-act="share">📤 Поделиться</button><button data-act="file">💾 Скачать файлом</button></div>
@@ -464,6 +502,7 @@ body.in-tower .tab.active{background:linear-gradient(180deg,rgba(255,70,140,.5),
 </div>
 
 <div id="toasts"></div>
+<div id="vl-say" class="hidden"></div>
 
 <script>
 'use strict';
@@ -732,7 +771,7 @@ const ITEMS = {
 };
 const SCROLL_CD = 360, POTION_CD = 8, SCROLL_RESTOCK = 600;
 const shopGM = () => Math.max(1, ZONES[locMaxZone()].goldM) * (S.loc === 3 ? 1.5 : 1);
-const itemPrice = id => Math.round(ITEMS[id].price * shopGM());
+const itemPrice = id => Math.round(ITEMS[id].price * shopGM() * (1 - vBonus('shopDisc')));
 const invN = id => (S.inv && S.inv[id]) || 0;
 
 const locMaxZone = () => clamp((S.loc === 3 ? S.maxZone3 : S.loc === 2 ? S.maxZone2 : S.maxZone) || 1, 1, 4);
@@ -833,7 +872,7 @@ function applyPetStats(st) {
 }
 function petGainXp(v, id = S.pets && S.pets.active) {
   const p = id && S.pets.owned[id]; if (!p || p.lvl >= PET_MAX_LVL) return;
-  p.xp += v;
+  p.xp += v * (1 + vBonus('petXp'));
   while (p.lvl < PET_MAX_LVL && p.xp >= petNeed(p.lvl)) {
     p.xp -= petNeed(p.lvl); const f0 = petForm(p.lvl); p.lvl++; const f1 = petForm(p.lvl);
     if (f1 > f0) { banner(`${PET_SP[id].icon} Эволюция!`, `${PET_SP[id].forms[f0]} → ${PET_SP[id].forms[f1]}`); SFX.up(); if (G.pet) { burst(G.pet.x, G.pet.y - 16, 40, hexRGB(PET_SP[id].col2), 260, 0.8, 3, 'glow'); P('ring', G.pet.x, G.pet.y, 0, 0, 0.7, 120, hexRGB(PET_SP[id].col2)); } }
@@ -1237,7 +1276,7 @@ var GFX = (() => {
 })();
 const GFX_NAMES = ['низкое', 'среднее', 'высокое'];
 const gfxScale = () => GFX.level >= 2 ? Math.min(2, window.devicePixelRatio || 1) : GFX.level === 1 ? 1 : 0.85;
-function setMaxZone(z) { if (S.loc === 3) { if (z > (S.maxZone3 || 1)) S.maxZone3 = z; } else if (S.loc === 2) { if (z > (S.maxZone2 || 1)) S.maxZone2 = z; } else if (z > (S.maxZone || 1)) S.maxZone = z; }
+function setMaxZone(z) { if (S.loc === 3) { if (z > (S.maxZone3 || 1)) S.maxZone3 = z; } else if (S.loc === 2) { if (z > (S.maxZone2 || 1)) S.maxZone2 = z; } else if (z > (S.maxZone || 1)) S.maxZone = z; vPeakUpdate(); }
 
 // ---- Развитие души ----
 const SOUL = [
@@ -1326,7 +1365,7 @@ function computeStats() {
   st.res = { fire: Math.min(0.8, (bark + treeVal('fire')) / 100), ice: Math.min(0.8, (bark + treeVal('ice')) / 100), thunder: Math.min(0.8, (bark + treeVal('thunder')) / 100), poison: Math.min(0.8, treeVal('poison') / 100), dark: 0 };
   st.curseRes = Math.min(0.9, treeVal('curse') / 100);
   st.acc = treeVal('eye') / 100; st.pen = Math.min(0.8, treeVal('pierce') / 100);
-  applyPetStats(st);
+  applyPetStats(st); applyVillageStats(st);
   return st;
 }
 
@@ -1363,7 +1402,7 @@ function fixSlots() {
   if (!S.daily || typeof S.daily !== 'object' || typeof S.daily.day !== 'string') S.daily = null; else for (const k of ['board', 'nq', 'trials']) S.daily[k] = Math.max(0, S.daily[k] | 0);
   applyClassText(); fixPets(); refreshPetFx();
   if (!Array.isArray(S.quests.trials)) S.quests.trials = []; S.quests.trials = S.quests.trials.filter(q => q && Array.isArray(q.mods)); for (const q of S.quests.active) if (q.trial && !Array.isArray(q.mods)) q.mods = [];
-  fixTower();
+  fixTower(); fixVillage();
 }
 function loadSave() {
   try { const raw = localStorage.getItem(CFG.SAVE_KEY); if (raw) { const d = JSON.parse(raw); S = Object.assign(defaultSave(), d); } } catch (e) { S = defaultSave(); }
@@ -1503,6 +1542,7 @@ function genWorld(loc = 1) {
   WORLD.obstacles.push({ kind: 'col', x: SHOP.x - 58, y: SHOP.sy - 40, w: 116, h: 40 }); // лавка
   WORLD.obstacles.push({ kind: 'col', x: NURSERY.x - 56, y: NURSERY.sy - 40, w: 112, h: 40 }); // питомник
   WORLD.obstacles.push({ kind: 'col', x: DUMMY.x - 9, y: DUMMY.y - 8, w: 18, h: 10 }); // тренировочное чучело
+  for (const id in VPLOTS) if (id !== 'palisade') { const p = VPLOTS[id]; WORLD.obstacles.push({ kind: 'col', x: p.x - p.w * 0.38, y: p.y - 26, w: p.w * 0.76, h: 22 }); } // участки деревни
   WORLD.obstacles.push({ kind: 'col', x: PORTAL.x - 68, y: PORTAL.sy - 8, w: 14, h: 10 }, { kind: 'col', x: PORTAL.x + 54, y: PORTAL.sy - 8, w: 14, h: 10 }); // портал
   if (temple || mountain) { // большие тории вдоль главной улицы
     let side = 0;
@@ -1696,13 +1736,14 @@ function killEnemy(e) {
     for (let i = 0; i < 14; i++) dropLoot('gold', e.x, e.y, Math.round(e.gold / 14));
     const n = Math.min(e.souls, 10); for (let i = 0; i < n; i++) dropLoot('soul', e.x, e.y, Math.round(e.souls / n));
     for (let i = 0; i < 2 + e.z + (e.loc === 3 ? 8 : e.loc === 2 ? 4 : 0); i++) dropLoot('jade', e.x, e.y, 1);
-    G.bossTimers[e.z] = 45; bossKillsArr()[e.z - 1]++; checkUnlock(); addShake(16); G.hitStop = 0.14; flashScreen(0.18); SFX.boom();
+    vShardDrop(e);
+    G.bossTimers[e.z] = 45; bossKillsArr()[e.z - 1]++; vEvent('boss'); checkUnlock(); addShake(16); G.hitStop = 0.14; flashScreen(0.18); SFX.boom();
     banner('БОСС ПОВЕРЖЕН', `${e.name} · +${e.souls} ◆ душ · +¥${fmt(e.gold)}`); save();
   } else {
     const n = randi(1, 3); for (let i = 0; i < n; i++) dropLoot('gold', e.x, e.y, Math.max(1, Math.round(e.gold * (e.elite ? 1 + (PFX.eliteGold || 0) : 1) / n)));
-    if (e.elite || Math.random() < 0.025 * ST.luck) dropLoot('soul', e.x, e.y, (ZONES[e.z].soulV || e.z) * (e.elite ? 2 : 1));
+    if (e.elite || Math.random() < 0.025 * ST.luck * (ST.vDrop || 1)) dropLoot('soul', e.x, e.y, (ZONES[e.z].soulV || e.z) * (e.elite ? 2 : 1));
     if (e.elite) { dropLoot('jade', e.x, e.y, 1); if (Math.random() < 0.5 * ST.luck) dropLoot('jade', e.x, e.y, 1); }
-    else if (Math.random() < 0.03 * ST.luck * (e.loc === 3 ? 2 : e.loc === 2 ? 1.5 : 1)) dropLoot('jade', e.x, e.y, 1);
+    else if (Math.random() < 0.03 * ST.luck * (e.loc === 3 ? 2 : e.loc === 2 ? 1.5 : 1) * (ST.vDrop || 1)) dropLoot('jade', e.x, e.y, 1);
   }
 }
 function dropLoot(type, x, y, val) { G.loot.push({ type, x, y, z: 0, vz: rand(180, 320), vx: rand(-170, 170), vy: rand(-130, 130), val, t: 0, spin: rand(TAU), attract: false }); }
@@ -1716,7 +1757,7 @@ function damageHero(amount, src, elem) {
   amount *= ST.frail || 1;
   if (elem && ST.res && ST.res[elem]) amount *= 1 - ST.res[elem];
   if (ST.block > 0 && Math.random() < ST.block) { amount *= 0.4; spawnText(hero.x, hero.y - 84, 'Блок', '#ffd76a', 13); P('ring', hero.x, hero.y - 28, 0, 0, 0.25, 30, '255,215,110'); }
-  const raw = amount; amount *= (1 - ST.reduce); hero.lastHurt = 0; hero.iframe = 0.12;
+  const raw = amount; amount *= (1 - ST.reduce) * (1 - (ST.vReduce || 0)); hero.lastHurt = 0; hero.iframe = 0.12;
   if (hero.shield > 0) { const a = Math.min(hero.shield, amount); hero.shield -= a; amount -= a; P('ring', hero.x, hero.y - 28, 0, 0, 0.25, 36, '90,220,255'); }
   if (amount > 0) { hero.hp -= amount; hero.hurtFlash = 0.18; spawnText(hero.x + rand(-8, 8), hero.y - 72, '-' + fmt(amount), elem ? ELEM[elem].col : '#ff5a6e', 15); SFX.hurt(); if (elem && hero.hp > 0) applyElemEffect(elem, amount * (1 - (ST.res && ST.res[elem] || 0))); }
   addShake(5);
@@ -1943,11 +1984,12 @@ function updateLoot(dt) {
     if (!hero.dead && l.t > 0.35 && d < 22) {
       if (l.type === 'gold') { const gv = Math.max(1, Math.round(l.val * ST.goldMul * (G.goldRush > 0 ? 2 : 1) * (PFX.doubleCoin && Math.random() < PFX.doubleCoin ? 2 : 1))); petGainXp(0.3); S.gold += gv; G.goldPop += gv; SFX.coin(); questEvent('gold', gv); }
       else if (l.type === 'jade') { S.jade += l.val; spawnText(hero.x, hero.y - 80, `+${l.val} ✧`, '#7dffb0', 16, true); SFX.soul(); burst(hero.x, hero.y - 30, 10, '110,255,170', 160, 0.5, 3, 'glow'); questEvent('jade', l.val); }
+      else if (l.type === 'vshard') vOnShard(l.val);
       else { const sv2 = Math.max(1, Math.round(l.val * (ST.soulMul || 1))); S.souls += sv2; spawnText(hero.x, hero.y - 80, `+${sv2} ◆`, '#d6a6ff', 16, true); SFX.soul(); burst(hero.x, hero.y - 30, 10, '200,140,255', 160, 0.5, 3, 'glow'); }
       if (!l.petPick && G.pet && dist(G.pet.x, G.pet.y, hero.x, hero.y) < 450) nqEvent('collect', zoneAt(l.x)); // лут, собранный вместе с питомцем
       G.loot.splice(i, 1); continue;
     }
-    if (l.t > 60) G.loot.splice(i, 1);
+    if (l.t > 60 && l.type !== 'vshard') G.loot.splice(i, 1);
   }
   G.xpPopT -= dt; if (G.xpPop > 0 && G.xpPopT <= 0) { spawnText(hero.x - 24, hero.y - 56, '+' + fmt(G.xpPop) + ' ✦', '#c9a6ff', 12); G.xpPop = 0; G.xpPopT = 0.6; }
   G.goldPopT -= dt; if (G.goldPop > 0 && G.goldPopT <= 0) { spawnText(hero.x + 16, hero.y - 66, '+' + CUR() + fmt(G.goldPop), towerIn() ? '#ff9ad0' : '#ffd76a', 13); G.goldPop = 0; G.goldPopT = 0.3; }
@@ -2040,9 +2082,10 @@ function updateHero(dt) {
   const db = towerIn() ? 1e9 : dist(h.x, h.y, BOARD.x, BOARD.y);
   if (db < BOARD.r) { if (!G.inBoardCircle) { G.inBoardCircle = true; openBoard(); } }
   else if (db > BOARD.r + 16 && G.inBoardCircle) { G.inBoardCircle = false; closeBoard(); }
+  vCircle(h);
   G.inPortal = dist(h.x, h.y, PORTAL.x, PORTAL.y) < PORTAL.r;
   const z = zoneAt(h.x);
-  if (z !== G.curZone) { G.curZone = z; if (towerIn()) { if (z === 0) banner('Холл башни', 'Демоническая кузница · демоническая лавка · выход'); } else { setMaxZone(z); banner(ZONES[z].name, z === 0 ? 'Безопасная зона · Кузница · Доска объявлений' : 'Опасность ' + '★'.repeat(z) + '☆'.repeat(4 - z)); } }
+  if (z !== G.curZone) { vZoneChange(G.curZone, z); G.curZone = z; if (towerIn()) { if (z === 0) banner('Холл башни', 'Демоническая кузница · демоническая лавка · выход'); } else { setMaxZone(z); banner(ZONES[z].name, z === 0 ? 'Безопасная зона · Кузница · Доска объявлений' : 'Опасность ' + '★'.repeat(z) + '☆'.repeat(4 - z)); } }
   updateHeroRibbons(h, dt, S.a.rank, G.time);
 }
 
@@ -3428,6 +3471,7 @@ function drawBoss(ctx, e, t) {
   const sq = e.squash || 0; ctx.save(); ctx.translate(e.x, e.y); ctx.scale(sc * e.face * (1 + 0.2 * sq), sc * (1 - 0.15 * sq)); ctx.globalAlpha = appear; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   fn(ctx, e, t, F, sc);
   ctx.restore();
+  vDrawBossShard(ctx, e, t, sc);
 }
 
 function drawEnemy(ctx, e, t) {
@@ -3554,6 +3598,7 @@ function drawLoot(ctx, t) {
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = 'rgba(255,200,80,0.25)'; ctx.beginPath(); ctx.arc(l.x, y, 10, 0, TAU); ctx.fill(); ctx.restore();
       const g = ctx.createLinearGradient(l.x, y - 6, l.x, y + 6); g.addColorStop(0, '#fff1a8'); g.addColorStop(1, '#d08a18');
       ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(l.x, y, sx, 6, 0, 0, TAU); ctx.fill(); ctx.strokeStyle = '#a8650e'; ctx.lineWidth = 0.8; ctx.stroke();
+    } else if (l.type === 'vshard') { drawShardLoot(ctx, l, y, t);
     } else if (l.type === 'jade') {
       const pu = 1 + 0.12 * Math.sin(t * 5 + l.spin), yy = y - 3;
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; const jg = ctx.createRadialGradient(l.x, yy, 0, l.x, yy, 16 * pu); jg.addColorStop(0, 'rgba(120,255,180,0.7)'); jg.addColorStop(1, 'rgba(60,220,140,0)'); ctx.fillStyle = jg; ctx.beginPath(); ctx.arc(l.x, yy, 16 * pu, 0, TAU); ctx.fill(); ctx.restore();
@@ -3748,7 +3793,7 @@ function drawHUD(ctx, sw, sh, t) {
   if (G.inBoardCircle && !G.boardOpen) { ctx.textAlign = 'center'; ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = '#7dffd8'; ctx.fillText('E — открыть доску объявлений', sw / 2, sh - 110); }
   if (G.inPortal && inT) { ctx.textAlign = 'center'; ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = '#ff9ad0'; ctx.fillText('E — выход из башни', sw / 2, sh - 110); }
   else if (G.inPortal) { ctx.textAlign = 'center'; ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = S.unlock2 ? '#9ff8ff' : '#a6a6b6'; ctx.fillText(S.unlock2 ? `E — портал: выбрать локацию` : `Портал запечатан · победи всех боссов Токио (${S.bossKills.filter(k => k > 0).length}/4)`, sw / 2, sh - 110); }
-  drawQuestTracker(ctx);
+  drawQuestTracker(ctx); drawVillageGoal(ctx);
   drawDummyPanel(ctx, sw, sh); drawDpsMeter(ctx, sw, sh);
   // баннер
   if (G.banner) {
@@ -3774,7 +3819,7 @@ const canvas = $('#game'), ctx = canvas.getContext('2d', { alpha: false });
 let dpr = 1, vignette = null;
 const emberRes = () => GFX.level >= 2 ? dpr : 0.5;
 const uiRes = () => GFX.level >= 2 ? dpr : GFX.level === 1 ? 0.8 : 0.65; // разрешение превью в окнах
-const bigWindow = () => !!(G.forgeOpen || G.boardOpen || G.soulOpen || G.shopOpen || G.treeOpen || G.travelOpen || G.petsOpen || G.menuOpen);
+const bigWindow = () => !!(G.villageOpen || G.forgeOpen || G.boardOpen || G.soulOpen || G.shopOpen || G.treeOpen || G.travelOpen || G.petsOpen || G.menuOpen);
 const rain = []; for (let i = 0; i < 150; i++) rain.push({ x: Math.random(), y: Math.random(), s: rand(0.6, 1.2) });
 function resize() {
   const W = Math.max(1, innerWidth | 0), H = Math.max(1, innerHeight | 0);
@@ -3798,7 +3843,7 @@ function render(realDt) {
   const hw = sw / 2 / z, hh = sh / 2 / z; const v = G.view = { x0: G.cam.x - hw - 60, x1: G.cam.x + hw + 60, y0: G.cam.y - hh - 60, y1: G.cam.y + hh + 300 };
   drawGround(ctx, v, t);
   const inT = WORLD.theme === 'tower';
-  if (v.x0 < CFG.BASE_X + 200) { drawForgeCircle(ctx, t); if (!inT) drawBoardCircle(ctx, t); drawPortalCircle(ctx, t); drawShopCircle(ctx, t); if (!inT) drawNurseryCircle(ctx, t); }
+  if (v.x0 < CFG.BASE_X + 200) { drawForgeCircle(ctx, t); if (!inT) drawBoardCircle(ctx, t); drawPortalCircle(ctx, t); drawShopCircle(ctx, t); if (!inT) drawNurseryCircle(ctx, t); drawVillageGround(ctx, v, t); }
   for (const A of WORLD.arenas) if (A.x > v.x0 - 400 && A.x < v.x1 + 400) drawArena(ctx, A, t);
   drawAutoAnchor(ctx, t);
   drawTowerAura(ctx, t);
@@ -3809,7 +3854,8 @@ function render(realDt) {
   for (const b of WORLD.buildings) if (b.x < v.x1 && b.x + b.w > v.x0 && b.y < v.y1 && b.y + b.h > v.y0 - 60) L.push({ y: b.y + b.h, k: 0, o: b });
   for (const o of WORLD.props) if (inV(o.x, o.y, 160)) L.push({ y: o.y + o.h, k: 1, o });
   if (!inT) for (const o of WORLD.lamps) if (inV(o.x, o.y)) L.push({ y: o.y, k: 2, o });
-  for (const o of WORLD.trees) if (inV(o.x, o.y, 160)) L.push({ y: o.y, k: 3, o });
+  for (const o of WORLD.trees) if (inV(o.x, o.y, 160) && !vPropHidden(o)) L.push({ y: o.y, k: 3, o });
+  vPushPlots(L, v);
   for (const o of WORLD.toro) if (inV(o.x, o.y)) L.push({ y: o.y, k: 4, o });
   for (const o of G.enemies) if (!o.dead && inV(o.x, o.y, 160)) L.push({ y: o.y, k: 5, o });
   if (inV(WORLD.torii.x, WORLD.torii.y, 260)) L.push({ y: WORLD.torii.y, k: 6, o: WORLD.torii });
@@ -3826,9 +3872,10 @@ function render(realDt) {
     switch (it.k) {
       case 0: drawBuilding(ctx, it.o, t); break; case 1: drawProp(ctx, it.o, t); break; case 2: drawLampPost(ctx, it.o, t); break;
       case 3: drawTree(ctx, it.o, t); break; case 4: drawToro(ctx, it.o, t); break; case 5: drawEnemy(ctx, it.o, t); break;
-      case 6: drawTorii(ctx, it.o, t); break; case 7: drawForgeStructure(ctx, t); break; case 8: drawHero(ctx, hero, lookRank('w'), lookRank('a'), t); break; case 9: drawBoardStructure(ctx, t); break; case 10: drawPortalStructure(ctx, t); break; case 11: drawGate(ctx, it.o, t); break; case 12: drawShopStructure(ctx, t); break; case 13: drawPet(ctx, t); break; case 14: drawNurseryStructure(ctx, t); break;
+      case 6: drawTorii(ctx, it.o, t); break; case 7: drawForgeStructure(ctx, t); break; case 8: drawHero(ctx, hero, lookRank('w'), lookRank('a'), t); break; case 9: drawBoardStructure(ctx, t); break; case 10: drawPortalStructure(ctx, t); break; case 11: drawGate(ctx, it.o, t); break; case 12: drawShopStructure(ctx, t); break; case 13: drawPet(ctx, t); break; case 14: drawNurseryStructure(ctx, t); break; case 15: drawVillagePlot(ctx, it.o, t); break; case 16: drawResident(ctx, it.o, t); break;
     }
   }
+  if (!towerIn() && v.x0 < baseW() + 200) vDecorExisting(ctx, t); drawVillageLabels(ctx, v, t); drawVillageBubble(ctx);
   drawBarrier(ctx, v, t);
   drawRecall(ctx, t);
   if (G.petShots && G.petShots.length) drawPetShots(ctx);
@@ -3874,7 +3921,7 @@ function updateRes(force, dt = 0) {
 function previewStats(fn) { const orig = S; S = JSON.parse(JSON.stringify(orig)); try { fn(S); fixSlots(); return computeStats(); } finally { S = orig; } }
 const arrow = (a, b) => `${fmt(a)} <span class="ar">→</span> <b class="up">${fmt(b)}</b>`;
 // В башне все цены кузницы — в демонических душах ❖: души ◆ и нефрит ✧ пересчитываются в надбавку к цене
-function towerCost(g, s, j) { return towerIn() ? [Math.ceil((g || 0) * (1 + (s ? 0.35 : 0) + (j ? 0.6 : 0))), 0, 0] : [g || 0, s || 0, j || 0]; }
+function towerCost(g, s, j) { if (towerIn()) return [Math.ceil((g || 0) * (1 + (s ? 0.35 : 0) + (j ? 0.6 : 0))), 0, 0]; const d = typeof vBonus === 'function' ? vBonus('forgeDisc') : 0; return d ? [Math.ceil((g || 0) * (1 - d)), Math.ceil((s || 0) * (1 - d)), Math.ceil((j || 0) * (1 - d))] : [g || 0, s || 0, j || 0]; }
 function costBtn(act, item, slot, label, gold, souls, cls = '', sub = '', jade = 0) {
   [gold, souls, jade] = towerCost(gold, souls, jade);
   const ok = S.gold >= gold && S.souls >= (souls || 0) && S.jade >= (jade || 0);
@@ -3947,7 +3994,7 @@ function forgeAction(act, item, slot, btn) {
     SFX.up(); panelHit(); prevBurst('255,180,90', 30, 220); emberBurst(20); PREV.flash = 0.25; burst(hero.x, hero.y - 30, 14, '255,170,80', 200, 0.5, 3); toast(`⚒ ${name}: закалка +${it.lvl}`);
   } else if (act === 'rank') {
     if (it.rank >= MAX_RANK || it.lvl < CFG.MAX_LVL || (!towerIn() && ((it.rank === 4 && !S.unlock2) || (it.rank >= 8 && (!S.unlock3 || S.loc !== 3 || aforgeLevel() < it.rank - 7))))) return; const c = RANKUP[it.rank]; if (!pay(c.gold, c.souls)) return;
-    it.rank++; it.lvl = 0; S.look[item] = 0; fixSlots(); SFX.up(); addShake(8); const RK = item === 'w' ? WEAPON_RANKS : ARMOR_RANKS, rc = hexRGB(RANK_COLORS[it.rank - 1]);
+    it.rank++; it.lvl = 0; S.look[item] = 0; fixSlots(); SFX.up(); vEvent('rank'); addShake(8); const RK = item === 'w' ? WEAPON_RANKS : ARMOR_RANKS, rc = hexRGB(RANK_COLORS[it.rank - 1]);
     prevBurst(rc, 80, 300); PREV.flash = 1; emberBurst(60); panelHit();
     burst(hero.x, hero.y - 30, 50, rc, 360, 0.9, 4, 'glow'); P('ring', hero.x, hero.y, 0, 0, 0.6, 160, rc);
     banner(`${name} эволюционирует!`, `${RK[it.rank - 1].name} · Ранг ${it.rank} · ${RANK_NAMES[it.rank - 1]}`);
@@ -4180,7 +4227,7 @@ function applyTrial(e) {
   return e;
 }
 const modsHtml = q => q.mods.map(id => `<span class="tmod" title="${TRIAL_MODS[id].name}: ${TRIAL_MODS[id].desc}">${TRIAL_MODS[id].icon} ${TRIAL_MODS[id].short}</span>`).join('');
-function ensureOffers() { const Q = S.quests; while (Q.offers.length < 4) Q.offers.push(genQuest()); if (!Array.isArray(Q.trials)) Q.trials = []; while (Q.trials.length < 4) Q.trials.push(genTrial()); }
+function ensureOffers() { const Q = S.quests; while (Q.offers.length < 4 + vBonus('offers')) Q.offers.push(genQuest()); if (!Array.isArray(Q.trials)) Q.trials = []; while (Q.trials.length < 4) Q.trials.push(genTrial()); }
 function qProgress(q) { return q.type === 'gold' ? `¥${fmt(q.have)} / ¥${fmt(q.need)}` : `${q.have} / ${q.need}`; }
 function questEvent(kind, a) {
   if (towerIn()) return;
@@ -4208,28 +4255,28 @@ const dailyLeft = k => DAILY[k] - daily()[k];
 const dailyHtml = () => { const d = daily(), c = (n, k) => `<span style="color:${d[k] >= DAILY[k] ? '#ffb36b' : '#9dffd0'}">${n}: <b>${Math.min(d[k], DAILY[k])}/${DAILY[k]}</b></span>`; return `${c('Задания сегодня', 'board')} · ${c('Испытания', 'trials')}`; };
 function openBoard() { if (G.boardOpen) return; G.boardOpen = true; ensureOffers(); $('#board').classList.remove('hidden'); renderBoard(); SFX.click(); }
 function closeBoard() { if (!G.boardOpen) return; G.boardOpen = false; $('#board').classList.add('hidden'); save(); }
-function updateBoardSub() { const Q = S.quests; $('#b-sub').innerHTML = `Взято <b>${Q.active.length}</b>/3 · ${dailyHtml()} · новые объявления через <b>${mmss(Q.refreshT)}</b>`; }
+function updateBoardSub() { const Q = S.quests; $('#b-sub').innerHTML = `Взято <b>${Q.active.length}</b>/${vActiveMax()} · ${dailyHtml()} · новые объявления через <b>${mmss(Q.refreshT)}</b>${vHeraldHtml()}`; }
 function renderBoard() {
   if (!G.boardOpen) return; const Q = S.quests; ensureOffers(); updateBoardSub();
   $('#b-res').innerHTML = `<span class="res g"><i>¥</i>${fmt(S.gold)}</span><span class="res s"><i>◆</i>${fmt(S.souls)}</span>`;
-  const full = Q.active.length >= 3, seals = ['依', '頼', '急', '令'], rots = [-2.2, 1.6, 1.1, -1.4];
+  const full = Q.active.length >= vActiveMax(), seals = ['依', '頼', '急', '令'], rots = [-2.2, 1.6, 1.1, -1.4];
   const tab = G.boardTab || 'orders', trialBusy = Q.active.some(x => x.trial);
   $('#b-tabs').innerHTML = `<button class="btab ${tab === 'orders' ? 'active' : ''}" data-act="btab" data-tab="orders">📜 Заказы жителей</button><button class="btab trial ${tab === 'trials' ? 'active' : ''}" data-act="btab" data-tab="trials">試 Испытания <small>выше риск — выше награда</small></button>`;
-  if (tab === 'trials') $('#b-offers').innerHTML = Q.trials.map((q, i) => `<div class="bnote trial" style="--r:${rots[i % 4]}deg"><div class="hanko">試</div><div class="nz">${qZone(q).short} · ${'★'.repeat(q.z)}${'☆'.repeat(4 - q.z)} · модификаторов: ${q.mods.length}</div><h4>${QUEST_ICON[q.type]} ${q.title}</h4><div class="nd">${q.desc}</div><div class="tmods">${modsHtml(q)}</div><div class="rw">Награда ×${q.mult}: ${rewardHtml(q)}</div><button class="primary" data-act="accept" data-kind="trial" data-i="${i}" ${full || trialBusy ? `disabled title="${trialBusy ? 'Сначала заверши текущее испытание' : 'Можно держать не больше 3 заданий'}"` : ''}>Принять испытание</button></div>`).join('');
-  else $('#b-offers').innerHTML = Q.offers.map((q, i) => `<div class="bnote" style="--r:${rots[i % 4]}deg"><div class="hanko">${seals[i % 4]}</div><div class="nz">${qZone(q).short} · ${'★'.repeat(q.z)}${'☆'.repeat(4 - q.z)}</div><h4>${QUEST_ICON[q.type]} ${q.title}</h4><div class="nd">${q.desc}</div><div class="rw">Награда: ${rewardHtml(q)}</div><button class="primary" data-act="accept" data-kind="order" data-i="${i}" ${full ? 'disabled title="Можно держать не больше 3 заданий"' : ''}>Взять заказ</button></div>`).join('');
+  if (tab === 'trials') $('#b-offers').innerHTML = Q.trials.map((q, i) => `<div class="bnote trial" style="--r:${rots[i % 4]}deg"><div class="hanko">試</div><div class="nz">${qZone(q).short} · ${'★'.repeat(q.z)}${'☆'.repeat(4 - q.z)} · модификаторов: ${q.mods.length}</div><h4>${QUEST_ICON[q.type]} ${q.title}</h4><div class="nd">${q.desc}</div><div class="tmods">${modsHtml(q)}</div><div class="rw">Награда ×${q.mult}: ${rewardHtml(q)}</div><button class="primary" data-act="accept" data-kind="trial" data-i="${i}" ${full || trialBusy ? `disabled title="${trialBusy ? 'Сначала заверши текущее испытание' : `Можно держать не больше ${vActiveMax()} заданий`}"` : ''}>Принять испытание</button></div>`).join('');
+  else $('#b-offers').innerHTML = Q.offers.map((q, i) => `<div class="bnote" style="--r:${rots[i % 4]}deg"><div class="hanko">${seals[i % 4]}</div><div class="nz">${qZone(q).short} · ${'★'.repeat(q.z)}${'☆'.repeat(4 - q.z)}</div><h4>${QUEST_ICON[q.type]} ${q.title}</h4><div class="nd">${q.desc}</div><div class="rw">Награда: ${rewardHtml(q)}</div><button class="primary" data-act="accept" data-kind="order" data-i="${i}" ${full ? `disabled title="Можно держать не больше ${vActiveMax()} заданий"` : ''}>Взять заказ</button></div>`).join('');
   const c = refreshCost();
   $('#b-refresh').innerHTML = `<button data-act="brefresh" ${S.gold >= c ? '' : 'disabled'}>↻ Сорвать все объявления<span class="pr g">¥${fmt(c)}</span></button>`;
   $('#b-active').innerHTML = Q.active.length ? Q.active.map(q => `<div class="quest ${q.done ? 'done' : ''} ${q.trial ? 'trial' : ''}"><div class="qh"><span class="qi">${QUEST_ICON[q.type]}</span><b>${q.title}</b><span class="qz">${qZone(q).short}</span></div><div class="nd2">${q.desc}</div>${q.trial ? `<div class="tmods">${modsHtml(q)}</div>` : ''}<div class="qbar"><i style="width:${(q.have / q.need * 100).toFixed(0)}%"></i></div><div class="qrow"><span>${qProgress(q)}</span><span>${rewardHtml(q)}</span></div>${q.done ? `<button class="primary big" data-act="claim" data-id="${q.id}">🎁 Получить награду${q.trial ? (dailyLeft('trials') <= 0 ? '<span class="sub">лимит испытаний на сегодня: только 💧1</span>' : '') : (dailyLeft('board') <= 0 ? '<span class="sub">лимит заданий на сегодня: награда 25%</span>' : '')}</button><div class="stamp">済</div>` : `<button class="ghost" data-act="abandon" data-id="${q.id}">Отказаться</button>`}</div>`).join('')
-    : `<div class="qempty">Пока нет взятых заданий.<br>Выбери объявление на доске — можно держать до трёх сразу.<br><small>Выполненное задание сдаётся здесь же.</small></div>`;
+    : `<div class="qempty">Пока нет взятых заданий.<br>Выбери объявление на доске — можно держать до ${vActiveMax() >= 4 ? 'четырёх' : 'трёх'} сразу.<br><small>Выполненное задание сдаётся здесь же.</small></div>`;
 }
 $('#board').addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return; const Q = S.quests, act = b.dataset.act;
   if (act === 'close') { closeBoard(); return; }
   if (act === 'btab') { G.boardTab = b.dataset.tab; SFX.click(); }
   else if (act === 'accept') {
-    if (Q.active.length >= 3) return; const list = b.dataset.kind === 'trial' ? Q.trials : Q.offers;
+    if (Q.active.length >= vActiveMax()) return; const list = b.dataset.kind === 'trial' ? Q.trials : Q.offers;
     if (b.dataset.kind === 'trial' && Q.active.some(x => x.trial)) { SFX.fail(); toast('Одновременно можно проходить только одно испытание'); return; }
-    const q = list.splice(+b.dataset.i, 1)[0]; if (!q) return; Q.active.push(q); ensureOffers(); SFX.up();
+    const q = list.splice(+b.dataset.i, 1)[0]; if (!q) return; Q.active.push(q); ensureOffers(); SFX.up(); vHerald('take');
     if (q.trial) { banner('Испытание принято', `${ZONES[q.z].short}: ${q.mods.map(id => TRIAL_MODS[id].icon + ' ' + TRIAL_MODS[id].name).join(' · ')}`); for (const e of G.enemies) if (!e.dead && !e.trial && e.z === q.z && (e.loc || 1) === (q.loc || 1)) applyTrial(e); }
     else toast(`📜 Взято: <b>${q.title}</b>`);
   }
@@ -4244,7 +4291,8 @@ $('#board').addEventListener('click', ev => {
       q = Object.assign({}, q, { gold: Math.round(q.gold * 0.25), souls: Math.round((q.souls || 0) * 0.25), xp: Math.round((q.xp || 0) * 0.25), jade: Math.round((q.jade || 0) * 0.25) });
       toast('📜 Лимит заданий на сегодня исчерпан — награда 25%. Новый день начнётся в 00:00');
     }
-    S.gold += q.gold; S.souls += q.souls || 0; S.xp += q.xp || 0; S.jade += q.jade || 0; if (q.dew) { S.dew = (S.dew || 0) + q.dew; spawnText(hero.x - 30, hero.y - 100, `+${q.dew} 💧`, '#7dffb0', 18, true); if (!G.dewHint) { G.dewHint = true; setTimeout(() => toast('💧 Роса жизни растит Древо Жизни — открой его клавишей L'), 1200); } } Q.done++; SFX.up(); addShake(5);
+    { const bm = 1 + vBonus('boardMul'); if (bm > 1 && !q.trial) q = Object.assign({}, q, { gold: Math.round(q.gold * bm), souls: Math.round((q.souls || 0) * bm), xp: Math.round((q.xp || 0) * bm), jade: Math.round((q.jade || 0) * bm) }); }
+    S.gold += q.gold; S.souls += q.souls || 0; S.xp += q.xp || 0; S.jade += q.jade || 0; if (q.dew) { S.dew = (S.dew || 0) + q.dew; spawnText(hero.x - 30, hero.y - 100, `+${q.dew} 💧`, '#7dffb0', 18, true); if (!G.dewHint) { G.dewHint = true; setTimeout(() => toast('💧 Роса жизни растит Древо Жизни — открой его клавишей L'), 1200); } } Q.done++; SFX.up(); addShake(5); vHerald('claim');
     burst(hero.x, hero.y - 30, 30, '255,215,110', 260, 0.7, 3, 'glow'); P('ring', hero.x, hero.y, 0, 0, 0.5, 120, '95,240,200');
     spawnText(hero.x, hero.y - 88, '+¥' + fmt(q.gold), '#ffd76a', 20, true); if (q.souls) spawnText(hero.x + 30, hero.y - 70, `+${q.souls} ◆`, '#d6a6ff', 16, true);
     banner('Награда получена', `${q.title} · +¥${fmt(q.gold)}${q.souls ? ` · +${q.souls} ◆` : ''}`);
@@ -5166,7 +5214,7 @@ function useItem(id) {
   if (id === 'potion') {
     if (G.potionCd > 0) { toast(`🧪 Зелье ещё не готово: ${Math.ceil(G.potionCd)} с`); return; }
     if (hero.hp >= ST.maxHp - 1) { toast('🧪 Здоровье и так полное'); return; }
-    S.inv.potion--; G.potionCd = POTION_CD; heal(ST.maxHp * 0.4); burst(hero.x, hero.y - 30, 20, '255,90,126', 200, 0.6, 3, 'glow'); spawnText(hero.x, hero.y - 90, '+40% HP', '#ff8aa0', 16, true); SFX.soul();
+    S.inv.potion--; G.potionCd = POTION_CD; const pk = 0.4 * (1 + vBonus('potion')); heal(ST.maxHp * pk); burst(hero.x, hero.y - 30, 20, '255,90,126', 200, 0.6, 3, 'glow'); spawnText(hero.x, hero.y - 90, `+${Math.round(pk * 100)}% HP`, '#ff8aa0', 16, true); SFX.soul();
   } else if (id === 'talisman') {
     if (curseTotal() === 0 && !(hero.hburn && hero.hburn.t > 0) && !(hero.hpoison && hero.hpoison.t > 0)) { toast('📜 На тебе нет проклятий'); return; }
     S.inv.talisman--; cleanseAll('talisman');
@@ -5190,7 +5238,7 @@ function tryRevive() {
 }
 
 // ---------- Лавка ----------
-function openShop() { if (G.shopOpen) return; G.shopOpen = true; $('#shop').classList.remove('hidden'); renderShop(); SFX.click(); }
+function openShop() { if (G.shopOpen) return; G.shopOpen = true; vGift(); $('#shop').classList.remove('hidden'); renderShop(); SFX.click(); }
 function closeShop() { if (!G.shopOpen) return; G.shopOpen = false; $('#shop').classList.add('hidden'); save(); }
 function renderShop() {
   if (!G.shopOpen) return;
@@ -5449,6 +5497,7 @@ function setupLocation(loc) {
   S.loc = loc; ZONES = LOCS[loc].zones;
   for (const k of ['obstacles', 'buildings', 'props', 'lamps', 'trees', 'puddles', 'toro', 'arenas', 'streets', 'gates']) WORLD[k] = [];
   if (loc === 4) genTowerWorld(); else genWorld(loc);
+  for (const o of WORLD.trees) o.vHid = loc !== 4 && o.x < baseW() && !!vPlotAt(o.x, o.y); // деревья на участках деревни прячем (считается один раз)
 }
 function checkUnlock() {
   if (S.unlock2 && !S.unlock3 && S.bossKills2.every(k => k > 0)) { S.unlock3 = true; save(); SFX.up(); setTimeout(() => banner('Путь в Горный пик открыт!', 'Вернись на базу: портал теперь ведёт и в горы'), 3300); }
@@ -5510,6 +5559,7 @@ function drawRecall(ctx, t) {
 function travelTo(loc) {
   if (towerIn() && loc !== 4) { towerSwapOut(); towerOnLeave(); }
   if (loc === 4 && !towerIn()) { towerSwapIn(); applyClassText(); fixSlots(); refreshPetFx(); refreshStats(); }
+  if (loc <= 3) setTimeout(() => vLocEvent(loc), 1500);
   if (loc === 3 && S.tower && !S.tower.unlocked) { S.tower.unlocked = true; setTimeout(() => toast('魔 В портале открылась вкладка <b>Башня демонов</b>'), 3600); }
   closeForge(); closeBoard(); closeShop(); closeTravel(); if (G.soulOpen) toggleSoul(false); if (G.treeOpen) toggleTree(false); G.inForgeCircle = G.inBoardCircle = G.inShopCircle = false; G.oniSuperT = 0; closePets(); G.inNurseryCircle = false; G.petShots = []; G.pet = null; G.goldRush = 0; G.petStance = 0;
   setupLocation(loc);
@@ -6147,6 +6197,499 @@ function drawDpsMeter(ctx, sw, sh) {
   drawDpsList(ctx, x + 12, y + 38, w - 24, rows, 5);
 }
 // =====================================================================
+//  БЛОК 11.14. ДЕРЕВНЯ АКИ (барьер древних богов, кристалл защиты, Ратуша, стройка, жители)
+// =====================================================================
+const VILLAGE = [
+  { id: 'ratusha',  name: 'Ратуша',            icon: '🏯', who: 'Староста Мори',          kind: 'new',      costW: 1.3, timeW: 1.0 },
+  { id: 'herald',   name: 'Глашатай',          icon: '📜', who: 'Глашатай Тэцу',          kind: 'existing', costW: 1.0, timeW: 0.8 },
+  { id: 'forge',    name: 'Кузница',           icon: '⚒', who: 'Кузнец Ками',            kind: 'existing', costW: 1.0, timeW: 1.2 },
+  { id: 'shop',     name: 'Лавка',             icon: '🏮', who: 'Лавочница-тануки Пон',   kind: 'existing', costW: 1.0, timeW: 0.8 },
+  { id: 'nursery',  name: 'Питомник',          icon: '🐾', who: 'Хранительница Юи',       kind: 'existing', costW: 1.0, timeW: 1.0 },
+  { id: 'tea',      name: 'Чайный домик',      icon: '🍵', who: 'Бабушка О-Тя',           kind: 'new',      costW: 1.0, timeW: 0.8 },
+  { id: 'spring',   name: 'Горячий источник',  icon: '♨', who: 'Монах Дзэн',             kind: 'new',      costW: 1.0, timeW: 1.2 },
+  { id: 'shrine',   name: 'Святилище',         icon: '⛩', who: 'Жрица барьера Сэцу',     kind: 'new',      costW: 1.0, timeW: 1.5 },
+  { id: 'house1',   name: 'Домик ремесленника', icon: '🏠', who: 'Плотник Гэн',           kind: 'new',      costW: 0.8, timeW: 0.6 },
+  { id: 'house2',   name: 'Домик рыбака',      icon: '🏠', who: 'Рыбак Уми',              kind: 'new',      costW: 0.8, timeW: 0.6 },
+  { id: 'house3',   name: 'Домик ткачихи',     icon: '🏠', who: 'Ткачиха Хана',           kind: 'new',      costW: 0.8, timeW: 0.6 },
+  { id: 'house4',   name: 'Домик с детьми',    icon: '🏠', who: 'Близнецы Кэн и Мэй',     kind: 'new',      costW: 0.8, timeW: 0.6 },
+  { id: 'palisade', name: 'Частокол',          icon: '🪵', who: '',                       kind: 'new',      costW: 1.0, timeW: 1.0 },
+  { id: 'tower1',   name: 'Сторожевая вышка',  icon: '🗼', who: 'Дозорный Рё',            kind: 'new',      costW: 0.8, timeW: 1.2 },
+  { id: 'tower2',   name: 'Сторожевая вышка',  icon: '🗼', who: 'Дозорная Аой',           kind: 'new',      costW: 0.8, timeW: 1.2 },
+];
+const VB = Object.fromEntries(VILLAGE.map(b => [b.id, b]));
+const V_MAX = 3, V_LOC3 = 0.016; // в горах враги толстые: йен в минуту на единицу goldM ≈ в 40 раз меньше (замер авто-охотой)
+const baseW = () => (LOCS[S.loc] && LOCS[S.loc].baseW) || CFG.BASE_X;
+const vStep = id => (S.village && S.village.steps && S.village.steps[id]) | 0;
+const villageGM = () => Math.max(1, (S.village && S.village.peakGM) || 1);
+const vSlots = () => !(S.village && S.village.crystal) ? 0 : vStep('ratusha') >= 2 ? 2 : 1;
+function vPeakUpdate() {
+  if (!S.village) return; let g = 1;
+  g = Math.max(g, ZONES1[clamp(S.maxZone | 0, 1, 4)].goldM);
+  if (S.unlock2) g = Math.max(g, ZONES2[clamp(S.maxZone2 | 0, 1, 4)].goldM);
+  if (S.unlock3) g = Math.max(g, ZONES3[clamp(S.maxZone3 | 0, 1, 4)].goldM * V_LOC3);
+  S.village.peakGM = Math.max(+S.village.peakGM || 1, g);
+}
+function fixVillage() {
+  const v = (S.village && typeof S.village === 'object') ? S.village : {};
+  const sh = Array.isArray(v.shards) ? v.shards : []; v.shards = [0, 1, 2, 3].map(i => !!sh[i]);
+  v.crystal = !!v.crystal; v.intro = !!v.intro;
+  const st = (v.steps && typeof v.steps === 'object') ? v.steps : {}; v.steps = {};
+  for (const b of VILLAGE) v.steps[b.id] = clamp(st[b.id] | 0, 0, V_MAX);
+  v.peakGM = isFinite(+v.peakGM) && +v.peakGM > 0 ? +v.peakGM : 1;
+  v.giftDay = typeof v.giftDay === 'string' ? v.giftDay : null;
+  v.said = (v.said && typeof v.said === 'object') ? v.said : {};
+  S.village = v;
+  const q = Array.isArray(v.queue) ? v.queue : [];
+  v.queue = q.filter(x => x && VB[x.id] && isFinite(+x.endTs) && (x.step | 0) === v.steps[x.id] + 1).map(x => ({ id: x.id, step: x.step | 0, endTs: +x.endTs }));
+  const seen = new Set(); v.queue = v.queue.filter(x => !seen.has(x.id) && seen.add(x.id)).slice(0, vSlots());
+  vPeakUpdate();
+}
+
+// ---- Кристалл защиты: 4 осколка у стражей Токио ----
+const vBossHasShard = e => !!(e && e.boss && (e.loc || 1) === 1 && !towerIn() && S.village && !S.village.crystal && !S.village.shards[e.z - 1]);
+function vShardDrop(e) { if (!vBossHasShard(e)) return; dropLoot('vshard', e.x, e.y, e.z); G.loot[G.loot.length - 1].attract = true; }
+const vShardN = () => S.village.shards.filter(Boolean).length;
+function vOnShard(z) {
+  const v = S.village; if (!v || v.crystal || v.shards[z - 1]) return;
+  v.shards[z - 1] = true; const n = vShardN();
+  toast(`💎 Осколок кристалла ${n}/4${n < 4 ? ' — найди остальные у стражей Токио' : ''}`); SFX.up();
+  if (typeof hero !== 'undefined') { spawnText(hero.x, hero.y - 100, `💎 ${n}/4`, '#8fe8ff', 20, true); burst(hero.x, hero.y - 30, 18, '140,230,255', 200, 0.7, 3, 'glow'); }
+  if (n >= 4) vCrystalScene();
+  save();
+}
+function vCrystalScene() {
+  const v = S.village; v.crystal = true; v.intro = true; G.vDomeT = 0;
+  banner('Барьер древних богов пробудился!', 'Деревня Аки под защитой · восстанови Ратушу на базе (меню ☰ → Деревня)');
+  flashScreen(0.12); SFX.up();
+  setTimeout(() => vEvent('crystal'), 1200); setTimeout(() => vSayBox('Староста Мори', 'Аки, ты вернула свет барьеру! Деревня снова дышит. Давай начнём с Ратуши — а там и соседи вернутся домой.', '🏯'), 2600);
+  save();
+}
+function vGoalLine() { const v = S.village; return v && !v.crystal && !towerIn() ? `💎 Собери осколки кристалла у 4 стражей Токио (${vShardN()}/4)` : null; }
+function drawVillageGoal(ctx) {
+  const line = vGoalLine(); if (!line) return;
+  const A = S.quests.active, x = 16, y0 = (G.helpT > 0 && !towerIn() ? 302 : 176) + (A.length ? 30 + A.length * 40 + 8 : 0), w = 312, h = 30;
+  glass(ctx, x, y0, w, h, 10); ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.font = '700 11.5px "Segoe UI",sans-serif'; ctx.fillStyle = '#8fe8ff'; ctx.fillText(line, x + 12, y0 + h / 2);
+}
+function vDrawBossShard(ctx, e, t, sc) {
+  if (!vBossHasShard(e)) return;
+  const x = e.x + 14 * sc * (e.face || 1), y = e.y - 30 * sc, pu = 0.85 + 0.15 * Math.sin(t * 2.4); // ~0,4 Гц, плавно
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(x, y, 0, x, y, 22 * pu); g.addColorStop(0, 'rgba(120,220,255,0.55)'); g.addColorStop(1, 'rgba(60,140,255,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, 22 * pu, 0, TAU); ctx.fill(); ctx.restore();
+  drawShardGem(ctx, x, y, 1.1);
+}
+function drawShardGem(ctx, x, y, s) {
+  const cg = ctx.createLinearGradient(x - 6 * s, y - 10 * s, x + 6 * s, y + 10 * s); cg.addColorStop(0, '#d8f6ff'); cg.addColorStop(0.5, '#4fc3ff'); cg.addColorStop(1, '#1b4f9a');
+  ctx.fillStyle = cg; ctx.beginPath(); ctx.moveTo(x, y - 11 * s); ctx.lineTo(x + 6 * s, y - 2 * s); ctx.lineTo(x + 2 * s, y + 10 * s); ctx.lineTo(x - 3 * s, y + 9 * s); ctx.lineTo(x - 6 * s, y - 3 * s); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(200,240,255,0.7)'; ctx.lineWidth = 0.8; ctx.stroke();
+}
+function drawShardLoot(ctx, l, y, t) {
+  const pu = 1 + 0.12 * Math.sin(t * 3 + l.spin), yy = y - 4;
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; const g = ctx.createRadialGradient(l.x, yy, 0, l.x, yy, 20 * pu); g.addColorStop(0, 'rgba(120,220,255,0.6)'); g.addColorStop(1, 'rgba(60,140,255,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(l.x, yy, 20 * pu, 0, TAU); ctx.fill(); ctx.restore();
+  drawShardGem(ctx, l.x, yy, 0.9);
+}
+// ---- Стройка: цены, ворота, таймеры, очередь ----
+const V_GOLD = [2750, 27500, 132000], V_TIME = [5 * 60e3, 60 * 60e3, 4 * 3600e3];
+function vCost(id, step) {
+  const b = VB[id], k = b.costW, c = { gold: Math.round(k * V_GOLD[step - 1] * villageGM()), souls: 0, jade: 0 };
+  if (step === 3) { c.souls = Math.round(1500 * k); c.jade = Math.round(200 * k); }
+  return c;
+}
+const vTime = (id, step) => V_TIME[step - 1] * VB[id].timeW * (vStep('ratusha') >= 3 ? 0.8 : 1);
+const vBuilding = id => S.village.queue.some(q => q.id === id);
+function vCanBuild(id) {
+  const v = S.village, b = VB[id]; if (!b) return { ok: false, why: '?' };
+  const no = why => ({ ok: false, why });
+  if (!v.crystal) return no('Нужен кристалл защиты');
+  const next = vStep(id) + 1;
+  if (next > V_MAX) return no('Уже на максимуме');
+  if (vBuilding(id)) return no('Уже строится');
+  if (id === 'ratusha') { if (next === 2 && !S.unlock2) return no('Откроется после Храмового квартала'); if (next === 3 && !S.unlock3) return no('Откроется после Горного пика'); }
+  else if (vStep('ratusha') < next) return no(`Сначала Ратуша: шаг ${next}`);
+  if (v.queue.length >= vSlots()) return no('Нет свободной бригады');
+  const c = vCost(id, next);
+  if (S.gold < c.gold) return no('Не хватает ¥'); if (S.souls < c.souls) return no('Не хватает ◆'); if (S.jade < c.jade) return no('Не хватает ✧');
+  return { ok: true, why: '' };
+}
+function vStartBuild(id) {
+  if (towerIn() || !vCanBuild(id).ok) return false;
+  const step = vStep(id) + 1, c = vCost(id, step);
+  S.gold -= c.gold; S.souls -= c.souls; S.jade -= c.jade;
+  S.village.queue.push({ id, step, endTs: Date.now() + vTime(id, step) }); save(); return true;
+}
+function vTick() {
+  const v = S.village; if (!v || !v.queue.length) return; const now = Date.now(); let done = false;
+  for (const q of v.queue) { const full = vTime(q.id, q.step); if (q.endTs - now > full) q.endTs = now + full; } // часы перевели назад
+  v.queue.sort((a, b) => a.endTs - b.endTs);
+  while (v.queue.length && v.queue[0].endTs <= now) {
+    const q = v.queue.shift(); if (v.steps[q.id] + 1 !== q.step) continue;
+    v.steps[q.id] = q.step; done = true; vEvent('built', q.id);
+  }
+  if (done) { refreshStats(); save(); }
+}
+
+// ---- Бонусы деревни (в Башне не действуют) ----
+const V_FX = {
+  forgeDisc: ['forge', [0, 0.08, 0.16, 0.25]], shopDisc: ['shop', [0, 0, 0.15, 0.15]], offers: ['herald', [0, 1, 1, 1]], active: ['herald', [0, 0, 1, 1]],
+  boardMul: ['herald', [0, 0, 0, 0.15]], petXp: ['nursery', [0, 0.15, 0.3, 0.5]], tea: ['tea', [0, 0.05, 0.1, 0.15]], teaDur: ['tea', [0, 600, 600, 900]],
+  potion: ['spring', [0, 0.25, 0.25, 0.25]], regen: ['spring', [0, 0, 0.001, 0.002]], drop: ['shrine', [1, 1.25, 1.5, 2]], reduce: ['palisade', [0, 0.02, 0.04, 0.06]],
+};
+function vBonus(key) {
+  if (!S.village || towerIn()) return key === 'drop' ? 1 : 0;
+  if (key === 'goldXp') return 0.03 * (vStep('house1') + vStep('house2') + vStep('house3') + vStep('house4'));
+  if (key === 'hp') return 0.03 * (vStep('tower1') + vStep('tower2'));
+  const f = V_FX[key]; return f ? f[1][vStep(f[0])] : 0;
+}
+const vActiveMax = () => 3 + vBonus('active');
+function applyVillageStats(st) {
+  if (!S.village || towerIn()) { st.vReduce = 0; st.vDrop = 1; return; }
+  st.maxHp *= 1 + vBonus('hp'); st.shieldMax = st.maxHp * sumE(S.a, 'eshield') / 100;
+  const gx = vBonus('goldXp'); st.goldMul *= 1 + gx; st.xpMul *= 1 + gx;
+  st.regen += vBonus('regen') * st.healMul;
+  if (typeof G !== 'undefined' && G.teaT > 0) st.dmg *= 1 + vBonus('tea');
+  st.vReduce = vBonus('reduce'); st.vDrop = vBonus('drop');
+}
+function vZoneChange(prev, z) {
+  if (towerIn()) return;
+  if (z === 0 && prev > 0) vBaseEnter();
+  if (prev === 0 && z > 0 && vStep('tea') >= 1) { G.teaT = vBonus('teaDur'); refreshStats(); spawnText(hero.x, hero.y - 96, `🍵 Чай О-Тя: урон +${Math.round(vBonus('tea') * 100)}%`, '#ffd9a0', 15, true); }
+}
+function vUpdate(dt) { vResUpdate(dt); if (G.teaT > 0) { G.teaT -= dt; if (G.teaT <= 0) { G.teaT = 0; refreshStats(); } } }
+function vGift() {
+  const lv = vStep('shop'); if (!lv || towerIn()) return; const day = kyivDay(); if (S.village.giftDay === day) return;
+  S.village.giftDay = day; const id = (+day.slice(-2)) % 2 ? 'potion' : 'talisman'; S.inv[id] = (S.inv[id] || 0) + 1;
+  let txt = `${ITEMS[id].icon} ${ITEMS[id].name}`; if (lv >= 3) { S.inv.stone = (S.inv.stone || 0) + 1; txt += ` и ${ITEMS.stone.icon} ${ITEMS.stone.name}`; }
+  toast(`🏮 Лавочница Пон: «Это тебе, Аки!» — ${txt}`); SFX.coin(); save();
+}
+
+// ---- Окно «Деревня» (Ратуша · меню ☰ · V) ----
+const VPLOTS = { // x — центр, y — линия земли, постройка растёт вверх на h
+  ratusha: { x: 500, y: 1000, w: 230, h: 170 }, shrine: { x: 500, y: 560, w: 180, h: 150 },
+  tea: { x: 150, y: 820, w: 170, h: 130 }, spring: { x: 850, y: 820, w: 180, h: 120 },
+  house1: { x: 150, y: 470, w: 150, h: 120 }, house2: { x: 850, y: 470, w: 150, h: 120 },
+  house3: { x: 150, y: 2580, w: 150, h: 120 }, house4: { x: 850, y: 2580, w: 150, h: 120 },
+  tower1: { x: 110, y: 3000, w: 90, h: 180 }, tower2: { x: 890, y: 3000, w: 90, h: 180 },
+  palisade: { x: 500, y: 3150, w: 460, h: 70 },
+};
+const RATUSHA = { x: VPLOTS.ratusha.x, y: VPLOTS.ratusha.y + 70, r: 84, sy: VPLOTS.ratusha.y };
+const V_TXT = {
+  ratusha: ['1 бригада строителей', '2-я бригада', 'вся стройка быстрее на 20%'],
+  herald: ['задания выдаёт глашатай · +1 объявление', '+1 взятое задание (3 → 4)', 'награды доски +15%'],
+  forge: ['ковка и закалка −8%', 'ковка и закалка −16%', 'ковка и закалка −25%'],
+  shop: ['ежедневный подарок: зелье или талисман', 'цены лавки −15%', 'подарок + камень телепортации'],
+  nursery: ['опыт питомцев +15%', 'опыт питомцев +30%', 'опыт питомцев +50%'],
+  tea: ['чай при выходе с базы: урон +5% на 10 мин', 'чай: урон +10% на 10 мин', 'чай: урон +15% на 15 мин'],
+  spring: ['зелья лечат на 25% сильнее', 'регенерация вне базы +0,1% HP/с', 'регенерация вне базы +0,2% HP/с'],
+  shrine: ['◆ и ✧ с обычных врагов чаще ×1,25', '◆ и ✧ чаще ×1,5', '◆ и ✧ чаще ×2'],
+  palisade: ['получаемый урон −2%', 'получаемый урон −4%', 'получаемый урон −6%'],
+};
+for (const id of ['house1', 'house2', 'house3', 'house4']) V_TXT[id] = ['йены и опыт +3%', 'йены и опыт +6%', 'йены и опыт +9%'];
+for (const id of ['tower1', 'tower2']) V_TXT[id] = ['здоровье +3%', 'здоровье +6%', 'здоровье +9%'];
+const vPrice = c => `<span class="pr g">¥${fmt(c.gold)}</span>${c.souls ? `<span class="pr s">◆${fmt(c.souls)}</span>` : ''}${c.jade ? `<span class="pr j">✧${fmt(c.jade)}</span>` : ''}`;
+const vDur = ms => { const m = Math.round(ms / 60000); return m >= 60 ? `${Math.floor(m / 60)} ч${m % 60 ? ' ' + (m % 60) + ' мин' : ''}` : `${m} мин`; };
+const vLeft = ms => { const s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600); return (h ? h + ':' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') : Math.floor(s / 60)) + ':' + String(s % 60).padStart(2, '0'); };
+function openVillage() {
+  if (towerIn()) { toast('🏯 Деревня осталась снаружи башни'); return; }
+  if (G.villageOpen) return; G.villageOpen = true; G.vSel = G.vSel || 'ratusha'; $('#village').classList.remove('hidden'); renderVillage(); SFX.click();
+}
+function closeVillage() { if (!G.villageOpen) return; G.villageOpen = false; $('#village').classList.add('hidden'); save(); }
+function toggleVillage() { G.villageOpen ? closeVillage() : openVillage(); }
+function renderVillage() {
+  if (!G.villageOpen) return; const v = S.village;
+  $('#vl-res').innerHTML = `<span class="res g"><i>¥</i>${fmt(S.gold)}</span><span class="res s"><i>◆</i>${fmt(S.souls)}</span><span class="res j"><i>✧</i>${fmt(S.jade)}</span>`;
+  if (!v.crystal) {
+    const n = vShardN();
+    $('#vl-sub').textContent = 'Барьер древних богов угас';
+    $('#vl-map').innerHTML = `<div class="vl-shards"><div class="gems">${v.shards.map(s => s ? '💎' : '◇').join('')}</div>Осколки кристалла: <b>${n}/4</b><br>Победи стражей Токио — у каждого из четырёх боссов по осколку. Когда кристалл соберётся, барьер засияет и деревню можно будет восстановить.</div>`;
+    $('#vl-queue').innerHTML = ''; $('#vl-card').innerHTML = `<h4>⛩ Кристалл защиты</h4><div class="who">Жрица барьера Сэцу</div>«Принеси осколки, Аки. Барьер снова укроет нашу деревню».`; return;
+  }
+  const lvl = VILLAGE.reduce((a, b) => a + vStep(b.id), 0);
+  $('#vl-sub').innerHTML = `Уровень деревни <b>${lvl}</b>/45 · бригад: <b>${v.queue.length}/${vSlots()}</b>`;
+  $('#vl-map').innerHTML = VILLAGE.map(b => { const s = vStep(b.id), bl = vBuilding(b.id); return `<button data-act="vsel" data-id="${b.id}" class="${G.vSel === b.id ? 'sel' : ''} ${s >= V_MAX ? 'done' : ''} ${bl ? 'bld' : ''}"><span class="vi">${b.icon}</span>${b.name}<span class="vs">${bl ? 'строится' : `шаг ${s}/${V_MAX}`}</span></button>`; }).join('');
+  const now = Date.now();
+  $('#vl-queue').innerHTML = v.queue.length ? v.queue.map(q => `<div class="vq"><span>${VB[q.id].icon} ${VB[q.id].name} · шаг ${q.step}</span><b>${vLeft(q.endTs - now)}</b></div>`).join('') : '<div class="note">Бригады свободны — выбери участок и начни стройку.</div>';
+  const id = G.vSel, b = VB[id], s = vStep(id), nx = s + 1, cb = vCanBuild(id);
+  let h = `<h4>${b.icon} ${b.name}</h4><div class="who">${b.who || 'Защищает деревню'}</div>`;
+  h += V_TXT[id].map((t, i) => `<div class="st ${i < s ? 'got' : i === s ? 'cur' : ''}">${i < s ? '✓' : i + 1}. ${t}</div>`).join('');
+  if (nx <= V_MAX) {
+    const c = vCost(id, nx);
+    h += `<div class="vb"><button class="primary" data-act="vbuild" data-id="${id}" ${cb.ok ? '' : 'disabled'}>🔨 Строить шаг ${nx}${vPrice(c)}<span class="sub">${vBuilding(id) ? 'уже строится' : vDur(vTime(id, nx))}</span></button></div>`;
+    if (!cb.ok) h += `<div class="why">${cb.why}</div>`;
+  } else h += `<div class="why" style="color:#ffd76a">Полностью восстановлено ✨</div>`;
+  $('#vl-card').innerHTML = h;
+}
+$('#village').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return; const act = b.dataset.act;
+  if (act === 'close') { closeVillage(); return; }
+  if (act === 'vsel') { G.vSel = b.dataset.id; SFX.click(); }
+  else if (act === 'vbuild') { if (vStartBuild(b.dataset.id)) { SFX.up(); toast(`🔨 Стройка началась: <b>${VB[b.dataset.id].name}</b>`); } else SFX.fail(); }
+  renderVillage();
+});
+function vCircle(h) {
+  const d = towerIn() ? 1e9 : dist(h.x, h.y, RATUSHA.x, RATUSHA.y);
+  if (d < RATUSHA.r) { if (!G.inVillageCircle) { G.inVillageCircle = true; openVillage(); } }
+  else if (d > RATUSHA.r + 16 && G.inVillageCircle) { G.inVillageCircle = false; closeVillage(); }
+}
+
+// ---- Деревня в мире: участки, руины, стройка, купол барьера, три темы ----
+const VPAL = {
+  city:     { wall: '#2b2440', wall2: '#3a3156', roof: '#1f1a30', edge: '#ff4fa3', trim: '#29d8ff', win: '#ffcf6b', wood: '#5a4632', stone: '#4a4658', cloth: '#ff4fa3' },
+  temple:   { wall: '#e2cfa8', wall2: '#cdb58a', roof: '#2f6f66', edge: '#5ff0c8', trim: '#c4372e', win: '#ffd27a', wood: '#6b3a24', stone: '#6d6a60', cloth: '#c4372e' },
+  mountain: { wall: '#5a4434', wall2: '#6e5440', roof: '#3a2e2a', edge: '#dce6f0', trim: '#8fd8ff', win: '#ffc070', wood: '#4a3626', stone: '#6a7280', cloth: '#5a7cff', snow: true },
+};
+const VSPR = new Map();
+const vLevel = () => VILLAGE.reduce((a, b) => a + vStep(b.id), 0);
+function vPlotAt(x, y) { for (const id in VPLOTS) { const p = VPLOTS[id]; if (x > p.x - p.w / 2 - 20 && x < p.x + p.w / 2 + 20 && y > p.y - p.h - 20 && y < p.y + 75) return id; } return null; }
+const vPropHidden = o => !!o.vHid;
+function vRoof(c, x0, x1, y, h, P, ov = 14) {
+  const g = c.createLinearGradient(0, y - h, 0, y); g.addColorStop(0, P.roof); g.addColorStop(1, P.wall2);
+  c.fillStyle = P.roof; c.beginPath(); c.moveTo(x0 - ov, y); c.quadraticCurveTo((x0 + x1) / 2, y - 6, x1 + ov, y); c.lineTo(x1 - (x1 - x0) * 0.18, y - h); c.lineTo(x0 + (x1 - x0) * 0.18, y - h); c.closePath(); c.fill();
+  c.strokeStyle = P.edge; c.globalAlpha = 0.8; c.lineWidth = 2.2; c.beginPath(); c.moveTo(x0 - ov, y); c.quadraticCurveTo((x0 + x1) / 2, y - 6, x1 + ov, y); c.stroke(); c.globalAlpha = 1;
+  if (P.snow) { c.fillStyle = P.edge; c.globalAlpha = 0.85; c.beginPath(); c.moveTo(x0 + (x1 - x0) * 0.18, y - h); c.lineTo(x1 - (x1 - x0) * 0.18, y - h); c.lineTo(x1 - (x1 - x0) * 0.12, y - h + 6); c.lineTo(x0 + (x1 - x0) * 0.12, y - h + 6); c.closePath(); c.fill(); c.globalAlpha = 1; }
+}
+function vWalls(c, x0, x1, y0, y1, P, wins = 2) {
+  c.fillStyle = P.wall; c.fillRect(x0, y0, x1 - x0, y1 - y0); c.fillStyle = P.wall2; c.fillRect(x0, y1 - 6, x1 - x0, 6);
+  c.fillStyle = P.trim; c.fillRect(x0, y0, 4, y1 - y0); c.fillRect(x1 - 4, y0, 4, y1 - y0);
+  const ww = (x1 - x0) / (wins * 2 + 1); for (let i = 0; i < wins; i++) { c.fillStyle = P.win; c.globalAlpha = 0.85; c.fillRect(x0 + ww * (1 + i * 2), y0 + (y1 - y0) * 0.25, ww, (y1 - y0) * 0.35); c.globalAlpha = 1; c.strokeStyle = P.wood; c.lineWidth = 1; c.strokeRect(x0 + ww * (1 + i * 2), y0 + (y1 - y0) * 0.25, ww, (y1 - y0) * 0.35); }
+}
+function vLantern(c, x, y, P, s = 1) { c.strokeStyle = P.wood; c.lineWidth = 1; c.beginPath(); c.moveTo(x, y - 8 * s); c.lineTo(x, y - 3 * s); c.stroke(); c.fillStyle = P.cloth; c.beginPath(); c.ellipse(x, y + 3 * s, 4.5 * s, 6 * s, 0, 0, TAU); c.fill(); c.fillStyle = P.win; c.globalAlpha = 0.7; c.beginPath(); c.ellipse(x, y + 3 * s, 2.2 * s, 3.8 * s, 0, 0, TAU); c.fill(); c.globalAlpha = 1; }
+function vFlag(c, x, y, h, col, P) { c.strokeStyle = P.wood; c.lineWidth = 2; c.beginPath(); c.moveTo(x, y); c.lineTo(x, y - h); c.stroke(); c.fillStyle = col; c.beginPath(); c.moveTo(x, y - h); c.lineTo(x + 16, y - h + 5); c.lineTo(x, y - h + 11); c.closePath(); c.fill(); }
+function vRuins(c, w, h, P, R) {
+  for (let i = 0; i < 7; i++) { c.fillStyle = i % 2 ? P.stone : '#3a3846'; c.beginPath(); c.ellipse((R() - 0.5) * w * 0.8, -4 - R() * 10, 8 + R() * 12, 5 + R() * 6, 0, 0, TAU); c.fill(); }
+  c.fillStyle = P.wood; for (let i = 0; i < 4; i++) { c.save(); c.translate((R() - 0.5) * w * 0.6, -6 - R() * 14); c.rotate((R() - 0.5) * 1.6); c.fillRect(-22, -3, 44, 6); c.restore(); }
+  c.fillStyle = P.trim; c.globalAlpha = 0.55; c.fillRect(-w * 0.25, -h * 0.45, 7, h * 0.45 - 4); c.fillRect(w * 0.2, -h * 0.3, 7, h * 0.3 - 4); c.globalAlpha = 1;
+}
+const VDRAW = {
+  ratusha(c, s, P, w, h) {
+    c.fillStyle = P.stone; c.fillRect(-w * 0.48, -14, w * 0.96, 14);
+    vWalls(c, -w * 0.34, w * 0.34, -h * 0.55, -14, P, 3); vRoof(c, -w * 0.4, w * 0.4, -h * 0.55, h * 0.2, P, 18);
+    if (s >= 2) { vWalls(c, -w * 0.22, w * 0.22, -h * 0.86, -h * 0.66, P, 2); vRoof(c, -w * 0.27, w * 0.27, -h * 0.86, h * 0.14, P, 14); }
+    c.fillStyle = P.trim; c.fillRect(-16, -h * 0.5, 32, 22); c.fillStyle = '#1a1424'; c.font = '700 16px "Yu Gothic","Meiryo",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('村', 0, -h * 0.5 + 11);
+    if (s >= 2) { vLantern(c, -w * 0.38, -h * 0.5, P); vLantern(c, w * 0.38, -h * 0.5, P); }
+    if (s >= 3) { vFlag(c, -w * 0.46, -14, 70, P.cloth, P); vFlag(c, w * 0.46 - 16, -14, 70, P.edge, P); c.fillStyle = '#ffd76a'; c.beginPath(); c.arc(0, -h * 1.0 + 6, 5, 0, TAU); c.fill(); }
+  },
+  shrine(c, s, P, w, h) {
+    c.fillStyle = P.stone; c.fillRect(-w * 0.4, -12, w * 0.8, 12);
+    c.fillStyle = P.trim; c.fillRect(-w * 0.3, -h * 0.6, 8, h * 0.6 - 12); c.fillRect(w * 0.3 - 8, -h * 0.6, 8, h * 0.6 - 12);
+    c.fillStyle = P.wall; c.fillRect(-w * 0.24, -h * 0.55, w * 0.48, h * 0.43); vRoof(c, -w * 0.36, w * 0.36, -h * 0.6, h * 0.22, P, 16);
+    c.strokeStyle = '#d8b25a'; c.lineWidth = 3; c.beginPath(); c.moveTo(-w * 0.2, -h * 0.5); c.quadraticCurveTo(0, -h * 0.42, w * 0.2, -h * 0.5); c.stroke();
+    if (s >= 2) { c.fillStyle = P.trim; c.fillRect(-w * 0.46, -h * 0.34, 5, h * 0.34); c.fillRect(-w * 0.32, -h * 0.34, 5, h * 0.34); c.fillRect(-w * 0.5, -h * 0.36, w * 0.24, 5); }
+    if (s >= 3) { vLantern(c, w * 0.42, -h * 0.3, P); vLantern(c, -w * 0.08, -h * 0.66, P, 0.8); c.fillStyle = '#ffd76a'; c.beginPath(); c.arc(0, -h * 0.36, 5, 0, TAU); c.fill(); }
+  },
+  tea(c, s, P, w, h) {
+    vWalls(c, -w * 0.38, w * 0.3, -h * 0.5, 0, P, 1); vRoof(c, -w * 0.44, w * 0.36, -h * 0.5, h * 0.24, P, 12);
+    c.fillStyle = P.cloth; c.fillRect(-w * 0.1, -h * 0.48, w * 0.3, h * 0.2); c.fillStyle = '#1a1424'; c.font = '700 12px "Yu Gothic","Meiryo",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('茶', w * 0.05, -h * 0.38);
+    if (s >= 2) { c.fillStyle = P.wood; c.fillRect(w * 0.32, -14, w * 0.18, 6); c.fillStyle = '#d23a3a'; c.beginPath(); c.moveTo(w * 0.41, -h * 0.55); c.lineTo(w * 0.24, -h * 0.4); c.lineTo(w * 0.58, -h * 0.4); c.closePath(); c.fill(); c.fillStyle = P.wood; c.fillRect(w * 0.405, -h * 0.4, 3, h * 0.3); }
+    if (s >= 3) { vLantern(c, -w * 0.42, -h * 0.42, P); vLantern(c, w * 0.32, -h * 0.46, P); }
+  },
+  spring(c, s, P, w, h) {
+    const g = c.createRadialGradient(0, -20, 4, 0, -20, w * 0.4); g.addColorStop(0, '#7fd8ff'); g.addColorStop(1, '#2a6a9a');
+    for (let i = 0; i < 9; i++) { const a = i / 9 * TAU; c.fillStyle = P.stone; c.beginPath(); c.ellipse(Math.cos(a) * w * 0.38, -20 + Math.sin(a) * 18, 10, 7, 0, 0, TAU); c.fill(); }
+    c.fillStyle = g; c.beginPath(); c.ellipse(0, -20, w * 0.34, 15, 0, 0, TAU); c.fill();
+    if (s >= 2) { vWalls(c, w * 0.18, w * 0.46, -h * 0.75, -h * 0.3, P, 1); vRoof(c, w * 0.16, w * 0.48, -h * 0.75, h * 0.18, P, 8); }
+    if (s >= 3) { vLantern(c, -w * 0.42, -h * 0.5, P); c.fillStyle = P.wood; for (let i = 0; i < 5; i++) c.fillRect(-w * 0.48 + i * 12, -h * 0.42, 4, h * 0.42 - 26); }
+  },
+  house(c, s, P, w, h, k) {
+    const wall = k % 2 ? P.wall2 : P.wall, PP = Object.assign({}, P, { wall });
+    vWalls(c, -w * 0.32, w * 0.32, -h * 0.5, 0, PP, 2); vRoof(c, -w * 0.38, w * 0.38, -h * 0.5, h * 0.28, P, 10);
+    c.fillStyle = P.wood; c.fillRect(-7, -h * 0.28, 14, h * 0.28);
+    if (s >= 2) { const fl = ['#ff7aa8', '#ffd76a', '#9dff8a', '#8fd8ff'][k % 4]; for (let i = 0; i < 6; i++) { c.fillStyle = '#2f5a30'; c.fillRect(-w * 0.44 + i * 9, -8, 6, 8); c.fillStyle = fl; c.beginPath(); c.arc(-w * 0.44 + i * 9 + 3, -10, 3, 0, TAU); c.fill(); } }
+    if (s >= 3) { vLantern(c, w * 0.36, -h * 0.4, P); c.strokeStyle = P.wood; c.lineWidth = 2; c.beginPath(); c.moveTo(w * 0.12, -6); c.lineTo(w * 0.5, -6); c.stroke(); for (let i = 0; i < 4; i++) c.fillRect(w * 0.14 + i * 11, -14, 3, 14); }
+  },
+  palisade(c, s, P, w, h) {
+    const n = Math.floor(w / 16);
+    for (let i = 0; i < n; i++) { const x = -w / 2 + i * 16 + 4; if (s >= 2 && Math.abs(x) < 34) continue; c.fillStyle = P.wood; c.fillRect(x, -h * 0.75, 9, h * 0.75); c.beginPath(); c.moveTo(x, -h * 0.75); c.lineTo(x + 4.5, -h * 0.9); c.lineTo(x + 9, -h * 0.75); c.fill(); }
+    c.strokeStyle = '#c8a46a'; c.lineWidth = 2; c.beginPath(); c.moveTo(-w / 2, -h * 0.45); c.lineTo(w / 2, -h * 0.45); c.stroke();
+    if (s >= 2) { c.fillStyle = P.trim; c.fillRect(-38, -h, 7, h); c.fillRect(31, -h, 7, h); c.fillRect(-44, -h, 88, 7); }
+    if (s >= 3) { vFlag(c, -w / 2 + 6, 0, h + 20, P.cloth, P); vFlag(c, w / 2 - 22, 0, h + 20, P.edge, P); vLantern(c, -30, -h + 14, P); vLantern(c, 30, -h + 14, P); }
+  },
+  tower(c, s, P, w, h, k) {
+    const top = -h * (s >= 2 ? 0.78 : 0.62);
+    c.strokeStyle = P.wood; c.lineWidth = 5; c.beginPath(); c.moveTo(-w * 0.36, 0); c.lineTo(-w * 0.26, top); c.moveTo(w * 0.36, 0); c.lineTo(w * 0.26, top); c.stroke();
+    c.lineWidth = 2; c.beginPath(); for (let y = -16; y > top + 10; y -= 22) { c.moveTo(-w * 0.33, y); c.lineTo(w * 0.33, y - 16); } c.stroke();
+    c.fillStyle = P.wood; c.fillRect(-w * 0.4, top - 6, w * 0.8, 8); c.fillStyle = P.wall; c.fillRect(-w * 0.32, top - 28, w * 0.64, 22);
+    vRoof(c, -w * 0.38, w * 0.38, top - 28, 18, P, 8);
+    if (s >= 3) { vLantern(c, w * 0.42, top - 4, P); vFlag(c, 0, top - 46, 22, k % 2 ? P.edge : P.cloth, P); }
+  },
+};
+function vSprite(id, step, theme) {
+  const p = VPLOTS[id], res = GFX.level === 0 ? 1 : clamp(Math.round((window.devicePixelRatio || 1) * G.cam.zoom * 2) / 2, 1, 2), key = `${id}|${step}|${theme}|${res}`;
+  let cv = VSPR.get(key); if (cv) return cv;
+  const pad = 40, W = p.w + pad * 2, H = p.h + pad * 2 + 20; cv = document.createElement('canvas'); cv.width = Math.ceil(W * res); cv.height = Math.ceil(H * res);
+  const c = cv.getContext('2d'), P = VPAL[theme] || VPAL.city; c.scale(res, res); c.translate(W / 2, p.h + pad); c.lineCap = 'round'; c.lineJoin = 'round';
+  c.fillStyle = 'rgba(0,0,0,0.35)'; c.beginPath(); c.ellipse(0, 2, p.w * 0.5, 9, 0, 0, TAU); c.fill();
+  const k = +id.replace(/\D/g, '') || 0, fn = VDRAW[id] || VDRAW[id.replace(/\d/g, '')];
+  if (step <= 0) vRuins(c, p.w, p.h, P, mulberry32(k * 97 + id.length * 13)); else fn(c, step, P, p.w, p.h, k);
+  if (VSPR.size > 160) VSPR.clear(); VSPR.set(key, cv); cv.pad = pad; cv.res = res; return cv;
+}
+function drawVillagePlot(ctx, id, t) {
+  const p = VPLOTS[id], cv = vSprite(id, vStep(id), WORLD.theme), W = cv.width / cv.res, H = cv.height / cv.res;
+  ctx.drawImage(cv, p.x - W / 2, p.y - p.h - cv.pad, W, H);
+  const q = S.village.queue.find(x => x.id === id); if (q) vDrawScaffold(ctx, p, t);
+  if (id === 'spring' && vStep(id) >= 1 && GFX.level > 0) for (let i = 0; i < 3; i++) { const ph = (t * 0.25 + i / 3) % 1; ctx.fillStyle = `rgba(200,225,240,${0.16 * (1 - ph)})`; ctx.beginPath(); ctx.arc(p.x - 30 + i * 30 + Math.sin(t + i) * 6, p.y - 24 - ph * 50, 8 + ph * 10, 0, TAU); ctx.fill(); }
+}
+function vDrawScaffold(ctx, p, t) {
+  const x0 = p.x - p.w * 0.42, x1 = p.x + p.w * 0.42, y0 = p.y - p.h * 0.85;
+  ctx.strokeStyle = 'rgba(214,170,100,0.9)'; ctx.lineWidth = 3; ctx.beginPath();
+  for (let x = x0; x <= x1 + 1; x += (x1 - x0) / 3) { ctx.moveTo(x, p.y); ctx.lineTo(x, y0); }
+  for (let y = p.y - 24; y > y0; y -= 34) { ctx.moveTo(x0, y); ctx.lineTo(x1, y); } ctx.stroke();
+  ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, p.y); ctx.lineTo(x1, y0); ctx.stroke();
+  const bob = GFX.level ? Math.sin(t * 3) * 3 : 0, wx = p.x + p.w * 0.2, wy = p.y - 30 + bob; // рабочий с молотком
+  ctx.fillStyle = '#ffd27a'; ctx.beginPath(); ctx.arc(wx, wy - 22, 6, 0, TAU); ctx.fill(); ctx.fillStyle = '#e8a33a'; ctx.beginPath(); ctx.ellipse(wx, wy - 27, 8, 3, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#3a6a9a'; ctx.fillRect(wx - 5, wy - 16, 10, 14); ctx.strokeStyle = '#6a4a2a'; ctx.lineWidth = 2; ctx.beginPath(); const a = GFX.level ? Math.sin(t * 6) * 0.6 : 0; ctx.moveTo(wx + 5, wy - 12); ctx.lineTo(wx + 5 + Math.cos(a - 0.8) * 14, wy - 12 + Math.sin(a - 0.8) * 14); ctx.stroke();
+}
+function vDecorExisting(ctx, t) { // фонарики у кузницы, лавки, доски и Питомника по шагам
+  const P = VPAL[WORLD.theme] || VPAL.city, spots = { forge: [FORGE.x, FORGE.sy - 70, 70], shop: [SHOP.x, SHOP.sy - 64, 64], herald: [BOARD.x, BOARD.sy - 70, 64], nursery: [NURSERY.x, NURSERY.sy - 64, 64] };
+  for (const id in spots) { const s = vStep(id); if (!s) continue; const [x, y, dx] = spots[id]; vLantern(ctx, x - dx, y, P, 1.2); if (s >= 2) vLantern(ctx, x + dx, y, P, 1.2); if (s >= 3) vFlag(ctx, x + dx + 12, y + 60, 54, P.edge, P); }
+}
+function drawVillageGround(ctx, v, t) { // под объектами: купол барьера и круг Ратуши
+  if (towerIn() || v.x0 > baseW() + 200) return; const SV = S.village;
+  if (SV.crystal) {
+    G.vDomeT = Math.min(2.5, (G.vDomeT ?? 2.5) + 1 / 60); const rise = 1 - Math.pow(1 - G.vDomeT / 2.5, 3), ry = (700 + vLevel() / 45 * 1050) * rise, pu = 0.85 + 0.15 * Math.sin(t * 1.2);
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, baseW(), CFG.WORLD_H); ctx.clip();
+    ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = `rgba(140,220,255,${0.22 * pu})`; ctx.lineWidth = 10; ctx.beginPath(); ctx.ellipse(500, 1700, 560, Math.max(1, ry), 0, 0, TAU); ctx.stroke();
+    ctx.strokeStyle = `rgba(190,240,255,${0.35 * pu})`; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(120,200,255,0.035)'; ctx.fill(); ctx.restore();
+  }
+  const { x, y, r } = RATUSHA, act = G.inVillageCircle ? 1 : 0.5;
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.strokeStyle = `rgba(255,210,120,${0.16 * act})`; ctx.lineWidth = 12; ctx.stroke();
+  ctx.strokeStyle = `rgba(255,220,140,${0.7 * act})`; ctx.lineWidth = 2.5; ctx.stroke(); ctx.lineWidth = 1.2; ctx.setLineDash([14, 10]); ctx.lineDashOffset = -t * 20; ctx.beginPath(); ctx.arc(x, y, r - 12, 0, TAU); ctx.stroke(); ctx.setLineDash([]);
+  ctx.font = '600 15px "Yu Gothic","Meiryo",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = `rgba(255,225,160,${0.8 * act})`; ctx.fillText('村', x, y); ctx.restore();
+}
+function drawVillageLabels(ctx, v, t) {
+  if (towerIn() || !S.village.crystal || v.x0 > baseW() + 200) return; const now = Date.now();
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 13px "Segoe UI",sans-serif';
+  for (const id in VPLOTS) {
+    const p = VPLOTS[id]; if (p.y < v.y0 - 60 || p.y - p.h > v.y1 + 60) continue; const q = S.village.queue.find(x => x.id === id);
+    const txt = `${VB[id].name} · ${q ? 'строится ' + vLeft(q.endTs - now) : `шаг ${vStep(id)}/${V_MAX}`}`, ly = p.y - p.h - 18, tw = ctx.measureText(txt).width + 16, lx = clamp(p.x, tw / 2 + 4, baseW() - tw / 2 - 4);
+    ctx.fillStyle = 'rgba(10,12,26,0.7)'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(lx - tw / 2, ly - 10, tw, 20, 10) : ctx.rect(lx - tw / 2, ly - 10, tw, 20); ctx.fill();
+    ctx.fillStyle = q ? '#ffd27a' : vStep(id) >= V_MAX ? '#ffd76a' : '#cfe9ff'; ctx.fillText(txt, lx, ly);
+  }
+}
+function vPushPlots(L, v) { G.vResDrawn = 0; if (towerIn() || v.x0 > baseW() + 200) return; for (const id in VPLOTS) { const p = VPLOTS[id]; if (p.y + 40 > v.y0 && p.y - p.h - 80 < v.y1) L.push({ y: p.y, k: 15, o: id }); } for (const r of vResidents()) if (r.y + 20 > v.y0 && r.y - 80 < v.y1) L.push({ y: r.y, k: 16, o: r.id }); }
+
+// ---- Жители деревни и их реплики ----
+const VRES = {
+  mori:   { plot: 'ratusha', name: 'Староста Мори',        at: () => [VPLOTS.ratusha.x - 95, VPLOTS.ratusha.y + 24], look: { robe: '#5a4a8a', hair: '#d8d8e0', beard: true } },
+  tetsu:  { plot: 'herald',  name: 'Глашатай Тэцу',        at: () => [BOARD.x - 100, BOARD.sy + 4], look: { robe: '#2f6a8a', hair: '#2a1a12', scroll: true } },
+  kami:   { plot: 'forge',   name: 'Кузнец Ками',          at: () => [FORGE.x + 92, FORGE.sy + 6], look: { robe: '#7a3a2a', hair: '#1a1a1a', apron: true } },
+  pon:    { plot: 'shop',    name: 'Лавочница Пон',        at: () => [SHOP.x + 88, SHOP.sy - 2], look: { robe: '#b8742a', hair: '#6a4a2a', tanuki: true } },
+  yui:    { plot: 'nursery', name: 'Хранительница Юи',     at: () => [NURSERY.x + 92, NURSERY.sy + 4], look: { robe: '#3a8a5a', hair: '#3a2418' } },
+  ota:    { plot: 'tea',     name: 'Бабушка О-Тя',         at: () => [VPLOTS.tea.x + 70, VPLOTS.tea.y + 26], look: { robe: '#8a5a7a', hair: '#b8b8c4', bun: true } },
+  zen:    { plot: 'spring',  name: 'Монах Дзэн',           at: () => [VPLOTS.spring.x - 78, VPLOTS.spring.y + 24], look: { robe: '#d8862a', bald: true } },
+  setsu:  { plot: 'shrine',  name: 'Жрица Сэцу',           at: () => [VPLOTS.shrine.x + 78, VPLOTS.shrine.y + 22], look: { robe: '#c4372e', hair: '#141018', top: '#ecdcc8' } },
+  gen:    { plot: 'house1',  name: 'Плотник Гэн',          at: () => [VPLOTS.house1.x + 62, VPLOTS.house1.y + 26], look: { robe: '#6a5a3a', hair: '#2a1a10', band: true } },
+  umi:    { plot: 'house2',  name: 'Рыбак Уми',            at: () => [VPLOTS.house2.x - 62, VPLOTS.house2.y + 26], look: { robe: '#2a5a8a', hair: '#1a1410', hat: true } },
+  hana:   { plot: 'house3',  name: 'Ткачиха Хана',         at: () => [VPLOTS.house3.x + 62, VPLOTS.house3.y + 26], look: { robe: '#c45a8a', hair: '#2a1418' } },
+  kenmei: { plot: 'house4',  name: 'Близнецы Кэн и Мэй',   at: () => [VPLOTS.house4.x - 60, VPLOTS.house4.y + 26], look: { robe: '#4a8ac4', hair: '#1a1410', kids: true } },
+  ryo:    { plot: 'tower1',  name: 'Дозорный Рё',          at: () => [VPLOTS.tower1.x + 58, VPLOTS.tower1.y + 22], look: { robe: '#3a4a3a', hair: '#141414', spear: true } },
+  aoi:    { plot: 'tower2',  name: 'Дозорная Аой',         at: () => [VPLOTS.tower2.x - 58, VPLOTS.tower2.y + 22], look: { robe: '#3a3a5a', hair: '#2a1424', spear: true } },
+};
+const VLINES = {
+  mori: { near: ['Деревня оживает — и всё благодаря тебе, Аки.', 'Каждый дом здесь помнит твою доброту.', 'Отдохни немного у очага, прежде чем идти дальше.', 'Ратуша снова светится по вечерам. Красота!'], morning: ['Доброе утро, Аки! Чай уже заварен.'], evening: ['Вечереет. Фонари барьера горят ярче.'], rank: ['Твой клинок стал сильнее — я вижу это по твоим глазам!'], boss: ['Стражи разбегаются, едва слышат твоё имя!'], loc: ['Новые земли? Будь осторожна, Аки.'], lowhp: ['Ох, ты вся в синяках! Посиди, отдохни.'], built: ['Бригада справилась! Деревня стала ещё уютнее.', 'Ещё один дом под защитой барьера.'], crystal: ['Барьер сияет! Добро пожаловать домой, Аки.'] },
+  tetsu: { near: ['Свежие объявления! Подходи, Аки!', 'Всем нужна помощь, а ты — лучшая.', 'Я записываю каждый твой подвиг на свиток.'], morning: ['Утро — лучшее время для новых заданий!'], evening: ['Последние объявления на сегодня, Аки.'], rank: ['Слыхал, ты стала ещё сильнее!'], boss: ['Весь квартал говорит о твоей победе!'], loc: ['Новые места — новые задания!'], lowhp: ['Задания подождут — сначала подлечись.'], built: ['Теперь я снова глашатай! Спасибо, Аки!'], crystal: ['Барьер вернулся — и задания тоже!'], take: ['Удачи, Аки!', 'Там шаманы — будь осторожна!', 'Береги себя и возвращайся скорее!', 'Ты справишься, я в тебя верю!', 'Не забудь взять зелья в лавке!'], claim: ['Деревня гордится тобой!', 'Отличная работа, Аки!', 'Вот это да! Записываю на свиток!', 'Люди говорят тебе спасибо!'] },
+  kami: { near: ['Горн горячий — приноси клинок!', 'Хорошая сталь любит заботу.', 'Звон молота — лучшая музыка.'], morning: ['С утра горн разгорается лучше всего!'], evening: ['Ещё пара ударов — и на сегодня хватит.'], rank: ['Ого, новый ранг! Клинок прямо поёт!', 'Вот это ковка! Я горжусь нами!'], boss: ['Слышал, твой клинок не подвёл!'], loc: ['Там, говорят, другая руда. Интересно!'], lowhp: ['Эх, доспех помят. Подлатаю!'], built: ['Кузница как новенькая! Теперь ковать дешевле.'], crystal: ['Барьер светит прямо в мой горн!'] },
+  pon: { near: ['Заходи, заходи! Всё самое нужное!', 'Зелья свежие, утром варила!', 'Хвост не трогать — продаётся отдельно! Шучу!'], morning: ['Утренний подарок уже ждёт тебя!'], evening: ['Скоро закрываюсь, но для тебя — всегда открыто!'], rank: ['Такая сильная — и всё ещё покупаешь у меня!'], boss: ['За такую победу — скидка в сердце!'], loc: ['Привези мне сувенир, ладно?'], lowhp: ['Ой-ой! Зелье — срочно!'], built: ['Моя лавка снова красивая! Спасибо!'], crystal: ['Барьер! Значит, и покупатели вернутся!'] },
+  yui: { near: ['Питомцы скучали по тебе!', 'Сегодня малыши особенно игривые.', 'Погладь их — они это любят.'], morning: ['Утром все питомцы завтракают вместе.'], evening: ['Пора укладывать малышей спать.'], rank: ['Твой питомец гордится тобой!'], boss: ['Малыши прыгали от радости, когда узнали!'], loc: ['Возьми питомца — вдвоём не страшно.'], lowhp: ['Отдохни с питомцами, они лечат душу.'], built: ['Питомник стал просторнее! Ура!'], crystal: ['Под барьером питомцам так спокойно.'] },
+  ota: { near: ['Выпей чаю, внученька, перед дорогой.', 'Чай с мёдом — от всех бед.', 'Ох, как ты выросла!'], morning: ['Утренний чай самый бодрящий.'], evening: ['Вечерний чай — для сладких снов.'], rank: ['Сильная девочка! Держи печенье.'], boss: ['Победила? Ну-ка, садись, расскажи!'], loc: ['Возьми термос с чаем в дорогу.'], lowhp: ['Ох, бедняжка! Сейчас заварю целебный чай.'], built: ['Мой домик! Теперь чай для всех!'], crystal: ['Барьер — как тёплый плед для деревни.'] },
+  zen: { near: ['Тёплая вода смывает усталость.', 'Дыши глубже, Аки. Вот так.', 'Пар над источником — как облака.'], morning: ['Утренняя тишина лечит лучше зелий.'], evening: ['Вечером источник особенно тёплый.'], rank: ['Сила тела растёт вместе с силой духа.'], boss: ['Победа без злости — настоящая победа.'], loc: ['Каждая дорога чему-то учит.'], lowhp: ['Окунись в источник — раны затянутся.'], built: ['Источник снова поёт. Благодарю.'], crystal: ['Свет барьера отражается в воде.'] },
+  setsu: { near: ['Барьер держится крепко — я слежу.', 'Боги древности улыбаются тебе.', 'Кристалл тёплый, как сердце.'], morning: ['Утренняя молитва за тебя, Аки.'], evening: ['Вечером барьер светит мягче.'], rank: ['Боги видят твой путь.'], boss: ['Стражи повержены — барьер благодарит.'], loc: ['Кристалл пойдёт с тобой, не бойся.'], lowhp: ['Позволь благословить тебя.'], built: ['Святилище снова дышит!'], crystal: ['Ты вернула свет древних богов!'] },
+  gen: { near: ['Тук-тук! Строю новую скамейку.', 'Хорошая доска — счастливый дом.', 'Забор покрашу — и будет загляденье.'], morning: ['С утра пила поёт звонче!'], evening: ['Пора убирать инструменты.'], rank: ['Ух, крепкая ты стала!'], boss: ['Сколотил тебе медальку из дерева!'], loc: ['Построим и там что-нибудь?'], lowhp: ['Присядь на мою новую скамейку!'], built: ['Мой дом готов! Спасибо, Аки!'], crystal: ['Под барьером и строить веселее.'] },
+  umi: { near: ['Рыбка сегодня клюёт отлично!', 'Хочешь, научу удить?', 'Море шумит — значит, всё хорошо.'], morning: ['Утренний улов — самый вкусный!'], evening: ['Закат над водой — загляденье.'], rank: ['Ты сильнее, чем самый большой тунец!'], boss: ['В честь победы — уха для всех!'], loc: ['Там есть река? Расскажешь потом!'], lowhp: ['Держи рыбный пирожок, полегчает!'], built: ['Домик у воды — мечта рыбака!'], crystal: ['Даже рыбки радуются барьеру.'] },
+  hana: { near: ['Тку тебе новый пояс, Аки!', 'Смотри, какой узор — сакура!', 'Нитки цвета заката — красиво?'], morning: ['Утром свет лучше для узоров.'], evening: ['Вечером вышиваю звёзды.'], rank: ['Сошью ленточку под цвет клинка!'], boss: ['Вышью эту победу на гобелене!'], loc: ['Привези новые цвета ниток!'], lowhp: ['Дай перевяжу мягкой тканью.'], built: ['Моя мастерская! Ура!'], crystal: ['Барьер переливается, как шёлк.'] },
+  kenmei: { near: ['Аки! Аки! Поиграй с нами!', 'Мы тоже будем героями!', 'А ты правда победила дракона?'], morning: ['Мы уже встали! Ура, утро!'], evening: ['Мама зовёт ужинать… ещё минутку!'], rank: ['Вау! Ты самая сильная!'], boss: ['Расскажи, как ты его победила!'], loc: ['Возьми нас с собой! Ну пожа-а-алуйста!'], lowhp: ['Мы подуем — и всё пройдёт!'], built: ['У нас новый дом! Ура-ура!'], crystal: ['Барьер блестит, как фонарики!'] },
+  ryo: { near: ['На посту! Всё спокойно.', 'С вышки видно всю деревню.', 'Ни один чужак не пройдёт!'], morning: ['Утро ясное, видимость отличная!'], evening: ['Зажигаю сигнальный фонарь.'], rank: ['Вот это боец! Честь имею!'], boss: ['Видел вспышку твоего клинка отсюда!'], loc: ['Будь начеку там, Аки.'], lowhp: ['Отдохни, я посторожу.'], built: ['Вышка готова! Деревня под присмотром.'], crystal: ['Барьер видно даже с вышки!'] },
+  aoi: { near: ['Дозор несу, не отвлекай! Ладно, привет!', 'Сегодня видела белку на заборе.', 'Деревня спит спокойно — мы рядом.'], morning: ['Рассвет с вышки — самый красивый!'], evening: ['Звёзды выходят. Красиво.'], rank: ['Ты стала ещё сильнее, я вижу!'], boss: ['Мы с Рё кричали «ура» на всю деревню!'], loc: ['Пусть дорога будет лёгкой!'], lowhp: ['Эй, береги себя!'], built: ['Моя вышка! Спасибо, Аки!'], crystal: ['Барьер сияет — и мне не страшно.'] },
+};
+const VBUILD_RES = Object.fromEntries(Object.entries(VRES).map(([id, r]) => [r.plot, id]));
+let vResKey = '', vResList = [];
+function vResidents() { // список жителей кэшируется, пока не изменились шаги построек
+  const key = !S.village || !S.village.crystal || towerIn() ? '' : VILLAGE.map(b => vStep(b.id)).join('');
+  if (key === vResKey) return vResList; vResKey = key; vResList = [];
+  if (key) for (const id in VRES) { const r = VRES[id]; if (vStep(r.plot) >= 1) { const [x, y] = r.at(); vResList.push({ id, x, y }); } }
+  return vResList;
+}
+function vSay(id, kind) {
+  const L = VLINES[id] && VLINES[id][kind]; if (!L || !L.length) return false;
+  let txt = pick(L); if (L.length > 1) while (txt === (G.vLast || {})[id]) txt = pick(L);
+  (G.vLast = G.vLast || {})[id] = txt; G.vBubble = { id, text: txt, t: 3.5 }; return true;
+}
+const vOnBase = () => typeof hero !== 'undefined' && !towerIn() && hero.x < baseW();
+function vNearest() { let best = null, bd = 1e9; for (const r of vResidents()) { const d = dist(r.x, r.y, hero.x, hero.y); if (d < bd) { bd = d; best = r; } } return best; }
+function vEvent(kind, arg) {
+  if (!S.village || !S.village.crystal || towerIn()) return;
+  if (kind === 'built') { const id = VBUILD_RES[arg] || 'mori'; if (vStep(VRES[id].plot) >= 1) vSay(id, 'built'); return; }
+  if (kind === 'rank') { if (vStep('forge') >= 1) vSay('kami', 'rank'); else { const r = vNearest(); if (r) vSay(r.id, 'rank'); } return; }
+  if (kind === 'crystal') { vSay('mori', 'crystal'); return; }
+  if (vOnBase()) { const R = vResidents(); if (R.length) vSay(pick(R).id, kind); } else G.vPending = kind; // boss / loc — скажут, когда героиня вернётся на базу
+}
+function vHerald(kind) { if (vStep('herald') >= 1 && S.village.crystal) { G.vHeraldLine = pick(VLINES.tetsu[kind]); vSay('tetsu', kind); } }
+const vHeraldHtml = () => vStep('herald') >= 1 && S.village.crystal && !towerIn() ? `<div class="b-herald">📜 <b>Глашатай Тэцу:</b> «${G.vHeraldLine || (G.vHeraldLine = pick(VLINES.tetsu.near))}»</div>` : '';
+function vLocEvent(loc) { const sd = S.village.said; if (sd['loc' + loc]) return; sd['loc' + loc] = true; if (loc > 1) vEvent('loc'); }
+function vBaseEnter() {
+  if (!S.village || !S.village.crystal) return; const R = vResidents(); if (!R.length) return;
+  if (hero.hp < ST.maxHp * 0.35) { const r = vNearest(); if (r) vSay(r.id, 'lowhp'); G.vPending = null; return; }
+  if (G.vPending) { vSay(pick(R).id, G.vPending); G.vPending = null; }
+}
+function vResUpdate(dt) {
+  if (G.vBubble) { G.vBubble.t -= dt; if (G.vBubble.t <= 0) G.vBubble = null; }
+  if (G.vBubble || !vOnBase()) return; const now = G.time || 0; G.vNearCd = G.vNearCd || {};
+  for (const r of vResidents()) {
+    if (dist(r.x, r.y, hero.x, hero.y) > 160 || (G.vNearCd[r.id] || -1e9) > now - 20) continue;
+    G.vNearCd[r.id] = now; const hr = kyivParts().h, L = VLINES[r.id];
+    vSay(r.id, Math.random() < 0.3 ? (hr >= 5 && hr < 11 ? 'morning' : hr >= 18 ? 'evening' : 'near') : 'near'); break;
+  }
+}
+function drawResident(ctx, id, t) {
+  const r = VRES[id], [x, y] = r.at(), L = r.look, an = GFX.level > 0, br = an ? Math.sin(t * 2 + x) * 0.025 : 0, face = an && Math.sin(t * 0.4 + y) > 0.6 ? -1 : 1;
+  G.vResDrawn = (G.vResDrawn || 0) + 1;
+  const one = (ox, s) => {
+    ctx.save(); ctx.translate(x + ox, y); ctx.scale(face * s, s * (1 + br));
+    ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(0, 0, 13, 4, 0, 0, TAU); ctx.fill();
+    if (L.tanuki) { ctx.fillStyle = '#6a4a2a'; ctx.beginPath(); ctx.ellipse(-12, -10, 6, 10, -0.6, 0, TAU); ctx.fill(); ctx.fillStyle = '#3a2614'; ctx.beginPath(); ctx.ellipse(-15, -14, 3, 5, -0.6, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = L.robe; ctx.beginPath(); ctx.moveTo(-11, 0); ctx.lineTo(11, 0); ctx.lineTo(7, -26); ctx.lineTo(-7, -26); ctx.closePath(); ctx.fill();
+    if (L.top) { ctx.fillStyle = L.top; ctx.fillRect(-7, -26, 14, 11); }
+    if (L.apron) { ctx.fillStyle = '#4a3a30'; ctx.fillRect(-6, -20, 12, 18); }
+    ctx.fillStyle = '#f2cdb0'; ctx.beginPath(); ctx.arc(0, -34, 9, 0, TAU); ctx.fill();
+    if (!L.bald) { ctx.fillStyle = L.hair; ctx.beginPath(); ctx.arc(0, -36, 9.5, Math.PI * 0.95, Math.PI * 2.05); ctx.fill(); if (L.bun) { ctx.beginPath(); ctx.arc(0, -46, 4.5, 0, TAU); ctx.fill(); } }
+    if (L.tanuki) { ctx.fillStyle = '#6a4a2a'; ctx.beginPath(); ctx.arc(-7, -43, 3.5, 0, TAU); ctx.arc(7, -43, 3.5, 0, TAU); ctx.fill(); ctx.fillStyle = 'rgba(60,40,24,0.55)'; ctx.beginPath(); ctx.ellipse(-3.5, -34, 3, 2, 0, 0, TAU); ctx.ellipse(3.5, -34, 3, 2, 0, 0, TAU); ctx.fill(); }
+    if (L.beard) { ctx.fillStyle = '#d8d8e0'; ctx.beginPath(); ctx.moveTo(-5, -30); ctx.lineTo(5, -30); ctx.lineTo(0, -21); ctx.closePath(); ctx.fill(); }
+    if (L.band) { ctx.fillStyle = '#e8e0d0'; ctx.fillRect(-9, -40, 18, 3); }
+    if (L.hat) { ctx.fillStyle = '#c8a46a'; ctx.beginPath(); ctx.moveTo(-14, -39); ctx.lineTo(14, -39); ctx.lineTo(0, -50); ctx.closePath(); ctx.fill(); }
+    ctx.fillStyle = '#2a1a1a'; ctx.beginPath(); ctx.arc(-3, -34, 1.3, 0, TAU); ctx.arc(3, -34, 1.3, 0, TAU); ctx.fill();
+    ctx.fillStyle = 'rgba(255,120,140,0.45)'; ctx.beginPath(); ctx.arc(-5.5, -31, 1.8, 0, TAU); ctx.arc(5.5, -31, 1.8, 0, TAU); ctx.fill();
+    if (L.scroll) { ctx.fillStyle = '#ecdcb0'; ctx.fillRect(8, -22, 10, 7); }
+    if (L.spear) { ctx.strokeStyle = '#6a4a2a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(12, -48); ctx.stroke(); ctx.fillStyle = '#b8c4d4'; ctx.beginPath(); ctx.moveTo(9, -48); ctx.lineTo(15, -48); ctx.lineTo(12, -56); ctx.closePath(); ctx.fill(); }
+    ctx.restore();
+  };
+  if (L.kids) { one(-9, 0.72); one(9, 0.7); } else one(0, 1);
+}
+function drawVillageBubble(ctx) {
+  const b = G.vBubble; if (!b || !VRES[b.id] || towerIn()) return; const [x, y] = VRES[b.id].at();
+  ctx.font = '600 13px "Segoe UI",sans-serif'; const words = b.text.split(' '), lines = []; let cur = '';
+  for (const w of words) { const tst = cur ? cur + ' ' + w : w; if (ctx.measureText(tst).width > 210 && cur) { lines.push(cur); cur = w; } else cur = tst; } if (cur) lines.push(cur);
+  const w = Math.max(...lines.map(l => ctx.measureText(l).width)) + 20, h = lines.length * 17 + 26, bx = clamp(x, w / 2 + 4, baseW() - w / 2 - 4), by = y - 64 - h, a = Math.min(1, b.t * 2);
+  ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(14,16,32,0.9)'; ctx.strokeStyle = 'rgba(143,232,255,0.5)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx - w / 2, by, w, h, 10) : ctx.rect(bx - w / 2, by, w, h); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 6, by + h); ctx.lineTo(x + 6, by + h); ctx.lineTo(x, by + h + 8); ctx.closePath(); ctx.fill();
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#8fe8ff'; ctx.font = '700 11px "Segoe UI",sans-serif'; ctx.fillText(VRES[b.id].name, bx, by + 11);
+  ctx.fillStyle = '#eef3ff'; ctx.font = '600 13px "Segoe UI",sans-serif'; lines.forEach((l, i) => ctx.fillText(l, bx, by + 28 + i * 17)); ctx.restore();
+}
+
+// ---- Окно-реплика жителя (приглашение, сценки) ----
+function vSayBox(who, text, icon = '💬', onOk) {
+  const el = $('#vl-say'); if (!el) return;
+  el.innerHTML = `<div class="vs-ic">${icon}</div><div class="vs-tx"><b>${who}</b><div>${text}</div></div><button class="primary" data-act="ok">Хорошо</button>`;
+  el.classList.remove('hidden'); G.vSayOk = onOk || null;
+}
+document.addEventListener('click', ev => { const b = ev.target.closest('#vl-say [data-act="ok"]'); if (!b) return; $('#vl-say').classList.add('hidden'); SFX.click(); const f = G.vSayOk; G.vSayOk = null; if (f) f(); });
+function vInit() {
+  const v = S.village; vTick(); setInterval(() => { vTick(); if (G.villageOpen) renderVillage(); }, 1000);
+  if (v && !v.crystal && !v.intro && S.unlock2) { v.intro = true; save(); setTimeout(() => vSayBox('Жрица барьера Сэцу', 'Аки… барьер древних богов угас, и деревня осталась без защиты. Четыре стража Токио унесли осколки кристалла. Принеси их — и барьер снова засияет!', '⛩'), 1200); }
+}
+
+// =====================================================================
 //  БЛОК 12. ЧИТ-КОНСОЛЬ
 // =====================================================================
 const cLog = $('#c-log'), cIn = $('#c-in'), cHist = []; let cHistI = 0;
@@ -6301,7 +6844,7 @@ const touchDir = { x: 0, y: 0, mag: 0 };
 // ---------- Сенсорные кнопки ----------
 const TOUCH_ACT = {
   dash: () => tryDash(), auto: () => toggleAuto(), home: () => startRecall(), oni: () => tryOniSuper(),
-  use: () => { if (G.inPortal) tryTravel(); else if (G.inForgeCircle && !G.forgeOpen) openForge(); else if (G.inBoardCircle && !G.boardOpen) openBoard(); },
+  use: () => { if (G.inPortal) tryTravel(); else if (G.inVillageCircle && !G.villageOpen) openVillage(); else if (G.inForgeCircle && !G.forgeOpen) openForge(); else if (G.inBoardCircle && !G.boardOpen) openBoard(); },
   soul: () => toggleSoul(), tree: () => toggleTree(), pets: () => togglePets(), menu: () => toggleMenu(),
   potion: () => useItem('potion'), talisman: () => useItem('talisman'), stone: () => useItem('stone'), scroll: () => useItem('scroll'),
 };
@@ -6380,6 +6923,7 @@ $('#menu').addEventListener('click', async ev => {
   if (act === 'close') toggleMenu(false);
   else if (act === 'ctrl') { SET.ctrl = b.dataset.v; saveSet(); G.touchUI = null; applyTouchMode(b.dataset.v === 'touch' || (b.dataset.v === 'auto' && (IS_TOUCH_DEVICE || (G.lastTouch && performance.now() - G.lastTouch < 60000)))); save(); renderMenu(); }
   else if (act === 'gfx') { GFX.mode = b.dataset.v; SET.gfx = GFX.mode; if (GFX.mode === 'auto') { delete SET.gfxAuto; GFX.level = IS_TOUCH_DEVICE ? 1 : 2; } else GFX.level = { high: 2, mid: 1, low: 0 }[GFX.mode]; saveSet(); resize(); renderMenu(); }
+  else if (act === 'village') { toggleMenu(false); openVillage(); }
   else if (act === 'calm') { CALM = SET.calm = !CALM; if (CALM) { G.flash = 0; G.shake = 0; } saveSet(); renderMenu(); }
   else if (act === 'autoboss') { SET.autoBoss = SET.autoBoss === false; saveSet(); G.autoTarget = null; renderMenu(); }
   else if (act === 'dps') { SET.dps = !SET.dps; G.dpsEv = []; saveSet(); renderMenu(); }
@@ -6397,7 +6941,7 @@ $('#menu').addEventListener('click', async ev => {
     let data; try { data = await readSaveCode(code); } catch (e) { msg('⚠ ' + e.message); SFX.fail(); return; }
     if (!G.importArm || performance.now() > G.importArm) { G.importArm = performance.now() + 8000; msg(`Найдено сохранение: ¥${fmt(data.gold || 0)}, катана ранг ${data.w ? data.w.rank : '?'}, душа ${data.soul ? Object.values(data.soul).reduce((a, v) => a + (v | 0), 0) : 0} ур.<br><b>Нажми «Загрузить» ещё раз</b> — текущий прогресс на этом устройстве будет заменён (резервная копия сохранится).`); SFX.warn(); return; }
     try { localStorage.setItem(CFG.SAVE_KEY + '_backup', JSON.stringify(S)); } catch (e) { }
-    S = Object.assign(defaultSave(), data); save(); G.noSaveOnUnload = true; msg('✓ Загружено! Перезапуск…'); setTimeout(() => location.reload(), 500);
+    S = Object.assign(defaultSave(), data); fixVillage(); save(); G.noSaveOnUnload = true; msg('✓ Загружено! Перезапуск…'); setTimeout(() => location.reload(), 500);
   }
   else if (act === 'restore') {
     let raw = null; try { raw = localStorage.getItem(CFG.SAVE_KEY + '_backup'); } catch (e) { }
@@ -6457,9 +7001,9 @@ addEventListener('keydown', e => {
   if (e.code === 'Backquote' || e.code === 'F1') { e.preventDefault(); if (consoleUnlocked()) toggleConsole(); else if (e.code === 'Backquote') consoleKnock(); return; }
   if (G.consoleOpen) { if (e.code === 'Escape') toggleConsole(false); return; }
   if (e.target && e.target.tagName === 'SELECT' && e.code.startsWith('Arrow')) return;
-  if (e.code === 'KeyO' || (e.code === 'Escape' && (G.menuOpen || !(G.forgeOpen || G.boardOpen || G.soulOpen || G.shopOpen || G.treeOpen || G.travelOpen || G.petsOpen)))) { toggleMenu(); return; }
+  if (e.code === 'KeyO' || (e.code === 'Escape' && (G.menuOpen || !(G.villageOpen || G.forgeOpen || G.boardOpen || G.soulOpen || G.shopOpen || G.treeOpen || G.travelOpen || G.petsOpen)))) { toggleMenu(); return; }
   if (G.menuOpen) return;
-  if (e.code === 'Escape') { if (G.forgeOpen) closeForge(); if (G.boardOpen) closeBoard(); if (G.soulOpen) toggleSoul(false); if (G.shopOpen) closeShop(); if (G.treeOpen) toggleTree(false); if (G.travelOpen) closeTravel(); if (G.petsOpen) closePets(); return; }
+  if (e.code === 'Escape') { if (G.villageOpen) closeVillage(); if (G.forgeOpen) closeForge(); if (G.boardOpen) closeBoard(); if (G.soulOpen) toggleSoul(false); if (G.shopOpen) closeShop(); if (G.treeOpen) toggleTree(false); if (G.travelOpen) closeTravel(); if (G.petsOpen) closePets(); return; }
   keys[e.code] = true;
   if (e.code === 'Space') { e.preventDefault(); tryDash(); }
   if (e.code === 'KeyE' && G.inForgeCircle && !G.forgeOpen) openForge();
@@ -6471,6 +7015,8 @@ addEventListener('keydown', e => {
   if (e.code === 'KeyH') startRecall();
   if (e.code === 'KeyL') toggleTree();
   if (e.code === 'KeyP') togglePets();
+  if (e.code === 'KeyV') toggleVillage();
+  if (e.code === 'KeyE' && G.inVillageCircle && !G.villageOpen) openVillage();
   if (e.code === 'KeyQ') tryOniSuper();
   if (e.code === 'Digit1') useItem('potion'); if (e.code === 'Digit2') useItem('talisman'); if (e.code === 'Digit3') useItem('stone'); if (e.code === 'Digit4') useItem('scroll');
   if (e.code.startsWith('Arrow')) e.preventDefault();
@@ -6505,7 +7051,7 @@ function update(dt) {
   updateProjectiles(dt);
   updateLoot(dt);
   updateParticles(dt);
-  updateQuests(dt);
+  updateQuests(dt); vUpdate(dt);
   if (towerIn()) { towerUpdate(dt); towerAmbient(dt); }
   // атмосфера: лепестки сакуры, брызги дождя, искры горна
   const v = G.view;
@@ -6539,7 +7085,7 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 function init() {
-  loadSave(); setupLocation(S.loc || 1); refreshStats(); hero.hp = ST.maxHp; hero.shield = ST.shieldMax; resize();
+  loadSave(); setupLocation(S.loc || 1); refreshStats(); hero.hp = ST.maxHp; hero.shield = ST.shieldMax; resize(); vInit();
   clog('Neon Ronin · чит-консоль. Набери help для списка команд.');
   setInterval(save, 5000);
   requestAnimationFrame(frame);
