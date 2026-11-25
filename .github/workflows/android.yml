@@ -1,4 +1,5 @@
 # Сборка APK для Android. Запускается при каждом push в main и вручную (вкладка Actions → Run workflow).
+# Ручной запуск на другой ветке (например big-patch) собирает тестовый APK только как артефакт — в Releases он не попадает.
 name: Сборка APK
 
 on:
@@ -15,15 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Скачать код
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Node.js 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
 
       - name: Java 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
@@ -68,12 +69,13 @@ jobs:
           fi
 
       - name: Сохранить APK как артефакт
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: NeonRonin-APK
           path: NeonRonin-*.apk
 
-      - name: Выложить в Releases
+      - name: Выложить в Releases (только из main)
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.${{ github.run_number }}

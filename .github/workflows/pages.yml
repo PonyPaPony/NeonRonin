@@ -1,4 +1,5 @@
 # Публикация веб-версии на GitHub Pages: https://<твой-логин>.github.io/<имя-репозитория>/
+# Запускается только при push в main (ветка big-patch сайт не трогает) и вручную.
 name: Веб-версия (GitHub Pages)
 
 on:
@@ -12,21 +13,31 @@ permissions:
   pages: write
   id-token: write
 
+# Одна выкладка за раз; начатую не обрываем (обрыв посреди deploy тоже ломает выкладку).
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  # 1) Упаковать папку www в архив сайта
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: www
+
+  # 2) Выложить архив отдельной задачей — к её старту архив уже зарегистрирован,
+  #    поэтому ошибка «No artifacts named github-pages» больше не возникает.
   deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: www
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
