@@ -90,6 +90,7 @@ button.big{padding:10px 16px;font-size:14px;border-radius:12px}
 #vl-card .st{padding:5px 8px;border-radius:8px;margin:3px 0;color:#aab2d6}#vl-card .st.cur{background:rgba(143,232,255,.12);color:#eaf8ff}#vl-card .st.got{color:#ffd76a}
 #vl-card .why{margin-top:8px;color:#ffb36b}#vl-card .vb{margin-top:10px;display:flex;flex-direction:column;gap:6px}
 @media (max-height:520px){#vl-map{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}#vl-map button{min-height:44px;padding:5px 8px;font-size:11.5px}#vl-map button .vi{font-size:16px}.vl-body{gap:10px;margin-top:6px}}
+.star-n{color:#ffd76a;font-weight:700;margin-left:4px}.starb{border-color:rgba(255,215,110,.55)!important}
 .b-herald{margin-top:4px;color:#ffe2a8;font-size:13px}.b-herald b{color:#8fe8ff}
 .vl-shards{font-size:15px;line-height:1.6}.vl-shards .gems{font-size:30px;letter-spacing:6px}
 .ctitle{font-size:11.5px;text-transform:uppercase;letter-spacing:1.4px;color:#9aa3c9;margin-bottom:8px}
@@ -1328,7 +1329,7 @@ const sumE = (it, id, key = 'v') => it.ench.reduce((s, e) => s + (e && e.id === 
 function computeStats() {
   const w = S.w, a = S.a, st = {}, oni = !!S.oni, sup = oni && typeof G !== 'undefined' && G.oniSuperT > 0 ? 1.5 : 1;
   const JW = JKEYS.map(k => S[k] || { lvl: 0, ench: [] }), sj = id => JW.reduce((sum, it) => sum + sumE(it, id), 0) / 100;
-  const sv = id => (S.soul && S.soul[id]) || 0;
+  const sv = id => ((S.soul && S.soul[id]) || 0) + (S.loc === 4 || S.mainStash || !S.stars ? 0 : starLv(id) / 3); // звёзды (S.loc === 4 — башня; towerIn ещё не объявлен при первом расчёте) = ⅓ уровня ветки
   st.dmg = 12 * WEAPON_RANKS[w.rank - 1].mult * (1 + 0.2 * w.lvl) * (1 + sj('might')) * (1 + sv('pow') * 0.06);
   st.maxHp = 100 * ARMOR_RANKS[a.rank - 1].mult * (1 + 0.2 * a.lvl) * (1 + sj('vigor')) * (1 + sv('vit') * 0.075);
   st.critChance = 0.05 + sumE(w, 'crit') / 100 + (oni ? 0 : JEWELS.brace.val(JW[1].lvl) / 100) + sv('acc') * 0.0075;
@@ -1365,7 +1366,7 @@ function computeStats() {
   st.res = { fire: Math.min(0.8, (bark + treeVal('fire')) / 100), ice: Math.min(0.8, (bark + treeVal('ice')) / 100), thunder: Math.min(0.8, (bark + treeVal('thunder')) / 100), poison: Math.min(0.8, treeVal('poison') / 100), dark: 0 };
   st.curseRes = Math.min(0.9, treeVal('curse') / 100);
   st.acc = treeVal('eye') / 100; st.pen = Math.min(0.8, treeVal('pierce') / 100);
-  applyPetStats(st); applyVillageStats(st);
+  applyPetStats(st); applyVillageStats(st); applyStarStats(st);
   return st;
 }
 
@@ -1402,7 +1403,7 @@ function fixSlots() {
   if (!S.daily || typeof S.daily !== 'object' || typeof S.daily.day !== 'string') S.daily = null; else for (const k of ['board', 'nq', 'trials']) S.daily[k] = Math.max(0, S.daily[k] | 0);
   applyClassText(); fixPets(); refreshPetFx();
   if (!Array.isArray(S.quests.trials)) S.quests.trials = []; S.quests.trials = S.quests.trials.filter(q => q && Array.isArray(q.mods)); for (const q of S.quests.active) if (q.trial && !Array.isArray(q.mods)) q.mods = [];
-  fixTower(); fixVillage();
+  fixTower(); fixVillage(); fixStars();
 }
 function loadSave() {
   try { const raw = localStorage.getItem(CFG.SAVE_KEY); if (raw) { const d = JSON.parse(raw); S = Object.assign(defaultSave(), d); } } catch (e) { S = defaultSave(); }
@@ -1780,7 +1781,7 @@ function heroRespawn() {
 }
 function tryDash(dir) {
   if (hero.dashCd > 0 || hero.dead) return false; const inp = dir || inputDir();
-  const dx = inp.mag ? inp.x : hero.face, dy = inp.mag ? inp.y : 0; hero.dashDx = dx; hero.dashDy = dy; hero.dashT = 0.17; hero.dashCd = ST.dashCd; SFX.dash();
+  const dx = inp.mag ? inp.x : hero.face, dy = inp.mag ? inp.y : 0; hero.dashDx = dx; hero.dashDy = dy; hero.dashT = 0.17; hero.dashCd = ST.dashCd; SFX.dash(); starDashFx();
   burst(hero.x, hero.y - 20, 10, '120,230,255', 140, 0.4, 3, 'glow'); return true;
 }
 
@@ -3708,7 +3709,7 @@ function drawHUD(ctx, sw, sh, t) {
   ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
   // панель героини
   glass(ctx, 16, 16, 312, 150);
-  ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText('Аки · Неоновый Ронин', 30, 36);
+  ctx.font = '700 15px "Segoe UI",sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText(constN() >= 5 && !towerIn() ? 'Звёздная Аки · Неоновый Ронин' : 'Аки · Неоновый Ронин', 30, 36);
   if (G.god) { ctx.fillStyle = '#ffd23f'; ctx.font = '700 11px "Segoe UI",sans-serif'; ctx.fillText('GOD', 282, 36); }
   const bx = 30, by = 50, bw = 284, k = clamp(hero.hp / ST.maxHp, 0, 1);
   ctx.fillStyle = 'rgba(0,0,0,0.5)'; rr(ctx, bx, by, bw, 16, 8); ctx.fill();
@@ -3867,12 +3868,13 @@ function render(realDt) {
   if (!inT && v.x0 < 400 && NURSERY.sy > v.y0 - 200 && NURSERY.sy < v.y1 + 200) L.push({ y: NURSERY.sy, k: 14, o: null });
   if (G.pet) L.push({ y: G.pet.y, k: 13, o: null });
   if (!hero.dead) L.push({ y: hero.y, k: 8, o: hero });
+  starPushFx(L);
   L.sort((a, b) => a.y - b.y);
   for (const it of L) {
     switch (it.k) {
       case 0: drawBuilding(ctx, it.o, t); break; case 1: drawProp(ctx, it.o, t); break; case 2: drawLampPost(ctx, it.o, t); break;
       case 3: drawTree(ctx, it.o, t); break; case 4: drawToro(ctx, it.o, t); break; case 5: drawEnemy(ctx, it.o, t); break;
-      case 6: drawTorii(ctx, it.o, t); break; case 7: drawForgeStructure(ctx, t); break; case 8: drawHero(ctx, hero, lookRank('w'), lookRank('a'), t); break; case 9: drawBoardStructure(ctx, t); break; case 10: drawPortalStructure(ctx, t); break; case 11: drawGate(ctx, it.o, t); break; case 12: drawShopStructure(ctx, t); break; case 13: drawPet(ctx, t); break; case 14: drawNurseryStructure(ctx, t); break; case 15: drawVillagePlot(ctx, it.o, t); break; case 16: drawResident(ctx, it.o, t); break;
+      case 6: drawTorii(ctx, it.o, t); break; case 7: drawForgeStructure(ctx, t); break; case 8: drawHero(ctx, hero, lookRank('w'), lookRank('a'), t); break; case 9: drawBoardStructure(ctx, t); break; case 10: drawPortalStructure(ctx, t); break; case 11: drawGate(ctx, it.o, t); break; case 12: drawShopStructure(ctx, t); break; case 13: drawPet(ctx, t); break; case 14: drawNurseryStructure(ctx, t); break; case 15: drawVillagePlot(ctx, it.o, t); break; case 16: drawResident(ctx, it.o, t); break; case 17: drawStarAura(ctx, hero, t); break; case 18: drawSakuraAura(ctx, hero, t); break;
     }
   }
   if (!towerIn() && v.x0 < baseW() + 200) vDecorExisting(ctx, t); drawVillageLabels(ctx, v, t); drawVillageBubble(ctx);
@@ -5251,7 +5253,7 @@ function renderShop() {
     const b1 = S.gold >= p && stock >= 1, b5 = !sc && S.gold >= p * 5;
     return `<div class="sitem" style="--ic:${I.col}"><div class="si-ic">${I.icon}</div><div class="si-main"><b>${I.name}</b><small>${I.desc}</small><span class="si-own">В сумке: <b>${invN(id)}</b> · клавиша ${I.key}${sc ? ` · в наличии: <b>${stock}</b>${stock ? '' : ` (завоз через ${mmss(S.scrollRestock || 0)})`}` : ''}</span></div>
       <div class="si-buy"><button class="primary" data-act="buy" data-id="${id}" data-n="1" ${b1 ? '' : 'disabled'}>Купить<span class="pr g">¥${fmt(p)}</span></button>${sc ? '' : `<button data-act="buy" data-id="${id}" data-n="5" ${b5 ? '' : 'disabled'}>×5<span class="pr g">¥${fmt(p * 5)}</span></button>`}</div></div>`;
-  }).join('') + treeResetHtml();
+  }).join('') + treeResetHtml() + starResetHtml();
 }
 // ---------- Свиток забвения: сброс Древа Жизни с возвратом всей росы ----------
 const treeSpent = () => TREE.reduce((a, n) => { const lv = (S.tree && S.tree[n.id]) || 0; for (let l = 0; l < lv; l++) a += treeCost(l); return a; }, 0);
@@ -5270,6 +5272,7 @@ function doTreeReset() {
 $('#shop').addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return;
   if (b.dataset.act === 'close') { closeShop(); return; }
+  if (b.dataset.act === 'starreset') { doStarReset(); return; }
   if (b.dataset.act === 'treereset') { doTreeReset(); return; }
   if (b.dataset.act === 'buy' && towerIn()) { towerBuy(b.dataset.id); return; }
   if (b.dataset.act === 'buy') {
@@ -5590,16 +5593,16 @@ function gainXp(v) { const g = Math.max(1, Math.round(v * ST.xpMul)); S.xp += g;
 function soulBurst(col, n) { for (let i = 0; i < n; i++) { const a = rand(TAU), sp = rand(40, 200); SOULFX.push({ x: 0, y: 0, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 30, life: rand(0.5, 1.2), max: 1.2, size: rand(1.5, 3.5), col }); } }
 function renderSoul() {
   if (!G.soulOpen) return; const T = soulTotal(), pct = T / SOUL_TOTAL, cost = soulCost(T);
-  $('#s-sub').innerHTML = `Освоено <b>${Math.floor(pct * 100)}%</b> · уровней ${T}/${SOUL_TOTAL} · следующий уровень любой ветки: <b>✦${fmt(cost)}</b> опыта`;
+  $('#s-sub').innerHTML = `Освоено <b>${Math.floor(pct * 100)}%</b> · уровней ${T}/${SOUL_TOTAL} · ${T < SOUL_TOTAL ? `следующий уровень любой ветки: <b>✦${fmt(cost)}</b> опыта` : 'душа освоена полностью'}${starSubLine()}`;
   $('#s-res').innerHTML = `<span class="res x"><i>✦</i>${fmt(S.xp)}</span>`;
   $('#s-grid').innerHTML = SOUL.map(s => {
     const l = soulLv(s.id), max = l >= SOUL_MAX;
-    return `<div class="sc ${max ? 'max' : ''}" style="--sc:${s.col}"><div class="sc-top"><span class="sc-ic">${s.icon}</span><div class="sc-n"><b>${s.name}</b><small>${s.desc}</small></div><span class="sc-lv">${l}/${SOUL_MAX}</span></div>
+    return `<div class="sc ${max ? 'max' : ''}" style="--sc:${s.col}"><div class="sc-top"><span class="sc-ic">${s.icon}</span><div class="sc-n"><b>${s.name}</b><small>${s.desc}</small></div><span class="sc-lv">${l}/${SOUL_MAX}${starTag(s.id)}</span></div>
       <div class="sc-bar"><i style="width:${l / SOUL_MAX * 100}%"></i></div>
-      <div class="sc-eff">${s.fmt(l * s.per)}${max ? '' : ` <span class="ar">→</span> <b class="up">${s.fmt((l + 1) * s.per)}</b>`}</div>
-      <div class="sc-act">${max ? '<button disabled>✓ Максимум</button>' : `<button class="soulb" data-act="sup" data-id="${s.id}" ${S.xp >= cost ? '' : 'disabled'}>+1<span class="pr x">✦${fmt(cost)}</span></button><button data-act="smax" data-id="${s.id}" ${S.xp >= cost ? '' : 'disabled'}>+ на весь опыт</button>`}</div></div>`;
+      <div class="sc-eff">${s.fmt(l * s.per)}${max ? (starsOpen() && starLv(s.id) ? ` <span class="star-n">★ ${s.fmt(starLv(s.id) * s.per / 3)}</span>` : '') : ` <span class="ar">→</span> <b class="up">${s.fmt((l + 1) * s.per)}</b>`}</div>
+      <div class="sc-act">${max ? starBtns(s.id) : `<button class="soulb" data-act="sup" data-id="${s.id}" ${S.xp >= cost ? '' : 'disabled'}>+1<span class="pr x">✦${fmt(cost)}</span></button><button data-act="smax" data-id="${s.id}" ${S.xp >= cost ? '' : 'disabled'}>+ на весь опыт</button>`}</div></div>`;
   }).join('');
-  const row = (ic, c, n, v) => `<div class="st"><span class="si" style="color:${c}">${ic}</span><span>${n}</span><b>${v}</b></div>`, L = id => soulLv(id) * SOUL.find(s => s.id === id).per;
+  const row = (ic, c, n, v) => `<div class="st"><span class="si" style="color:${c}">${ic}</span><span>${n}</span><b>${v}</b></div>`, L = id => (soulLv(id) + (starsOpen() ? starLv(id) / 3 : 0)) * SOUL.find(s => s.id === id).per;
   $('#s-sum').innerHTML = row('⚔', '#ff8a5c', 'Урон', `+${round1(L('pow'))}%`) + row('♥', '#ff5a7e', 'Здоровье', `+${round1(L('vit'))}%`) + row('⛨', '#9fb4ff', 'Защита', `−${round1(L('def'))}%`) + row('✦', '#ffd84a', 'Крит', `+${round1(L('acc'))}%`)
     + row('✸', '#ff6a3d', 'Крит. урон', `+${round1(L('fury'))}%`) + row('☾', '#7dffb0', 'Регенерация', `+${round1(L('life'))}%/с`) + row('»', '#5ff0ff', 'Скорость', `+${round1(L('agi'))}%`) + row('¥', '#ffd76a', 'Йены и опыт', `+${round1(L('greed'))}%`);
   document.querySelector('#soul .f-title').textContent = towerIn() ? 'Демоническая душа' : 'Развитие души';
@@ -5609,6 +5612,7 @@ function renderSoul() {
 $('#soul').addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b || b.disabled) return; const act = b.dataset.act;
   if (act === 'close') { toggleSoul(false); return; }
+  if (act === 'star' || act === 'starmax') { const s = SOUL.find(x => x.id === b.dataset.id), k = starBuy(b.dataset.id, act === 'starmax'); if (!k) { SFX.fail(); return; } SFX.up(); soulBurst('255,215,110', 18 + k * 4); G.soulFlash = 0.4; toast(`★ ${s.name}: звёзд ${starLv(s.id)}${k > 1 ? ` (+${k})` : ''}`); save(); renderSoul(); return; }
   if (act === 'sup' || act === 'smax') {
     const id = b.dataset.id, s = SOUL.find(x => x.id === id), before = Math.floor(soulTotal() / SOUL_TOTAL * 100); let bought = 0;
     do { const c = soulCost(soulTotal()); if (S.xp < c || soulLv(id) >= SOUL_MAX) break; S.xp -= c; S.soul[id] = soulLv(id) + 1; bought++; } while (act === 'smax');
@@ -6337,14 +6341,14 @@ const V_FX = {
   potion: ['spring', [0, 0.25, 0.25, 0.25]], regen: ['spring', [0, 0, 0.001, 0.002]], drop: ['shrine', [1, 1.25, 1.5, 2]], reduce: ['palisade', [0, 0.02, 0.04, 0.06]],
 };
 function vBonus(key) {
-  if (!S.village || towerIn()) return key === 'drop' ? 1 : 0;
+  if (!S.village || towerIn() || S.mainStash) return key === 'drop' ? 1 : 0;
   if (key === 'goldXp') return 0.03 * (vStep('house1') + vStep('house2') + vStep('house3') + vStep('house4'));
   if (key === 'hp') return 0.03 * (vStep('tower1') + vStep('tower2'));
   const f = V_FX[key]; return f ? f[1][vStep(f[0])] : 0;
 }
 const vActiveMax = () => 3 + vBonus('active');
 function applyVillageStats(st) {
-  if (!S.village || towerIn()) { st.vReduce = 0; st.vDrop = 1; return; }
+  if (!S.village || towerIn() || S.mainStash) { st.vReduce = 0; st.vDrop = 1; return; }
   st.maxHp *= 1 + vBonus('hp'); st.shieldMax = st.maxHp * sumE(S.a, 'eshield') / 100;
   const gx = vBonus('goldXp'); st.goldMul *= 1 + gx; st.xpMul *= 1 + gx;
   st.regen += vBonus('regen') * st.healMul;
@@ -6690,6 +6694,87 @@ function vInit() {
 }
 
 // =====================================================================
+//  БЛОК 11.15. ЗВЁЗДЫ ДУШИ (после полной души: звёзды веток, созвездия, свиток звёзд)
+// =====================================================================
+const STAR_BASE = 1200000, STAR_GROW = 1.025; // замер: ≈88 тыс. ✦/мин в Храме (район 4) → 1-я звезда ≈ 14 мин, 1-е созвездие ≈ 2,5 ч, сакура (100★) ≈ 100 ч
+const starCost = n => Math.round(STAR_BASE * Math.pow(STAR_GROW, n));
+const starLv = id => (S.stars && S.stars.b && S.stars.b[id]) | 0;
+const starsTotal = () => SOUL.reduce((a, s) => a + starLv(s.id), 0);
+const starsOpen = () => !towerIn() && soulTotal() >= SOUL_TOTAL;
+const constN = () => Math.floor(((S.stars && S.stars.peak) | 0) / 10);
+function fixStars() {
+  const z = (S.stars && typeof S.stars === 'object') ? S.stars : {}, b = (z.b && typeof z.b === 'object') ? z.b : {};
+  z.b = {}; for (const s of SOUL) z.b[s.id] = Math.max(0, Math.floor(+b[s.id] || 0));
+  z.spent = isFinite(+z.spent) && +z.spent > 0 ? +z.spent : 0; z.resets = Math.max(0, z.resets | 0);
+  S.stars = z; z.peak = Math.max(Math.max(0, z.peak | 0), starsTotal());
+}
+function applyStarStats(st) {
+  if (S.loc === 4 || S.mainStash || !S.stars) return; const c = constN(); // S.mainStash — профиль башни уже надет (вход в башню, S.loc ещё старый)
+  if (c) { st.dmg *= 1 + 0.01 * c; st.maxHp *= 1 + 0.01 * c; st.shieldMax = st.maxHp * sumE(S.a, 'eshield') / 100; }
+  st.critChance = Math.min(1, st.critChance);
+}
+
+// ---- Свиток звёзд: сброс звёзд души с возвратом всего опыта ----
+const starResetPrice = () => (S.stars.resets | 0) === 0 ? 0 : Math.round(600 * shopGM() * Math.pow(2, Math.min(4, (S.stars.resets | 0) - 1)));
+function starResetHtml() {
+  if (!starsOpen()) return ''; const n = starsTotal(), p = starResetPrice(), ok = n > 0 && S.gold >= p, arm = G.starResetArm > performance.now();
+  return `<div class="sitem" style="--ic:#ffd76a"><div class="si-ic">🌟</div><div class="si-main"><b>Свиток звёзд</b><small>Снимает все звёзды души: весь потраченный опыт ✦${fmt(S.stars.spent)} возвращается, созвездия остаются. Первый раз — бесплатно.</small></div>
+    <div class="si-buy"><button class="${arm ? 'danger' : 'primary'}" data-act="starreset" ${ok ? '' : 'disabled'}>${arm ? 'Точно сбросить?' : 'Сбросить звёзды'}<span class="pr g">${p ? '¥' + fmt(p) : 'бесплатно'}</span></button></div></div>`;
+}
+function doStarReset() {
+  const n = starsTotal(), p = starResetPrice(); if (!starsOpen() || !n || S.gold < p) { SFX.fail(); return; }
+  if (!(G.starResetArm > performance.now())) { G.starResetArm = performance.now() + 3000; SFX.click(); if (G.shopOpen) renderShop(); setTimeout(() => { if (G.shopOpen) renderShop(); }, 3100); return; }
+  const back = S.stars.spent; G.starResetArm = 0; S.gold -= p; S.xp += back; for (const s of SOUL) S.stars.b[s.id] = 0; S.stars.spent = 0; S.stars.resets++;
+  refreshStats(); SFX.up(); banner('🌟 Звёзды сброшены', `Вернулось ✦${fmt(back)} опыта — расставь звёзды заново (клавиша U)`); save(); if (G.shopOpen) renderShop();
+}
+
+// ---- Украшения созвездий: звёздная аура (1), след рывка (3), титул (5), лепестки сакуры (10) ----
+function starPushFx(L) { if (towerIn() || hero.dead) return; const c = constN(); if (c >= 1) L.push({ y: hero.y - 0.5, k: 17 }); if (c >= 10) L.push({ y: hero.y + 0.5, k: 18 }); }
+function drawStarAura(ctx, h, t) {
+  const k = CALM ? 0.5 : 1, pu = 0.85 + 0.15 * Math.sin(t * 1.6);
+  ctx.save(); const g = ctx.createRadialGradient(h.x, h.y + 4, 4, h.x, h.y + 4, 46); g.addColorStop(0, `rgba(255,215,110,${0.28 * k * pu})`); g.addColorStop(1, 'rgba(255,190,90,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(h.x, h.y + 4, 46, 16, 0, 0, TAU); ctx.fill();
+  const n = GFX.level ? 6 : 3; for (let i = 0; i < n; i++) { const a = t * 0.35 + i / n * TAU, x = h.x + Math.cos(a) * 38, y = h.y + 4 + Math.sin(a) * 13; ctx.fillStyle = `rgba(255,224,140,${0.8 * k})`; vStar(ctx, x, y, 3.2); }
+  for (const p of G.starTrail || []) { ctx.fillStyle = `rgba(255,220,130,${0.7 * k * (p.life / p.max)})`; vStar(ctx, p.x, p.y, 2.5 + 2 * (p.life / p.max)); }
+  ctx.restore();
+}
+function vStar(ctx, x, y, r) { ctx.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } ctx.closePath(); ctx.fill(); }
+function drawSakuraAura(ctx, h, t) {
+  const n = GFX.level ? 14 : 6, k = CALM ? 0.5 : 1; ctx.save();
+  for (let i = 0; i < n; i++) {
+    const ph = (t * 0.12 + i / n) % 1, a = t * 0.5 + i * 2.4, r = 30 + 22 * Math.sin(i * 1.7), x = h.x + Math.cos(a) * r, y = h.y - 90 + ph * 96 + Math.sin(a) * 6, rot = t * 0.8 + i;
+    ctx.globalAlpha = 0.85 * k * Math.min(1, (1 - ph) * 3, ph * 6); ctx.fillStyle = i % 3 ? '#ffb7d0' : '#ff9cc2';
+    ctx.beginPath(); ctx.ellipse(x, y, 4.2, 2.4, rot, 0, TAU); ctx.fill();
+  }
+  ctx.restore();
+}
+function starDashFx() { if (towerIn() || constN() < 3) return; G.starTrail = G.starTrail || []; for (let i = 0; i < 4; i++) G.starTrail.push({ x: hero.x + rand(-10, 10), y: hero.y - rand(10, 40), life: 0.5 + i * 0.1, max: 0.8 }); if (G.starTrail.length > 24) G.starTrail.splice(0, G.starTrail.length - 24); }
+function starFxUpdate(dt) { const T = G.starTrail; if (!T) return; for (let i = T.length - 1; i >= 0; i--) if ((T[i].life -= dt) <= 0) T.splice(i, 1); }
+
+// ---- Окно души: звёзды и созвездия ----
+const starBtns = id => !starsOpen() ? '<button disabled>✓ Максимум</button>' : `<button class="soulb starb" data-act="star" data-id="${id}" ${S.xp >= starCost(starsTotal()) ? '' : 'disabled'}>+★<span class="pr x">✦${fmt(starCost(starsTotal()))}</span></button><button data-act="starmax" data-id="${id}" ${S.xp >= starCost(starsTotal()) ? '' : 'disabled'}>★ max</button>`;
+const starTag = id => starLv(id) ? ` <span class="star-n">★${starLv(id)}</span>` : '';
+function starSubLine() { if (!starsOpen()) return ''; const n = starsTotal(), c = constN(); return ` · звёзд <b>★${n}</b>, созвездий <b>${c}</b> · следующая звезда: <b>✦${fmt(starCost(n))}</b>`; }
+function starBuy(id, max) {
+  if (!starsOpen() || !SOUL.some(s => s.id === id)) return 0; const z = S.stars, c0 = constN(); let k = 0;
+  while (k < 1000) { const c = starCost(starsTotal()); if (S.xp < c) break; S.xp -= c; z.spent += c; z.b[id]++; k++; if (!max) break; }
+  if (!k) return 0; z.peak = Math.max(z.peak, starsTotal()); refreshStats();
+  const c1 = constN(); if (c1 > c0) { banner(`✨ Созвездие ${c1} зажглось!`, STAR_GIFT[c1] || 'Урон и здоровье +1%'); G.starBanner = c1; }
+  return k;
+}
+const STAR_GIFT = { 1: 'Звёздная аура под ногами Аки · урон и здоровье +1%', 3: 'Звёздный след за рывком · урон и здоровье +1%', 5: 'Титул «Звёздная Аки» · урон и здоровье +1%', 10: 'Аура из лепестков сакуры 🌸 · урон и здоровье +1%' };
+function drawStarOrb() {
+  if (!G.soulOpen || !starsOpen()) return; const c = $('#soul-orb'), p = c.getContext('2d'), W = c.width, H = c.height, t = G.time, n = constN();
+  const cx = W / 2, cy = H * 0.46, R = W * 0.43, u = W / 260; p.save(); p.setTransform(1, 0, 0, 1, 0, 0);
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i / 10 * TAU, x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R, lit = i < n, tw = lit ? 0.75 + 0.25 * Math.sin(t * 2.4 + i) : 0.25; // ~0,4 Гц
+    for (let k = 0; k < 5; k++) { const b = a + k * 1.3, rr = (k ? 7 : 0) * u, sx = x + Math.cos(b) * rr, sy = y + Math.sin(b) * rr;
+      p.fillStyle = lit ? `rgba(255,215,110,${tw})` : 'rgba(160,150,200,0.25)'; p.beginPath(); p.arc(sx, sy, (k ? 1.4 : 2.2) * u, 0, TAU); p.fill(); }
+  }
+  p.restore();
+}
+
+// =====================================================================
 //  БЛОК 12. ЧИТ-КОНСОЛЬ
 // =====================================================================
 const cLog = $('#c-log'), cIn = $('#c-in'), cHist = []; let cHistI = 0;
@@ -6941,7 +7026,7 @@ $('#menu').addEventListener('click', async ev => {
     let data; try { data = await readSaveCode(code); } catch (e) { msg('⚠ ' + e.message); SFX.fail(); return; }
     if (!G.importArm || performance.now() > G.importArm) { G.importArm = performance.now() + 8000; msg(`Найдено сохранение: ¥${fmt(data.gold || 0)}, катана ранг ${data.w ? data.w.rank : '?'}, душа ${data.soul ? Object.values(data.soul).reduce((a, v) => a + (v | 0), 0) : 0} ур.<br><b>Нажми «Загрузить» ещё раз</b> — текущий прогресс на этом устройстве будет заменён (резервная копия сохранится).`); SFX.warn(); return; }
     try { localStorage.setItem(CFG.SAVE_KEY + '_backup', JSON.stringify(S)); } catch (e) { }
-    S = Object.assign(defaultSave(), data); fixVillage(); save(); G.noSaveOnUnload = true; msg('✓ Загружено! Перезапуск…'); setTimeout(() => location.reload(), 500);
+    S = Object.assign(defaultSave(), data); fixVillage(); fixStars(); save(); G.noSaveOnUnload = true; msg('✓ Загружено! Перезапуск…'); setTimeout(() => location.reload(), 500);
   }
   else if (act === 'restore') {
     let raw = null; try { raw = localStorage.getItem(CFG.SAVE_KEY + '_backup'); } catch (e) { }
@@ -7051,7 +7136,7 @@ function update(dt) {
   updateProjectiles(dt);
   updateLoot(dt);
   updateParticles(dt);
-  updateQuests(dt); vUpdate(dt);
+  updateQuests(dt); vUpdate(dt); starFxUpdate(dt);
   if (towerIn()) { towerUpdate(dt); towerAmbient(dt); }
   // атмосфера: лепестки сакуры, брызги дождя, искры горна
   const v = G.view;
@@ -7078,7 +7163,7 @@ function frame(now) {
   const big = bigWindow(), lo = GFX.level < 2; G.uiFrame = (G.uiFrame || 0) + 1; G.rAcc = (G.rAcc || 0) + real; G.pAcc = (G.pAcc || 0) + real;
   if (!big || G.uiFrame % (lo ? 4 : 2) === 0) { render(G.rAcc); G.rAcc = 0; }
   gfxMonitor(real);
-  if (!lo || G.uiFrame % 2 === 0) { updatePreview(G.pAcc); drawSoulOrb(G.pAcc); if (G.petsOpen) drawPetsPreview(G.time); G.pAcc = 0; }
+  if (!lo || G.uiFrame % 2 === 0) { updatePreview(G.pAcc); drawSoulOrb(G.pAcc); drawStarOrb(); if (G.petsOpen) drawPetsPreview(G.time); G.pAcc = 0; }
   if (G.fadeT > 0) G.fadeT -= real * 1.1;
   if (G.forgeOpen) updateRes(false, real);
   uiT -= real; if (uiT <= 0) { uiT = 0.5; if (G.boardOpen) updateBoardSub(); if (G.travelOpen) document.querySelectorAll('[data-twleft]').forEach(el => el.textContent = mmss(towerLeft() / 1000)); }
