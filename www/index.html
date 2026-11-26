@@ -576,19 +576,22 @@ const TIER_NAMES = ['I', 'II', 'III', 'IV', 'V'];
 const TIER_COLORS = ['#cfd6e0', '#5fd16b', '#4fa8ff', '#b66bff', '#ffb340'];
 
 const ENCH = {
-  burn:    { slot: 'w', name: 'Ожог',          icon: '✹', vals: [15, 25, 40, 60, 90],    fmt: e => `Поджигает цель: ${e.v}% урона в сек. (3 сек.)` },
-  chain:   { slot: 'w', name: 'Цепная молния', icon: 'ϟ', vals: [8, 12, 17, 23, 30],     fmt: e => `${e.v}% шанс: молния по ${2 + Math.floor(e.t / 2)} целям (50% урона)` },
+  poison:  { slot: 'w', el: 'poison', name: 'Яд', icon: '🧪', vals: [6, 10, 15, 23, 32], fmt: e => `☠ Яд: каждый удар — стак яда, ${e.v}% урона удара в сек. (до 5 стаков, 4 сек.); отравленный враг лечится вдвое слабее · Сочетается с: 🔥 Едкий дым, ϟ Токсичный разряд` },
+  frost:   { slot: 'w', el: 'ice', name: 'Холод', icon: '❄', vals: [5, 9, 14, 20, 28], fmt: e => `❄ Лёд: +${e.v}% урона удара льдом, замедляет (−8% за стак, до 5); 5 стаков замораживают на 1 сек. (боссы — только замедление) · Сочетается с: 🔥 Пар, ϟ Ледяная искра` },
+  burn:    { slot: 'w', el: 'fire', name: 'Ожог',  icon: '🔥', vals: [6, 10, 16, 24, 36],     fmt: e => `🔥 Огонь: каждый удар — стак горения, ${e.v}% урона удара в сек. (до 5 стаков, 3 сек.), горение может критовать и перекидывается при смерти врага · Сочетается с: ☠ Едкий дым, ❄ Пар` },
+  chain:   { slot: 'w', el: 'thunder', name: 'Цепная молния', icon: 'ϟ', vals: [8, 12, 17, 23, 30],     fmt: e => `ϟ Гром: ${e.v}% шанс — молния по ${2 + Math.floor(e.t / 2)} целям (50% урона), иногда оглушает · Сочетается с: ❄ Ледяная искра, ☠ Токсичный разряд` },
   vamp:    { slot: 'w', name: 'Вампиризм',     icon: '♥', vals: [2, 3.5, 5, 7, 10],      fmt: e => `Лечит на ${e.v}% от нанесённого урона` },
   crit:    { slot: 'w', name: 'Крит',          icon: '✦', vals: [5, 8, 12, 16, 22], vals2: [20, 35, 50, 70, 100], fmt: e => `+${e.v}% шанс крита, +${e.v2}% крит. урона` },
   execute: { slot: 'w', name: 'Казнь',         icon: '☠', vals: [6, 9, 12, 16, 20],      fmt: e => `Добивает врагов ниже ${e.v}% HP (боссов — ниже ${round1(e.v / 2)}%)` },
-  thorns:  { slot: 'a', name: 'Шипы',          icon: '✸', vals: [20, 35, 55, 80, 120],   fmt: e => `Возвращает атакующему ${e.v}% полученного урона` },
+  shell:   { slot: 'a', name: 'Панцирь',       icon: '🛡', vals: [20, 35, 55, 80, 120],   fmt: e => `🛡 Панцирь: урон, уклонение и блок дают заряд (до 5): −${round1(SHELL_R[e.t - 1] * e.v / ENCH.shell.vals[e.t - 1])}% входящего урона и −3% скорости за заряд; на 5 зарядах отражает ${e.v}% полученного урона` },
   speed:   { slot: 'a', name: 'Ускорение бега', icon: '»', vals: [6, 10, 15, 20, 28],    fmt: e => `+${e.v}% к скорости бега` },
   eshield: { slot: 'a', name: 'Энергощит',     icon: '◈', vals: [10, 16, 24, 33, 45],    fmt: e => `Щит ${e.v}% от макс. HP, регенерирует вне боя` },
   magnet:  { slot: 'a', name: 'Магнит лута',   icon: '◎', vals: [40, 70, 110, 160, 230], fmt: e => `+${e.v}% к радиусу сбора лута` },
   dodge:   { slot: 'a', name: 'Уклонение',     icon: '≋', vals: [4, 7, 10, 14, 18],      fmt: e => `${e.v}% шанс полностью избежать удара` },
   // чары бижутерии
+  sharp:   { slot: 'j', name: 'Острота',       icon: '🗡', vals: [4, 7, 11, 15, 22], vals2: [5, 8, 12, 18, 25], fmt: e => `+${e.v}% к физическому урону (катана, вихрь, волна, танец теней, аура) и +${e.v2}% крит. урона` },
   gold:    { slot: 'j', name: 'Золотая жила',  icon: '¥', vals: [10, 18, 28, 40, 60],    fmt: e => `+${e.v}% йен с врагов` },
-  luck:    { slot: 'j', name: 'Удача',         icon: '☘', vals: [10, 18, 28, 40, 60],    fmt: e => `+${e.v}% к шансу выпадения душ и нефрита` },
+  luck:    { slot: 'j', name: 'Удача',         icon: '☘', vals: [10, 18, 28, 40, 60],    fmt: e => `+${e.v}% к шансу выпадения душ и нефрита и к шансу лучшего броска чар в кузнице` },
   might:   { slot: 'j', name: 'Мощь',          icon: '⚔', vals: [4, 7, 11, 15, 22],      fmt: e => `+${e.v}% ко всему урону` },
   vigor:   { slot: 'j', name: 'Стойкость',     icon: '♥', vals: [5, 9, 14, 20, 28],      fmt: e => `+${e.v}% к максимальному здоровью` },
   haste:   { slot: 'j', name: 'Стремительность', icon: 'ϟ', vals: [4, 7, 10, 14, 20],    fmt: e => `+${e.v}% к скорости атаки` },
@@ -602,7 +605,8 @@ const JEWELS = {
   neck:  { name: 'Ожерелье Луны', short: 'Ожерелье', icon: '☾', stat: 'Регенерация HP', desc: 'Лунная магатама понемногу залечивает раны — даже посреди боя.', val: l => l * 0.3, fmt: v => `${round1(v)}% HP/с`, craft: { gold: 600, jade: 3 } },
 };
 const jUpCost = l => ({ gold: Math.floor(400 * Math.pow(1.7, l) * (l >= 10 ? 6 : 1)), jade: l >= 10 ? 2 + l * 2 : 2 + l });
-const jewelSlots = l => l <= 0 ? 0 : Math.min(3, 1 + Math.floor(l / 4));
+const jewelSlots = (l, x4) => l <= 0 ? 0 : Math.min(3, 1 + Math.floor(l / 4)) + (l >= JMAX && x4 ? 1 : 0); // 4-й слот — на +15 за Печать Четырёх Ветров
+const SLOT4_COST = { gold: 250e6, jade: 250 }, SEAL_EVERY = 25;
 const jewelColor = l => l <= 0 ? '#6f7699' : RANK_COLORS[l >= 15 ? 7 : l >= 13 ? 6 : l >= 11 ? 4 : l >= 10 ? 3 : l >= 7 ? 2 : l >= 4 ? 1 : 0];
 
 const ENEMY_TYPES = {
@@ -988,7 +992,7 @@ function updatePetShots(dt) {
     const dx = e.x - s.x, dy = (e.y - 24) - s.y, d = Math.hypot(dx, dy); s.x += dx / d * s.sp * dt; s.y += dy / d * s.sp * dt;
     if (d < 16) {
       G.petShots.splice(i, 1); const f = PFX; dealDamage(e, ST.dmg * (f.atkDmg || 0.5), { small: true, noProc: true, noKb: true, col: s.col, src: 'pet' });
-      if (f.atkBurn) { e.burnDps = Math.max(e.burnDps, ST.dmg * f.atkBurn / 3); e.burnT = 3; }
+      if (f.atkBurn) applyElem(e, 'fire', 0, 'pet', { dps: ST.dmg * f.atkBurn / 3, pet: true });
       if (f.atkEnergy && S.oni && !(G.oniSuperT > 0)) S.oniE = Math.min(100, (S.oniE || 0) + f.atkEnergy);
       burst(e.x, e.y - 24, 6, hexRGB(s.col), 140, 0.3, 3, 'glow');
     }
@@ -1321,7 +1325,7 @@ function tierWeights(fl) {
 }
 function rollTier() { const w = tierWeights(S.forge), tot = w.reduce((a, b) => a + b, 0); let r = Math.random() * tot; for (let i = 0; i < 5; i++) { r -= w[i]; if (r <= 0) return i + 1; } return 1; }
 function rollEnch(id) {
-  const D = ENCH[id], t = rollTier(), q = (0.85 + Math.random() * 0.3) * (1 + 0.03 * (S.forge - 1));
+  const D = ENCH[id], t = rollTier(), q = rollQ() * (1 + 0.03 * (S.forge - 1)); // удача — шанс лучшего броска
   const e = { id, t, v: round1(D.vals[t - 1] * q) }; if (D.vals2) e.v2 = round1(D.vals2[t - 1] * q); return e;
 }
 const sumE = (it, id, key = 'v') => it.ench.reduce((s, e) => s + (e && e.id === id ? (e[key] || 0) : 0), 0);
@@ -1333,13 +1337,13 @@ function computeStats() {
   st.dmg = 12 * WEAPON_RANKS[w.rank - 1].mult * (1 + 0.2 * w.lvl) * (1 + sj('might')) * (1 + sv('pow') * 0.06);
   st.maxHp = 100 * ARMOR_RANKS[a.rank - 1].mult * (1 + 0.2 * a.lvl) * (1 + sj('vigor')) * (1 + sv('vit') * 0.075);
   st.critChance = 0.05 + sumE(w, 'crit') / 100 + (oni ? 0 : JEWELS.brace.val(JW[1].lvl) / 100) + sv('acc') * 0.0075;
-  st.critDmg = 1.5 + sumE(w, 'crit', 'v2') / 100 + sv('fury') * 0.03;
-  st.burn = sumE(w, 'burn') / 100;
+  st.critDmg = 1.5 + sumE(w, 'crit', 'v2') / 100 + sv('fury') * 0.03 + JW.reduce((a, it) => a + sumE(it, 'sharp', 'v2'), 0) / 100; st.sharp = sj('sharp'); // Острота: физ. урон отдельным множителем + крит. урон
+  st.burn = sumE(w, 'burn') / 100; st.elV = { fire: st.burn, poison: sumE(w, 'poison') / 100, ice: sumE(w, 'frost') / 100 };
   st.chain = Math.min(0.6, sumE(w, 'chain') / 100);
   const ce = w.ench.find(e => e && e.id === 'chain'); st.chainN = ce ? 2 + Math.floor(ce.t / 2) : 0;
   st.vamp = sumE(w, 'vamp') / 100;
   st.execute = Math.min(0.3, sumE(w, 'execute') / 100);
-  st.thorns = sumE(a, 'thorns') / 100;
+  { const se = a.ench.find(e => e && e.id === 'shell'); st.shellR = se ? SHELL_R[se.t - 1] * se.v / ENCH.shell.vals[se.t - 1] / 100 : 0; st.shellRefl = se ? se.v / 100 : 0; }
   st.speed = 235 * (1 + sumE(a, 'speed') / 100) * (a.rank >= 2 ? 1.05 : 1) * (1 + sv('agi') * 0.01);
   st.shieldMax = st.maxHp * sumE(a, 'eshield') / 100;
   st.magnet = 120 * (1 + sumE(a, 'magnet') / 100);
@@ -1348,7 +1352,7 @@ function computeStats() {
   st.range = 80 + Math.min(w.rank, 6) * 7;
   st.cdr = oni ? 0 : JEWELS.ring.val(JW[0].lvl) / 100;
   st.regen = (oni ? 0 : JEWELS.neck.val(JW[2].lvl) / 100) + sv('life') * 0.001;
-  st.goldMul = 1 + sj('gold') + sv('greed') * 0.03; st.xpMul = 1 + sv('greed') * 0.03; st.luck = 1 + sj('luck');
+  st.goldMul = 1 + sj('gold') + sv('greed') * 0.03; st.xpMul = 1 + sv('greed') * 0.03; st.luck = 1 + sj('luck'); st.luckRoll = Math.min(1, sj('luck'));
   st.skillMul = (1 + sj('skill')) * (1 + 0.25 * Math.max(0, w.rank - 4));
   st.atkCd = Math.max(0.26, 0.52 - (Math.min(w.rank, 6) - 1) * 0.035) * (1 - st.cdr * 0.5) / (1 + sj('haste')) / (1 + sv('agi') * 0.01);
   st.dashCd = 1.5 * (1 - st.cdr);
@@ -1366,7 +1370,7 @@ function computeStats() {
   st.res = { fire: Math.min(0.8, (bark + treeVal('fire')) / 100), ice: Math.min(0.8, (bark + treeVal('ice')) / 100), thunder: Math.min(0.8, (bark + treeVal('thunder')) / 100), poison: Math.min(0.8, treeVal('poison') / 100), dark: 0 };
   st.curseRes = Math.min(0.9, treeVal('curse') / 100);
   st.acc = treeVal('eye') / 100; st.pen = Math.min(0.8, treeVal('pierce') / 100);
-  applyPetStats(st); applyVillageStats(st); applyStarStats(st);
+  applyPetStats(st); applyVillageStats(st); applyStarStats(st); applyShellStats(st);
   return st;
 }
 
@@ -1376,6 +1380,7 @@ function computeStats() {
 function defaultSave() { return { gold: 0, souls: 0, jade: 0, forge: 1, maxZone: 1, w: { rank: 1, lvl: 0, ench: [null] }, a: { rank: 1, lvl: 0, ench: [null] }, ring: { lvl: 0, ench: [] }, brace: { lvl: 0, ench: [] }, neck: { lvl: 0, ench: [] }, quests: { offers: [], active: [], refreshT: 180, done: 0 }, kills: 0, bossKills: [0, 0, 0, 0], bossKills2: [0, 0, 0, 0], loc: 1, unlock2: false, maxZone2: 1, xp: 0, soul: {}, look: { w: 0, a: 0 }, muted: false }; }
 let S = defaultSave();
 function fixSlots() {
+  fixElemMig(); // перевод старых чар — до проверки чар по таблице ENCH
   for (const it of [S.w, S.a]) {
     it.rank = clamp(it.rank | 0, 1, MAX_RANK); it.lvl = clamp(it.lvl | 0, 0, CFG.MAX_LVL);
     if (!Array.isArray(it.ench)) it.ench = [];
@@ -1386,8 +1391,9 @@ function fixSlots() {
   for (const k of JKEYS) {
     const it = S[k] = (S[k] && typeof S[k] === 'object') ? S[k] : { lvl: 0, ench: [] }; it.lvl = clamp(it.lvl | 0, 0, JMAX);
     if (!Array.isArray(it.ench)) it.ench = []; it.ench = it.ench.map(e => (e && ENCH[e.id] && ENCH[e.id].slot === 'j') ? e : null);
-    const n = jewelSlots(it.lvl); while (it.ench.length < n) it.ench.push(null); it.ench.length = n;
+    it.slot4 = !!it.slot4; const n = jewelSlots(it.lvl, it.slot4); while (it.ench.length < n) it.ench.push(null); it.ench.length = n;
   }
+  S.jSeal = Math.max(0, S.jSeal | 0); S.sealN = clamp(S.sealN | 0, 0, SEAL_EVERY - 1);
   S.forge = clamp(S.forge | 0, 1, 10); S.jade = Math.max(0, +S.jade || 0); S.maxZone = clamp(S.maxZone | 0, 1, 4);
   S.loc = [1, 2, 3].includes(S.loc) || (S.loc === 4 && S.mainStash) ? S.loc : 1; if (!Array.isArray(S.bossKills3) || S.bossKills3.length !== 4) S.bossKills3 = [0, 0, 0, 0]; S.maxZone3 = clamp(S.maxZone3 | 0, 1, 4); S.kills3 = Math.max(0, S.kills3 | 0); S.dew = Math.max(0, S.dew | 0);
   if (!S.tree || typeof S.tree !== 'object') S.tree = {}; for (const n of TREE) S.tree[n.id] = clamp(S.tree[n.id] | 0, 0, n.max);
@@ -1543,7 +1549,7 @@ function genWorld(loc = 1) {
   WORLD.obstacles.push({ kind: 'col', x: SHOP.x - 58, y: SHOP.sy - 40, w: 116, h: 40 }); // лавка
   WORLD.obstacles.push({ kind: 'col', x: NURSERY.x - 56, y: NURSERY.sy - 40, w: 112, h: 40 }); // питомник
   WORLD.obstacles.push({ kind: 'col', x: DUMMY.x - 9, y: DUMMY.y - 8, w: 18, h: 10 }); // тренировочное чучело
-  for (const id in VPLOTS) if (id !== 'palisade') { const p = VPLOTS[id]; WORLD.obstacles.push({ kind: 'col', x: p.x - p.w * 0.38, y: p.y - 26, w: p.w * 0.76, h: 22 }); } // участки деревни
+  for (const id in VPLOTS) if (id !== 'palisade' && !VT_SLOTS[id]) { const p = VPLOTS[id]; WORLD.obstacles.push({ kind: 'col', x: p.x - p.w * 0.38, y: p.y - 26, w: p.w * 0.76, h: 22 }); } // участки деревни
   WORLD.obstacles.push({ kind: 'col', x: PORTAL.x - 68, y: PORTAL.sy - 8, w: 14, h: 10 }, { kind: 'col', x: PORTAL.x + 54, y: PORTAL.sy - 8, w: 14, h: 10 }); // портал
   if (temple || mountain) { // большие тории вдоль главной улицы
     let side = 0;
@@ -1560,6 +1566,7 @@ function genWorld(loc = 1) {
     if (pointBlocked(tx, ty, 50) || WORLD.arenas.some(a => dist(tx, ty, a.x, a.y) < 380) || Math.abs(ty - MID) < 300) continue;
     WORLD.trees.push(mkTree(tx, ty, 0.85 + R() * 0.4, R)); break;
   }
+  vWallObs();
   for (let i = 0; i < 460; i++) { const px = R() * W, py = 470 + R() * (H - 940); WORLD.puddles.push({ x: px, y: py, rx: 28 + R() * 70, ry: 0.35 + R() * 0.25, col: mountain && R() < 0.7 ? '#cfe8ff' : rp(ZONES[zoneAt(px)].neon), seed: R() * 10 }); }
 }
 function mkTree(x, y, s, R) {
@@ -1677,17 +1684,21 @@ function heroAttack(target) {
     if (e.dead) continue; const d = dist(e.x, e.y, hero.x, hero.y); if (d > range + e.r) continue;
     if (!whirl && Math.abs(angDiff(ang, Math.atan2(e.y - hero.y, e.x - hero.x))) > arc / 2 + 0.25) continue;
     dealDamage(e, ST.dmg * (whirl ? 1.3 * ST.skillMul : 1), whirl ? { src: 'whirl' } : undefined);
-    if (S.oni && !e.dead) dealDamage(e, ST.dmg * 0.45, { noProc: true, noKb: true, small: true, col: '#ff7a6a', src: 'oni' });
+    if (S.oni && !e.dead) { dealDamage(e, ST.dmg * 0.45 * darkMul(e), { noProc: true, noKb: true, small: true, col: '#c06bff', src: 'oni', el: 'dark' }); applyElem(e, 'dark', ST.dmg * 0.45, 'oni'); }
   }
   if (whirl) P('ring', hero.x, hero.y - 20, 0, 0, 0.35, range, RANK_FX[S.w.rank - 1]);
   if (S.w.rank >= 3) G.waves.push({ x: hero.x + Math.cos(ang) * 20, y: hero.y + Math.sin(ang) * 20, ang, speed: 640, life: 0.75, max: 0.75, dmg: ST.dmg * 0.6 * ST.skillMul, hit: new Set(), r: 34, rank: S.w.rank });
 }
+const PHYS_SRC = { katana: 1, whirl: 1, wave: 1, shadow: 1, aura: 1 };
+const physMul = o => (!o.el && PHYS_SRC[o.src || 'katana']) ? 1 + (ST.sharp || 0) : 1; // Острота — только физический урон катаны и её приёмов
 function dealDamage(e, base, o = {}) {
   if (e.dead) return;
   let dmg = base * rand(0.9, 1.1), crit = false;
   if (e.eva && !o.small && Math.random() < Math.max(0, e.eva - ST.acc)) { spawnText(e.x + rand(-10, 10), e.y - (e.boss ? 105 : 55), 'Промах', '#9aa3c9', 12); return; }
   if (!o.noCrit && Math.random() < ST.critChance) { crit = true; dmg *= ST.critDmg; }
-  if (e.def) dmg *= 1 - e.def * (1 - ST.pen);
+  if (e.def) dmg *= 1 - e.def * (1 - ST.pen) * ((e.st && e.st.smoke && e.st.smoke.t > 0) ? 0.85 : 1);
+  if (o.el && e.elem === o.el) dmg *= 0.5; // враг своей стихии
+  dmg *= physMul(o);
   if (mountainWeak()) dmg *= 0.6;
   if (!o.small && !o.noProc) gainOniEnergy(crit ? 1.5 : 1);
   if (auraWeak(e)) dmg *= 0.45;
@@ -1695,12 +1706,12 @@ function dealDamage(e, base, o = {}) {
   dpsHit(e, o.src || 'katana', dmg, crit);
   e.hp -= dmg; if (!e.boss && !(e.flashCd > 0)) { e.flash = 0.07; e.flashCd = 0.35; } hero.lastCombat = 0;
   const top = e.y - (e.boss ? 105 : 55);
-  spawnText(e.x + rand(-10, 10), top, fmt(dmg), crit ? '#ffd84a' : o.col || '#ffffff', o.small ? 11 : crit ? 22 : 15, crit);
+  if (!o.quiet || G.texts.length < 50) spawnText(e.x + rand(-10, 10), top, fmt(dmg), crit ? '#ffd84a' : o.col || '#ffffff', o.small ? 11 : crit ? 22 : 15, crit);
   if (!o.small) { hitFx(e, crit, o); SFX.hit(crit); }
   if (!o.noKb && !e.boss) { const a = Math.atan2(e.y - hero.y, e.x - hero.x), kb = crit ? 280 : 170; e.kx += Math.cos(a) * kb; e.ky += Math.sin(a) * kb; }
   if (!o.noProc) {
     if (ST.vamp > 0) heal(Math.min(dmg * ST.vamp, ST.maxHp * 0.012));
-    if (ST.burn > 0) { e.burnDps = Math.max(e.burnDps, ST.dmg * ST.burn); e.burnT = 3; }
+    elemProcs(e, base);
     if (ST.chain > 0 && Math.random() < ST.chain) chainLightning(e, ST.chainN, ST.dmg * 0.5 * ST.skillMul);
     if (crit && S.w.rank >= 4) shadowDance(e);
   }
@@ -1712,13 +1723,16 @@ function chainLightning(src, n, dmg) {
   for (let i = 0; i < n; i++) {
     let best = null, bd = 270; for (const e of G.enemies) { if (e.dead || hit.has(e)) continue; const d = dist(cur.x, cur.y, e.x, e.y); if (d < bd) { bd = d; best = e; } }
     if (!best) break; addBolt(cur.x, cur.y - 26, best.x, best.y - 26, '127,212,255'); hit.add(best);
-    dealDamage(best, dmg, { noProc: true, noKb: true, noCrit: true, col: '#9fdcff', src: 'chain' }); cur = best;
+    dealDamage(best, dmg * ((best.st && best.st.spark && best.st.spark.t > 0) ? 2 : 1), { noProc: true, noKb: true, noCrit: true, col: '#9fdcff', src: 'chain', el: 'thunder' }); applyElem(best, 'thunder', dmg, 'chain'); cur = best;
   }
+  if (hit.size === 1 && !src.dead) { addBolt(src.x + rand(-20, 20), src.y - 300, src.x, src.y - 26, '127,212,255'); dealDamage(src, dmg * ((src.st && src.st.spark && src.st.spark.t > 0) ? 2 : 1), { noProc: true, noKb: true, noCrit: true, col: '#9fdcff', src: 'chain', el: 'thunder' }); if (!src.dead) applyElem(src, 'thunder', dmg, 'chain'); } // рядом никого — молния бьёт саму цель с неба
+  if (hit.size > 1) vToxicChain([...hit]);
   SFX.zap();
 }
 function shadowDance(src) {
   if (hero.shadowCd > 0) return; hero.shadowCd = 0.12;
   const list = G.enemies.filter(e => !e.dead && e !== src && dist(e.x, e.y, hero.x, hero.y) < 340).sort((a, b) => dist(a.x, a.y, hero.x, hero.y) - dist(b.x, b.y, hero.x, hero.y)).slice(0, 3);
+  if (!list.length && !src.dead) list.push(src); // рядом никого — танец теней бьёт саму цель
   for (const e of list) {
     addBolt(e.x + rand(-30, 30), e.y - 320, e.x, e.y - 20, '255,80,230', 4); addBolt(hero.x, hero.y - 28, e.x, e.y - 26, '80,240,255', 2);
     burst(e.x, e.y - 10, 10, '255,120,240', 260, 0.4, 3); dealDamage(e, ST.dmg * 0.8 * ST.skillMul, { noProc: true, noKb: true, noCrit: true, col: '#ff9cf0', src: 'shadow' });
@@ -1726,8 +1740,8 @@ function shadowDance(src) {
   if (list.length) SFX.zap();
 }
 function killEnemy(e) {
-  if (e.dummy) { e.hp = e.maxHp; e.burnT = 0; if (G.dsess && !G.dsess.done) G.dsess.kills++; return; } // чучело не умирает: «враг побеждён» и здоровье снова полное
-  if (e.dead) return; e.dead = true; S.kills++; questEvent('kill', e); gainXp(e.xp || 0); onKill3(e); gainOniEnergy(3); petOnKill(e);
+  if (e.dummy) { e.hp = e.maxHp; e.burnT = 0; e.st = null; if (G.dsess && !G.dsess.done) G.dsess.kills++; return; } // чучело не умирает: «враг побеждён» и здоровье снова полное
+  if (e.dead) return; e.dead = true; elemSpread(e); S.kills++; questEvent('kill', e); gainXp(e.xp || 0); onKill3(e); gainOniEnergy(3); petOnKill(e);
   const s = e.boss ? 2.2 : 1;
   burst(e.x, e.y - 25, e.boss ? 70 : 16, e.boss ? hexRGB(e.col2) : '255,90,120', 260 * s, 0.6, 3);
   burst(e.x, e.y - 20, e.boss ? 26 : 7, '30,30,48', 110, 0.9, 12, 'smoke');
@@ -1750,19 +1764,21 @@ function killEnemy(e) {
 function dropLoot(type, x, y, val) { G.loot.push({ type, x, y, z: 0, vz: rand(180, 320), vx: rand(-170, 170), vy: rand(-130, 130), val, t: 0, spin: rand(TAU), attract: false }); }
 function damageHero(amount, src, elem) {
   if (hero.dead || G.god || hero.dashT > 0 || hero.iframe > 0) return;
-  if (Math.random() < ST.dodge) { spawnText(hero.x, hero.y - 70, 'Уклон', '#7fe8ff', 14); burst(hero.x, hero.y - 30, 6, '120,230,255', 160, 0.3, 2); return; }
+  if (Math.random() < ST.dodge) { spawnText(hero.x, hero.y - 70, 'Уклон', '#7fe8ff', 14); burst(hero.x, hero.y - 30, 6, '120,230,255', 160, 0.3, 2); shellGain(); return; }
   elem = elem || (src && src.elem) || null;
   if (auraWeak(src)) amount *= 1.5;
   if (mountainWeak()) amount *= 1.4;
   if (G.petStance > 0) amount *= 0.4;
   amount *= ST.frail || 1;
   if (elem && ST.res && ST.res[elem]) amount *= 1 - ST.res[elem];
+  const shellOn = (G.shellN | 0) >= 5 && ST.shellRefl > 0; if (G.shellN > 0 && ST.shellR > 0) amount *= 1 - ST.shellR * G.shellN; // Панцирь
   if (ST.block > 0 && Math.random() < ST.block) { amount *= 0.4; spawnText(hero.x, hero.y - 84, 'Блок', '#ffd76a', 13); P('ring', hero.x, hero.y - 28, 0, 0, 0.25, 30, '255,215,110'); }
   const raw = amount; amount *= (1 - ST.reduce) * (1 - (ST.vReduce || 0)); hero.lastHurt = 0; hero.iframe = 0.12;
   if (hero.shield > 0) { const a = Math.min(hero.shield, amount); hero.shield -= a; amount -= a; P('ring', hero.x, hero.y - 28, 0, 0, 0.25, 36, '90,220,255'); }
   if (amount > 0) { hero.hp -= amount; hero.hurtFlash = 0.18; spawnText(hero.x + rand(-8, 8), hero.y - 72, '-' + fmt(amount), elem ? ELEM[elem].col : '#ff5a6e', 15); SFX.hurt(); if (elem && hero.hp > 0) applyElemEffect(elem, amount * (1 - (ST.res && ST.res[elem] || 0))); }
   addShake(5);
-  if (src && !src.dead && ST.thorns > 0) { const t = raw * ST.thorns; dpsHit(src, 'thorns', t); src.hp -= t; src.flash = 0.1; spawnText(src.x, src.y - 60, fmt(t), '#7dff9a', 12); burst(src.x, src.y - 26, 5, '120,255,150', 160, 0.3, 2); if (src.hp <= 0) killEnemy(src); }
+  shellGain();
+  if (src && !src.dead && shellOn) { const t = raw * ST.shellRefl; dpsHit(src, 'thorns', t); src.hp -= t; spawnText(src.x, src.y - 60, fmt(t), '#7dff9a', 12); burst(src.x, src.y - 26, 5, '120,255,150', 160, 0.3, 2); if (src.hp <= 0) killEnemy(src); }
   if (hero.hp <= 0) heroDie();
 }
 function heroDie() {
@@ -1807,6 +1823,7 @@ function makeBossRaw(z) {
   };
 }
 function moveEnemy(e, mx, my, sp, dt) {
+  sp *= elemSlow(e);
   if (e.detourT > 0) { e.detourT -= dt; const s = e.detourS, nx = -my * s, ny = mx * s; mx = nx * 0.85 + mx * 0.15; my = ny * 0.85 + my * 0.15; }
   const ox = e.x, oy = e.y; e.x += mx * sp * dt; e.y += my * sp * dt; resolveRects(e, e.r); e.moving = true;
   const want = sp * dt; if (want > 0.3 && dist(ox, oy, e.x, e.y) < want * 0.35) { e.stuckT = (e.stuckT || 0) + dt; if (e.stuckT > 0.5 && !(e.detourT > 0)) { e.detourT = 1; e.detourS = Math.random() < 0.5 ? 1 : -1; e.stuckT = 0; } } else e.stuckT = 0;
@@ -1815,12 +1832,9 @@ function updateEnemy(e, dt) {
   if (e.dummy) { updateDummy(e, dt); return; }
   e.anim += dt * (e.moving ? 11 : 0); e.moving = false;
   if (e.flash > 0) e.flash -= dt; if (e.flashCd > 0) e.flashCd -= dt; if (e.squash > 0) e.squash = Math.max(0, e.squash - dt * 7); if (e.spawnT < 1) e.spawnT += dt; if (e.swingT > 0) e.swingT -= dt; if (e.muzzle > 0) e.muzzle -= dt;
-  if (e.burnT > 0) {
-    e.burnT -= dt; e.burnTick -= dt;
-    if (Math.random() < dt * 14) P('fire', e.x + rand(-10, 10), e.y - rand(10, 45) * (e.boss ? 1.8 : 1), rand(-10, 10), rand(-60, -30), 0.5, 6, '255,140,50');
-    if (e.burnTick <= 0) { e.burnTick = 0.5; const d = e.burnDps * 0.5; dpsHit(e, 'burn', d); e.hp -= d; spawnText(e.x + rand(-10, 10), e.y - (e.boss ? 90 : 48), fmt(d), '#ff9a3d', 11); if (e.hp <= 0) { killEnemy(e); return; } }
-  } else e.burnDps = 0;
+  if (elemTick(e, dt)) return;
   e.x += e.kx * dt; e.y += e.ky * dt; const kd = Math.max(0, 1 - dt * 9); e.kx *= kd; e.ky *= kd; if (e.buffT > 0) updateBuff(e, dt);
+  if (elemHold(e)) return; // оглушение / заморозка
   e.cd -= dt;
   const dx = hero.x - e.x, dy = hero.y - e.y, d = Math.hypot(dx, dy) || 1;
   const canSee = !hero.dead && hero.x > CFG.BASE_X - 10 && (d < (e.boss ? 820 : 720) || e.tower); // в башне враги всегда охотятся на героиню
@@ -1871,7 +1885,7 @@ function updateBoss(e, dt, dx, dy, d, canSee) {
   const A = e.arena, da = dist(e.x, e.y, A.x, A.y);
   if (!canSee || dist(hero.x, hero.y, A.x, A.y) > 1300) {
     if (da > 20) moveEnemy(e, (A.x - e.x) / da, (A.y - e.y) / da, e.speed * 1.6, dt);
-    e.hp = Math.min(e.maxHp, e.hp + e.maxHp * 0.15 * dt); e.engaged = false; e.state = e.state === 'dash' ? 'dash' : 'move';
+    e.hp = Math.min(e.maxHp, e.hp + e.maxHp * 0.15 * dt * elemHealMul(e)); e.engaged = false; e.state = e.state === 'dash' ? 'dash' : 'move';
     if (e.state === 'dash') enemyDash(e, dt, 0.6); return;
   }
   if (!e.engaged) { e.engaged = true; SFX.warn(); }
@@ -2037,7 +2051,7 @@ function updateHero(dt) {
     if (inp.mag) G.autoAnchorDirty = true;
     else {
       if (G.autoAnchorDirty) { G.autoAnchor = { x: h.x, y: h.y }; G.autoAnchorDirty = false; G.autoTarget = null; }
-      const a = autoHuntInput(h, dt);
+      const a = vWallSteer(h, autoHuntInput(h, dt));
       if (a) { inp = a; autoMove = true; if (G.autoDetourT > 0) { G.autoDetourT -= dt; const sg = G.autoDetourS; inp = { x: -a.y * sg * 0.9 + a.x * 0.1, y: a.x * sg * 0.9 + a.y * 0.1, mag: 1 }; } }
     }
   }
@@ -2045,7 +2059,7 @@ function updateHero(dt) {
   const ox = h.x, oy = h.y;
   if (h.dashT > 0) { h.dashT -= dt; h.x += h.dashDx * 980 * dt; h.y += h.dashDy * 980 * dt; P('glow', h.x + rand(-6, 6), h.y - 28 + rand(-16, 16), 0, 0, 0.3, 11, '110,220,255'); }
   else if (inp.mag) { h.x += inp.x * ST.speed * heroSpdMul() * dt; h.y += inp.y * ST.speed * heroSpdMul() * dt; if (h.faceLock <= 0 && Math.abs(inp.x) > 0.1) h.face = inp.x > 0 ? 1 : -1; }
-  resolveRects(h, h.r); h.x = clamp(h.x, 20, CFG.WORLD_W - 20); h.y = clamp(h.y, 60, CFG.WORLD_H - 40);
+  resolveRects(h, h.r); vWallBlock(h, ox); h.x = clamp(h.x, 20, CFG.WORLD_W - 20); h.y = clamp(h.y, 60, CFG.WORLD_H - 40);
   if (autoMove && h.dashT <= 0) {
     if (dist(ox, oy, h.x, h.y) < ST.speed * dt * 0.35) { G.autoStuck = (G.autoStuck || 0) + dt; if (G.autoStuck > 0.35) { G.autoDetourT = 0.7; G.autoDetourS = Math.random() < 0.5 ? 1 : -1; G.autoStuck = 0; G.autoTarget = null; } }
     else G.autoStuck = 0;
@@ -2158,7 +2172,7 @@ function mob3AI(e, dt, dx, dy, d) {
         addTele({ type: 'circle', x: e.x, y: e.y, r: 70, dur: 0.65, owner: e, follow: true, col: '120,255,150', heal: true, onFire: () => {
           P('ring', e.x, e.y, 0, 0, 0.7, 260, '120,255,150'); burst(e.x, e.y - 30, 24, '120,255,150', 260, 0.7, 3, 'glow');
           // одного врага лечат не чаще раза в 3 с, лекари друг друга — вдвое слабее
-          for (const m of allies) { if (m.dead || (m.healLock || 0) > G.time) continue; m.healLock = G.time + 3; const hv = m.maxHp * (m.boss ? 0.03 : 0.14) * (m.type === 'shaman' ? 0.5 : 1); m.hp = Math.min(m.maxHp, m.hp + hv); buffAlly(m); spawnText(m.x, m.y - (m.boss ? 110 : 60), '+' + fmt(hv), '#7dff9a', 12); burst(m.x, m.y - 30, 6, '120,255,150', 120, 0.5, 2, 'glow'); }
+          for (const m of allies) { if (m.dead || (m.healLock || 0) > G.time) continue; m.healLock = G.time + 3; const hv = m.maxHp * (m.boss ? 0.03 : 0.14) * (m.type === 'shaman' ? 0.5 : 1) * elemHealMul(m); m.hp = Math.min(m.maxHp, m.hp + hv); buffAlly(m); spawnText(m.x, m.y - (m.boss ? 110 : 60), '+' + fmt(hv), '#7dff9a', 12); burst(m.x, m.y - 30, 6, '120,255,150', 120, 0.5, 2, 'glow'); }
           done(0.6, [1.6, 2.4]);
         } });
       } else if (d < 520) {
@@ -3714,6 +3728,7 @@ function drawHUD(ctx, sw, sh, t) {
   const bx = 30, by = 50, bw = 284, k = clamp(hero.hp / ST.maxHp, 0, 1);
   ctx.fillStyle = 'rgba(0,0,0,0.5)'; rr(ctx, bx, by, bw, 16, 8); ctx.fill();
   let g = ctx.createLinearGradient(bx, 0, bx + bw, 0); g.addColorStop(0, '#ff3d6a'); g.addColorStop(1, '#ff8a5c'); ctx.fillStyle = g; rr(ctx, bx, by, Math.max(8, bw * k), 16, 8); ctx.fill();
+  if (G.shellN > 0 && ST.shellR > 0) { ctx.save(); ctx.font = '700 12px "Segoe UI",sans-serif'; ctx.textAlign = 'right'; ctx.fillStyle = '#ffe2a8'; ctx.fillText('🛡' + G.shellN, bx + bw - 6, by + 8); ctx.restore(); }
   if (ST.shieldMax > 0) { ctx.fillStyle = 'rgba(90,220,255,0.85)'; rr(ctx, bx, by, Math.max(4, bw * clamp(hero.shield / ST.maxHp, 0, 1)), 5, 3); ctx.fill(); }
   ctx.font = '600 11px "Segoe UI",sans-serif'; ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
   ctx.fillText(`${fmt(hero.hp)} / ${fmt(ST.maxHp)}${ST.shieldMax > 0 ? `   ◈ ${fmt(hero.shield)}` : ''}`, bx + bw / 2, by + 8.5); ctx.textAlign = 'left';
@@ -3873,7 +3888,7 @@ function render(realDt) {
   for (const it of L) {
     switch (it.k) {
       case 0: drawBuilding(ctx, it.o, t); break; case 1: drawProp(ctx, it.o, t); break; case 2: drawLampPost(ctx, it.o, t); break;
-      case 3: drawTree(ctx, it.o, t); break; case 4: drawToro(ctx, it.o, t); break; case 5: drawEnemy(ctx, it.o, t); break;
+      case 3: drawTree(ctx, it.o, t); break; case 4: drawToro(ctx, it.o, t); break; case 5: drawEnemy(ctx, it.o, t); drawElemIcons(ctx, it.o); break;
       case 6: drawTorii(ctx, it.o, t); break; case 7: drawForgeStructure(ctx, t); break; case 8: drawHero(ctx, hero, lookRank('w'), lookRank('a'), t); break; case 9: drawBoardStructure(ctx, t); break; case 10: drawPortalStructure(ctx, t); break; case 11: drawGate(ctx, it.o, t); break; case 12: drawShopStructure(ctx, t); break; case 13: drawPet(ctx, t); break; case 14: drawNurseryStructure(ctx, t); break; case 15: drawVillagePlot(ctx, it.o, t); break; case 16: drawResident(ctx, it.o, t); break; case 17: drawStarAura(ctx, hero, t); break; case 18: drawSakuraAura(ctx, hero, t); break;
     }
   }
@@ -4015,6 +4030,10 @@ function forgeAction(act, item, slot, btn) {
     const c = act === 'jcraft' ? J.craft : jUpCost(it.lvl); if (!pay(c.gold, 0, c.jade)) return; it.lvl++; fixSlots();
     const jc = hexRGB(jewelColor(it.lvl)); SFX.up(); panelHit(); prevBurst(jc, act === 'jcraft' ? 70 : 34, 240); PREV.flash = act === 'jcraft' ? 0.8 : 0.3; emberBurst(act === 'jcraft' ? 50 : 20);
     if (act === 'jcraft') banner('Украшение выковано!', `${J.name} · ${J.stat} ${J.fmt(J.val(1))}`); else toast(`${J.icon} ${J.short}: уровень ${it.lvl} · ${J.stat} ${J.fmt(J.val(it.lvl))}`);
+  } else if (act === 'jslot4') {
+    if (towerIn() || !JKEYS.includes(item) || it.lvl < JMAX || it.slot4 || !((S.jSeal || 0) > 0)) { SFX.fail(); return; }
+    if (!pay(SLOT4_COST.gold, 0, SLOT4_COST.jade)) return; S.jSeal--; it.slot4 = true; fixSlots();
+    SFX.up(); panelHit(); prevBurst('255,215,120', 60, 240); PREV.flash = 0.5; emberBurst(40); banner('4-й слот чар открыт!', `${JEWELS[item].name} · Печать Четырёх Ветров вставлена`);
   } else if (act === 'remove') { it.ench[slot] = null; SFX.click(); }
   else if (act === 'oniwake') { if (!S.masks.every(Boolean) || S.oni) return; if (G.oniArm && performance.now() < G.oniArm) { G.oniArm = 0; oniAwaken(); return; } G.oniArm = performance.now() + 6000; SFX.warn(); }
   else if (act === 'forgeup') {
@@ -4118,6 +4137,7 @@ function renderJewelTabRaw(R) {
   if (lv === 0) action = costBtn('jcraft', k, '', `✧ Выковать: ${J.name}`, J.craft.gold, 0, 'primary big', `${J.stat}: <b class="up">${J.fmt(J.val(1))}</b> · открывает 1 слот чар`, J.craft.jade);
   else if (lv >= 10 && !S.unlock2 && !towerIn()) action = '<button class="big" disabled>🔒 Уровни 11–15 откроются после победы над всеми боссами Токио</button>';
   else if (lv < JMAX) { const c = jUpCost(lv); action = costBtn('jup', k, '', `⚒ Улучшить до ур. ${lv + 1}`, c.gold, 0, 'primary big', `${J.stat}: ${J.fmt(J.val(lv))} <span class="ar">→</span> <b class="up">${J.fmt(J.val(lv + 1))}</b>${jewelSlots(lv + 1) > jewelSlots(lv) ? ' · +1 слот чар' : ''}`, c.jade); }
+  else if (!it.slot4 && !towerIn()) action = costBtn('jslot4', k, '', '🀄 Открыть 4-й слот чар', SLOT4_COST.gold, 0, 'primary big', `нужна Печать Четырёх Ветров: у тебя ${S.jSeal || 0} · печать даётся за каждые ${SEAL_EVERY} испытаний с наградой`, SLOT4_COST.jade).replace('<button', (S.jSeal || 0) > 0 ? '<button' : '<button disabled');
   else action = '<button class="big" disabled>✧ Украшение совершенно</button>';
   R.innerHTML = sel + `<div class="card itemcard" style="--rc:${tc}"><div class="irow"><div><div class="iname" style="color:${tc};text-shadow:0 0 16px ${tc}88">${J.name}${lv ? ' +' + lv : ''}</div><div class="stars">${lv ? '◆'.repeat(lv) + '◇'.repeat(JMAX - lv) : 'ещё не выковано'}</div></div><div class="badge" style="color:${tc}">${J.stat}: ${lv ? J.fmt(J.val(lv)) : '—'}</div></div>
     <div class="desc">${J.desc}</div>
@@ -4125,7 +4145,7 @@ function renderJewelTabRaw(R) {
     <div class="pips">${Array.from({ length: JMAX }, (_, i) => `<div class="pip ${i < lv ? 'on' : i === lv ? 'next' : ''}"></div>`).join('')}</div>
     <div class="btns">${action}</div>
     <div class="note">✧ Осколки нефрита выпадают с обычных врагов (≈3%, больше с чарой «Удача»), с элиты и боссов — всегда. У тебя: <b style="color:#7dffb0">${fmt(S.jade)} ✧</b></div></div>
-    <div class="card"><div class="ctitle">Слоты чар (${jewelSlots(lv)}/3) · чары украшений</div><div class="slots">${slotsHtml(k, it, 3, jewelSlots(lv), i => lv === 0 ? 'Сначала выкуй украшение' : `Откроется на ур. ${[1, 4, 8][i]}`)}</div></div>`;
+    <div class="card"><div class="ctitle">Слоты чар (${jewelSlots(lv, it.slot4)}/4) · чары украшений</div><div class="slots">${slotsHtml(k, it, 4, jewelSlots(lv, it.slot4), i => lv === 0 ? 'Сначала выкуй украшение' : i === 3 ? 'Ур. 15 + Печать Четырёх Ветров' : `Откроется на ур. ${[1, 4, 8][i]}`)}</div></div>`;
 }
 function goldGrad(ctx, y0, y1) { const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, '#fff3c0'); g.addColorStop(0.45, '#e2b04e'); g.addColorStop(1, '#7a4e10'); return g; }
 function magatamaPath(ctx, x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, Math.PI, 0); ctx.quadraticCurveTo(x + r, y + r * 1.6, x - r * 0.4, y + r * 2.3); ctx.quadraticCurveTo(x - r * 0.1, y + r * 1.2, x - r, y); ctx.closePath(); }
@@ -4254,7 +4274,7 @@ const rewardHtml = q => `<span class="rg">¥${fmt(q.gold)}</span>${q.souls ? ` <
 const DAILY = { board: 15, nq: 10, trials: 5 };
 function daily() { const d = kyivDay(); if (!S.daily || S.daily.day !== d) S.daily = { day: d, board: 0, nq: 0, trials: 0 }; return S.daily; }
 const dailyLeft = k => DAILY[k] - daily()[k];
-const dailyHtml = () => { const d = daily(), c = (n, k) => `<span style="color:${d[k] >= DAILY[k] ? '#ffb36b' : '#9dffd0'}">${n}: <b>${Math.min(d[k], DAILY[k])}/${DAILY[k]}</b></span>`; return `${c('Задания сегодня', 'board')} · ${c('Испытания', 'trials')}`; };
+const dailyHtml = () => { const d = daily(), c = (n, k) => `<span style="color:${d[k] >= DAILY[k] ? '#ffb36b' : '#9dffd0'}">${n}: <b>${Math.min(d[k], DAILY[k])}/${DAILY[k]}</b></span>`; return `${c('Задания сегодня', 'board')} · ${c('Испытания', 'trials')} · <span style="color:#ffd76a">🀄 до Печати Четырёх Ветров: <b>${SEAL_EVERY - (S.sealN || 0)}</b>${S.jSeal ? ` (есть: ${S.jSeal})` : ''}</span>`; };
 function openBoard() { if (G.boardOpen) return; G.boardOpen = true; ensureOffers(); $('#board').classList.remove('hidden'); renderBoard(); SFX.click(); }
 function closeBoard() { if (!G.boardOpen) return; G.boardOpen = false; $('#board').classList.add('hidden'); save(); }
 function updateBoardSub() { const Q = S.quests; $('#b-sub').innerHTML = `Взято <b>${Q.active.length}</b>/${vActiveMax()} · ${dailyHtml()} · новые объявления через <b>${mmss(Q.refreshT)}</b>${vHeraldHtml()}`; }
@@ -4289,6 +4309,7 @@ $('#board').addEventListener('click', ev => {
       Q.done++; S.dew = (S.dew || 0) + 1; spawnText(hero.x, hero.y - 100, '+1 💧', '#7dffb0', 18, true); SFX.up();
       banner('Испытание пройдено', 'Лимит испытаний на сегодня исчерпан: награда — 1 💧 роса'); save(); renderBoard(); return;
     }
+    if (q.trial && ++S.sealN >= SEAL_EVERY) { S.sealN = 0; S.jSeal = (S.jSeal || 0) + 1; setTimeout(() => banner('🀄 Печать Четырёх Ветров!', 'Открывает 4-й слот чар у украшения +15 — кузница → Бижутерия'), 1600); } // печать — за каждые 25 испытаний с наградой
     if (!q.trial && ++D.board > DAILY.board) { // после 15 заданий в сутки — 25% награды
       q = Object.assign({}, q, { gold: Math.round(q.gold * 0.25), souls: Math.round((q.souls || 0) * 0.25), xp: Math.round((q.xp || 0) * 0.25), jade: Math.round((q.jade || 0) * 0.25) });
       toast('📜 Лимит заданий на сегодня исчерпан — награда 25%. Новый день начнётся в 00:00');
@@ -5500,7 +5521,7 @@ function setupLocation(loc) {
   S.loc = loc; ZONES = LOCS[loc].zones;
   for (const k of ['obstacles', 'buildings', 'props', 'lamps', 'trees', 'puddles', 'toro', 'arenas', 'streets', 'gates']) WORLD[k] = [];
   if (loc === 4) genTowerWorld(); else genWorld(loc);
-  for (const o of WORLD.trees) o.vHid = loc !== 4 && o.x < baseW() && !!vPlotAt(o.x, o.y); // деревья на участках деревни прячем (считается один раз)
+  for (const o of WORLD.trees) o.vHid = loc !== 4 && o.x < baseW() && (!!vPlotAt(o.x, o.y) || o.x > baseW() - 170); // деревья на участках деревни прячем (считается один раз)
 }
 function checkUnlock() {
   if (S.unlock2 && !S.unlock3 && S.bossKills2.every(k => k > 0)) { S.unlock3 = true; save(); SFX.up(); setTimeout(() => banner('Путь в Горный пик открыт!', 'Вернись на базу: портал теперь ведёт и в горы'), 3300); }
@@ -6114,8 +6135,8 @@ function towerBuy(id) {
 const DUMMY = { x: 790, y: 1740 }, DUMMY_T = 15, DPS_WIN = 10;
 const DPS_SRC = {
   katana: ['Удар катаны', '#ffffff'], whirl: ['Вихрь клинка', '#9ff8ff'], wave: ['Волна', '#c9a6ff'], shadow: ['Танец теней', '#ff9cf0'],
-  chain: ['Молния', '#9fdcff'], burn: ['Ожог', '#ff9a3d'], execute: ['Казнь', '#ff4d6d'], aura: ['Аура доспеха', '#8ff6ff'],
-  oni: ['Клинок Они', '#ff7a6a'], thorns: ['Шипы', '#7dff9a'], pet: ['Питомец', '#ffd0f0'], petult: ['Ульта питомца', '#ffd76a'],
+  chain: ['Гром (молния)', '#9fdcff'], burn: ['Ожог', '#ff9a3d'], fire: ['Огонь', '#ff7a3a'], poison: ['Яд', '#9dff6a'], ice: ['Лёд', '#8fd8ff'], execute: ['Казнь', '#ff4d6d'], aura: ['Аура доспеха', '#8ff6ff'],
+  oni: ['Клинок Они (тьма)', '#c06bff'], react: ['Реакции стихий', '#ffd0b0'], thorns: ['Панцирь (отражение)', '#7dff9a'], pet: ['Питомец', '#ffd0f0'], petult: ['Ульта питомца', '#ffd76a'],
 };
 function makeDummy() {
   const z = Math.max(1, locMaxZone()), Z = ZONES[z], hp = ENEMY_TYPES.bruiser.hp * Z.hpM;
@@ -6129,10 +6150,7 @@ function ensureDummy() {
 function updateDummy(e, dt) {
   e.x = DUMMY.x; e.y = DUMMY.y; e.kx = e.ky = 0; e.state = 'idle';
   if (e.flash > 0) e.flash -= dt; if (e.flashCd > 0) e.flashCd -= dt; if (e.wob > 0) e.wob = Math.max(0, e.wob - dt * 1.6);
-  if (e.burnT > 0) {
-    e.burnT -= dt; e.burnTick -= dt;
-    if (e.burnTick <= 0) { e.burnTick = 0.5; const d = e.burnDps * 0.5; dpsHit(e, 'burn', d); e.hp -= d; spawnText(e.x + rand(-10, 10), e.y - 48, fmt(d), '#ff9a3d', 11); if (e.hp <= 0) killEnemy(e); }
-  } else e.burnDps = 0;
+  elemTick(e, dt);
   const s = G.dsess; if (s && !s.done && G.time - s.t0 >= DUMMY_T) { s.done = true; s.end = G.time; SFX.up(); }
 }
 // Учёт урона: для ДПС-метра (если включён) и для замера на чучеле
@@ -6174,19 +6192,21 @@ function drawDpsList(ctx, x, y, w, rows, max) {
     ctx.fillStyle = '#e8ecff'; ctx.fillText(r.name, x, yy); ctx.textAlign = 'right'; ctx.fillText(`${Math.round(r.p * 100)}%`, x + w, yy); ctx.textAlign = 'left';
   });
 }
+const EL_SRC = ['fire', 'poison', 'ice', 'chain', 'react', 'oni', 'burn'];
+const dummyElemShare = s => s && s.sum > 0 ? EL_SRC.reduce((a, k) => a + (s.tot[k] || 0), 0) / s.sum : 0;
 function drawDummyPanel(ctx, sw, sh) {
   const e = G.dummy; if (!e || towerIn() || !G.enemies.includes(e)) return;
   const s = G.dsess, near = dist(hero.x, hero.y, e.x, e.y) < 430; if (!near && !(s && !s.done)) return;
   const z = G.cam.zoom, px = sw / 2 + (e.x - G.cam.x) * z, py = sh / 2 + (e.y - 112 - G.cam.y) * z;
-  const rows = s ? dpsRows(s.tot, s.sum) : [], w = 264, h = s ? 92 + Math.min(6, rows.length) * 18 + (s.done ? 18 : 0) : 54, x = clamp(px - w / 2, 8, sw - w - 8), y = clamp(py - h - 14, 8, sh - h - 8);
+  const rows = s ? dpsRows(s.tot, s.sum) : [], w = 264, h = s ? 92 + Math.min(8, rows.length) * 18 + (s.done ? 18 : 0) : 54, x = clamp(px - w / 2, 8, sw - w - 8), y = clamp(py - h - 14, 8, sh - h - 8);
   glass(ctx, x, y, w, h, 12); ctx.textAlign = 'center';
   if (!s) { ctx.font = '700 13px "Segoe UI",sans-serif'; ctx.fillStyle = '#ffe6aa'; ctx.fillText('藁 Тренировочное чучело', x + w / 2, y + 20); ctx.font = '600 11.5px "Segoe UI",sans-serif'; ctx.fillStyle = '#c9cfee'; ctx.fillText('Ударь его — начнётся замер на 15 секунд', x + w / 2, y + 40); return; }
   const el = Math.max(0.5, (s.done ? s.end : G.time) - s.t0), dps = s.sum / el;
   ctx.font = '700 13px "Segoe UI",sans-serif'; ctx.fillStyle = s.done ? '#9dffd0' : '#ffe6aa';
   ctx.fillText(s.done ? `✓ Итог за ${DUMMY_T} с` : `Замер: ${Math.min(DUMMY_T, el).toFixed(1)} / ${DUMMY_T} с`, x + w / 2, y + 18);
   ctx.font = '800 20px "Segoe UI",sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText(`${fmt(dps)} урона/с`, x + w / 2, y + 42);
-  ctx.font = '600 11px "Segoe UI",sans-serif'; ctx.fillStyle = '#9aa3c9'; ctx.fillText(`всего ${fmt(s.sum)} · из них криты ${Math.round(s.crit / Math.max(1, s.sum) * 100)}%`, x + w / 2, y + 58); ctx.fillText(`врагов этого района «побеждено»: ${s.kills}`, x + w / 2, y + 72);
-  drawDpsList(ctx, x + 14, y + 92, w - 28, rows, 6);
+  ctx.font = '600 11px "Segoe UI",sans-serif'; ctx.fillStyle = '#9aa3c9'; ctx.fillText(`всего ${fmt(s.sum)} · криты ${Math.round(s.crit / Math.max(1, s.sum) * 100)}% · стихии ${Math.round(dummyElemShare(s) * 100)}%`, x + w / 2, y + 58); ctx.fillText(`врагов этого района «побеждено»: ${s.kills}`, x + w / 2, y + 72);
+  drawDpsList(ctx, x + 14, y + 92, w - 28, rows, 8);
   if (s.done) { ctx.textAlign = 'center'; ctx.font = '600 10.5px "Segoe UI",sans-serif'; ctx.fillStyle = '#9dffd0'; ctx.fillText('Новый замер: отойди на пару секунд и вернись', x + w / 2, y + h - 10); }
 }
 function drawDpsMeter(ctx, sw, sh) {
@@ -6331,7 +6351,7 @@ function vTick() {
     const q = v.queue.shift(); if (v.steps[q.id] + 1 !== q.step) continue;
     v.steps[q.id] = q.step; done = true; vEvent('built', q.id);
   }
-  if (done) { refreshStats(); save(); }
+  if (done) { refreshStats(); save(); if (S.loc !== 4 && WORLD.obstacles) vWallObs(); }
 }
 
 // ---- Бонусы деревни (в Башне не действуют) ----
@@ -6374,9 +6394,27 @@ const VPLOTS = { // x — центр, y — линия земли, постро�
   tea: { x: 150, y: 820, w: 170, h: 130 }, spring: { x: 850, y: 820, w: 180, h: 120 },
   house1: { x: 150, y: 470, w: 150, h: 120 }, house2: { x: 850, y: 470, w: 150, h: 120 },
   house3: { x: 150, y: 2580, w: 150, h: 120 }, house4: { x: 850, y: 2580, w: 150, h: 120 },
-  tower1: { x: 110, y: 3000, w: 90, h: 180 }, tower2: { x: 890, y: 3000, w: 90, h: 180 },
-  palisade: { x: 500, y: 3150, w: 460, h: 70 },
+  tower1: { x: 900, y: 1600, w: 90, h: 180 }, tower2: { x: 900, y: 1990, w: 90, h: 180 }, // вышки — у стены, позиция = место следующей (vTowerSync)
+  palisade: { x: 965, y: 1800, w: 60, h: 140 }, // частокол — вдоль выхода из базы, участок = ворота
 };
+// ---- Частокол вдоль выхода из базы: настоящая стена, одни ворота на средней улице; вышки вдоль стены по числу шагов ----
+const VWALL = { g0: 1610, g1: 1910, seg: 100 };
+const VT_SLOTS = { tower1: [[-65, 1600], [-65, 1100], [-65, 650]], tower2: [[-65, 1990], [-65, 2440], [-65, 2820]] }; // tower1 — северные вышки, tower2 — южные; первые две по бокам ворот
+const vWallX = () => baseW() - 35;
+function vTowerSync() { const X = vWallX(); for (const id in VT_SLOTS) { const sl = VT_SLOTS[id][Math.min(vStep(id), V_MAX - 1)]; VPLOTS[id].x = X + sl[0]; VPLOTS[id].y = sl[1]; } VPLOTS.palisade.x = X; }
+function vTowersBuilt() { const X = vWallX(), out = []; for (const id in VT_SLOTS) for (let i = 0; i < vStep(id); i++) out.push({ id, i, x: X + VT_SLOTS[id][i][0], y: VT_SLOTS[id][i][1] }); return out; }
+function vWallObs() { // препятствия стены и вышек; вызывается при генерации базы и после каждой постройки
+  WORLD.obstacles = WORLD.obstacles.filter(o => !o.vWall); vTowerSync();
+  const on = !towerIn() && !!(S.village && S.village.crystal) && vStep('palisade') >= 1, X = vWallX(); G.vWallOn = on; G.vWallX = X; if (towerIn()) return;
+  if (on) WORLD.obstacles.push({ kind: 'col', vWall: true, x: X - 12, y: 0, w: 24, h: VWALL.g0 }, { kind: 'col', vWall: true, x: X - 12, y: VWALL.g1, w: 24, h: CFG.WORLD_H - VWALL.g1 });
+  for (const t of vTowersBuilt()) { const p = VPLOTS[t.id]; WORLD.obstacles.push({ kind: 'col', vWall: true, x: t.x - p.w * 0.38, y: t.y - 26, w: p.w * 0.76, h: 22 }); }
+}
+function vWallBlock(o, ox) { if (!G.vWallOn || towerIn()) return; const X = G.vWallX; if ((ox < X) !== (o.x < X) && (o.y < VWALL.g0 + 8 || o.y > VWALL.g1 - 8)) o.x = ox < X ? Math.min(ox, X - 14 - (o.r || 0)) : Math.max(ox, X + 14 + (o.r || 0)); } // рывок не проскакивает сквозь стену
+function vWallSteer(h, a) { // авто-охота: цель или якорь по ту сторону стены — сначала к воротам
+  if (!a || a.dodge || !G.vWallOn || towerIn()) return a; const X = G.vWallX, tg = G.autoTarget && !G.autoTarget.dead ? G.autoTarget : null, d = tg || G.autoAnchor; if (!d) return a;
+  if ((h.x < X) === (d.x < X) || (h.y > VWALL.g0 + 30 && h.y < VWALL.g1 - 30)) return a;
+  const gx = h.x < X ? X - 50 : X + 50, gy = (VWALL.g0 + VWALL.g1) / 2, l = Math.hypot(gx - h.x, gy - h.y) || 1; return { x: (gx - h.x) / l, y: (gy - h.y) / l, mag: 1 };
+}
 const RATUSHA = { x: VPLOTS.ratusha.x, y: VPLOTS.ratusha.y + 70, r: 84, sy: VPLOTS.ratusha.y };
 const V_TXT = {
   ratusha: ['1 бригада строителей', '2-я бригада', 'вся стройка быстрее на 20%'],
@@ -6529,10 +6567,38 @@ function vSprite(id, step, theme) {
   if (VSPR.size > 160) VSPR.clear(); VSPR.set(key, cv); cv.pad = pad; cv.res = res; return cv;
 }
 function drawVillagePlot(ctx, id, t) {
-  const p = VPLOTS[id], cv = vSprite(id, vStep(id), WORLD.theme), W = cv.width / cv.res, H = cv.height / cv.res;
-  ctx.drawImage(cv, p.x - W / 2, p.y - p.h - cv.pad, W, H);
+  if (id.startsWith('wl:')) { const [a, b] = id.slice(3).split(':').map(Number); return drawWallSeg(ctx, a, b || Math.min(a + VWALL.seg, CFG.WORLD_H - 40)); }
+  if (id.startsWith('gp:')) return drawGatePost(ctx, +id.slice(3), t);
+  if (id.startsWith('tw:')) { const [, tid, i] = id.split(':'), p = VPLOTS[tid], sl = VT_SLOTS[tid][+i], cv = vSprite(tid, V_MAX, WORLD.theme), W = cv.width / cv.res, H = cv.height / cv.res; ctx.drawImage(cv, vWallX() + sl[0] - W / 2, sl[1] - p.h - cv.pad, W, H); return; }
+  const p = VPLOTS[id], st = VT_SLOTS[id] || id === 'palisade' ? 0 : vStep(id), cv = vSprite(id, st, WORLD.theme), W = cv.width / cv.res, H = cv.height / cv.res; // у вышек и частокола участок = место стройки (фундамент)
+  if (!(id === 'palisade' && vStep(id) >= 1)) ctx.drawImage(cv, p.x - W / 2, p.y - p.h - cv.pad, W, H);
   const q = S.village.queue.find(x => x.id === id); if (q) vDrawScaffold(ctx, p, t);
   if (id === 'spring' && vStep(id) >= 1 && GFX.level > 0) for (let i = 0; i < 3; i++) { const ph = (t * 0.25 + i / 3) % 1; ctx.fillStyle = `rgba(200,225,240,${0.16 * (1 - ph)})`; ctx.beginPath(); ctx.arc(p.x - 30 + i * 30 + Math.sin(t + i) * 6, p.y - 24 - ph * 50, 8 + ph * 10, 0, TAU); ctx.fill(); }
+}
+function vWallSprite(len, step, theme) { // кусок стены длиной len по y: колья (1), каменное основание (2), флажки (3)
+  const res = GFX.level === 0 ? 1 : clamp(Math.round((window.devicePixelRatio || 1) * G.cam.zoom * 2) / 2, 1, 2), key = `wall|${len}|${step}|${theme}|${res}`;
+  let cv = VSPR.get(key); if (cv) return cv; const P = VPAL[theme] || VPAL.city, W = 60, H = len + 100; cv = document.createElement('canvas'); cv.width = Math.ceil(W * res); cv.height = Math.ceil(H * res);
+  const c = cv.getContext('2d'); c.scale(res, res); c.translate(W / 2, 90); c.lineCap = 'round';
+  c.fillStyle = 'rgba(0,0,0,0.3)'; c.fillRect(-12, -4, 24, len + 8);
+  c.strokeStyle = '#c8a46a'; c.globalAlpha = 0.9; c.lineWidth = 3; c.beginPath(); c.moveTo(-6, -44); c.lineTo(-6, len - 44); c.stroke(); c.globalAlpha = 1; // задняя перекладина
+  for (let y = 4; y <= len; y += 13) { const j = ((y * 7) % 5) - 2, hh = 58 + ((y * 13) % 9);
+    if (step >= 2) { c.fillStyle = P.stone; c.beginPath(); c.ellipse(j * 0.5, y - 3, 11, 6, 0, 0, TAU); c.fill(); }
+    c.fillStyle = P.wood; c.fillRect(j - 5, y - hh, 10, hh); c.beginPath(); c.moveTo(j - 5, y - hh); c.lineTo(j, y - hh - 9); c.lineTo(j + 5, y - hh); c.fill();
+    c.fillStyle = 'rgba(0,0,0,0.25)'; c.fillRect(j + 1, y - hh, 4, hh); }
+  c.strokeStyle = '#d8b47a'; c.lineWidth = 3; c.beginPath(); c.moveTo(7, -22); c.lineTo(7, len - 22); c.stroke(); // передняя перекладина
+  if (step >= 3 && len >= 80) vFlag(c, 10, len * 0.6, 72, P.cloth, P);
+  if (VSPR.size > 160) VSPR.clear(); VSPR.set(key, cv); cv.res = res; return cv;
+}
+function drawWallSeg(ctx, y0, y1) { const len = Math.round(y1 - y0); if (len <= 4) return; const cv = vWallSprite(len, vStep('palisade'), WORLD.theme); ctx.drawImage(cv, vWallX() - 30, y0 - 90, cv.width / cv.res, cv.height / cv.res); }
+function drawGatePost(ctx, gy, t) { // ворота: два столба, перекладина; шаг 2 — фонари, шаг 3 — крыша и табличка
+  const P = VPAL[WORLD.theme] || VPAL.city, s = vStep('palisade'), X = vWallX(), top = gy === VWALL.g0, hp = 150;
+  ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(X, gy, 16, 6, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = P.trim; ctx.fillRect(X - 8, gy - hp, 16, hp); ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(X + 2, gy - hp, 6, hp);
+  if (s >= 2) vLantern(ctx, X - 18, gy - hp * 0.55, P, 1.1);
+  if (!top) { const yA = VWALL.g0 - hp - 6, yB = gy - hp - 6; ctx.strokeStyle = P.wood; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(X, yA); ctx.lineTo(X, yB); ctx.stroke(); // перекладина над проходом
+    if (s >= 3) { ctx.strokeStyle = P.roof; ctx.lineWidth = 22; ctx.beginPath(); ctx.moveTo(X, yA - 16); ctx.lineTo(X, yB - 16); ctx.stroke(); ctx.strokeStyle = P.edge; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X - 12, yA - 26); ctx.lineTo(X - 12, yB - 6); ctx.stroke();
+      const my = (yA + yB) / 2; ctx.fillStyle = P.wall; ctx.fillRect(X - 13, my - 18, 26, 36); ctx.strokeStyle = P.edge; ctx.lineWidth = 1.5; ctx.strokeRect(X - 13, my - 18, 26, 36); ctx.fillStyle = P.win; ctx.font = '700 16px "Yu Gothic","Meiryo",sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('村', X, my); } }
+  if (s >= 3) vFlag(ctx, X + 10, gy - 8, 60, top ? P.cloth : P.edge, P);
 }
 function vDrawScaffold(ctx, p, t) {
   const x0 = p.x - p.w * 0.42, x1 = p.x + p.w * 0.42, y0 = p.y - p.h * 0.85;
@@ -6571,7 +6637,11 @@ function drawVillageLabels(ctx, v, t) {
     ctx.fillStyle = q ? '#ffd27a' : vStep(id) >= V_MAX ? '#ffd76a' : '#cfe9ff'; ctx.fillText(txt, lx, ly);
   }
 }
-function vPushPlots(L, v) { G.vResDrawn = 0; if (towerIn() || v.x0 > baseW() + 200) return; for (const id in VPLOTS) { const p = VPLOTS[id]; if (p.y + 40 > v.y0 && p.y - p.h - 80 < v.y1) L.push({ y: p.y, k: 15, o: id }); } for (const r of vResidents()) if (r.y + 20 > v.y0 && r.y - 80 < v.y1) L.push({ y: r.y, k: 16, o: r.id }); }
+function vPushPlots(L, v) { G.vResDrawn = 0; if (towerIn() || v.x0 > baseW() + 200) return; const vis = (y, h) => y + 40 > v.y0 && y - h - 80 < v.y1;
+  for (const id in VPLOTS) { const p = VPLOTS[id];
+    if (id === 'palisade' && vStep(id) >= 1) { for (let y = 40; y < CFG.WORLD_H - 40; y += VWALL.seg) { const y1 = Math.min(y + VWALL.seg, CFG.WORLD_H - 40); if (y1 <= VWALL.g0 || y >= VWALL.g1) { if (vis(y1, 90)) L.push({ y: y1, k: 15, o: 'wl:' + y }); } else { if (y < VWALL.g0 && vis(VWALL.g0, 90)) L.push({ y: VWALL.g0, k: 15, o: 'wl:' + y + ':' + VWALL.g0 }); if (y1 > VWALL.g1 && vis(y1, 90)) L.push({ y: y1, k: 15, o: 'wl:' + VWALL.g1 + ':' + y1 }); } } for (const gy of [VWALL.g0, VWALL.g1]) if (vis(gy, 170)) L.push({ y: gy + 1, k: 15, o: 'gp:' + gy }); if (!S.village.queue.find(x => x.id === id)) continue; }
+    if (VT_SLOTS[id]) { for (const tw of vTowersBuilt()) if (tw.id === id && vis(tw.y, p.h)) L.push({ y: tw.y, k: 15, o: 'tw:' + id + ':' + tw.i }); if (vStep(id) >= V_MAX && !S.village.queue.find(x => x.id === id)) continue; }
+    if (vis(p.y, p.h)) L.push({ y: p.y, k: 15, o: id }); } for (const r of vResidents()) if (r.y + 20 > v.y0 && r.y - 80 < v.y1) L.push({ y: r.y, k: 16, o: r.id }); }
 
 // ---- Жители деревни и их реплики ----
 const VRES = {
@@ -6587,8 +6657,8 @@ const VRES = {
   umi:    { plot: 'house2',  name: 'Рыбак Уми',            at: () => [VPLOTS.house2.x - 62, VPLOTS.house2.y + 26], look: { robe: '#2a5a8a', hair: '#1a1410', hat: true } },
   hana:   { plot: 'house3',  name: 'Ткачиха Хана',         at: () => [VPLOTS.house3.x + 62, VPLOTS.house3.y + 26], look: { robe: '#c45a8a', hair: '#2a1418' } },
   kenmei: { plot: 'house4',  name: 'Близнецы Кэн и Мэй',   at: () => [VPLOTS.house4.x - 60, VPLOTS.house4.y + 26], look: { robe: '#4a8ac4', hair: '#1a1410', kids: true } },
-  ryo:    { plot: 'tower1',  name: 'Дозорный Рё',          at: () => [VPLOTS.tower1.x + 58, VPLOTS.tower1.y + 22], look: { robe: '#3a4a3a', hair: '#141414', spear: true } },
-  aoi:    { plot: 'tower2',  name: 'Дозорная Аой',         at: () => [VPLOTS.tower2.x - 58, VPLOTS.tower2.y + 22], look: { robe: '#3a3a5a', hair: '#2a1424', spear: true } },
+  ryo:    { plot: 'tower1',  name: 'Дозорный Рё',          at: () => [vWallX() + VT_SLOTS.tower1[0][0] - 58, VT_SLOTS.tower1[0][1] + 22], look: { robe: '#3a4a3a', hair: '#141414', spear: true } },
+  aoi:    { plot: 'tower2',  name: 'Дозорная Аой',         at: () => [vWallX() + VT_SLOTS.tower2[0][0] - 58, VT_SLOTS.tower2[0][1] + 22], look: { robe: '#3a3a5a', hair: '#2a1424', spear: true } },
 };
 const VLINES = {
   mori: { near: ['Деревня оживает — и всё благодаря тебе, Аки.', 'Каждый дом здесь помнит твою доброту.', 'Отдохни немного у очага, прежде чем идти дальше.', 'Ратуша снова светится по вечерам. Красота!'], morning: ['Доброе утро, Аки! Чай уже заварен.'], evening: ['Вечереет. Фонари барьера горят ярче.'], rank: ['Твой клинок стал сильнее — я вижу это по твоим глазам!'], boss: ['Стражи разбегаются, едва слышат твоё имя!'], loc: ['Новые земли? Будь осторожна, Аки.'], lowhp: ['Ох, ты вся в синяках! Посиди, отдохни.'], built: ['Бригада справилась! Деревня стала ещё уютнее.', 'Ещё один дом под защитой барьера.'], crystal: ['Барьер сияет! Добро пожаловать домой, Аки.'] },
@@ -6681,6 +6751,14 @@ function drawVillageBubble(ctx) {
   ctx.fillStyle = '#eef3ff'; ctx.font = '600 13px "Segoe UI",sans-serif'; lines.forEach((l, i) => ctx.fillText(l, bx, by + 28 + i * 17)); ctx.restore();
 }
 
+// ---- Удача: шанс лучшего броска чар ----
+function rollQ() { const a = Math.random(), b = Math.random(); return 0.85 + 0.3 * (Math.random() < (ST.luckRoll || 0) ? Math.max(a, b) : a); }
+// ---- Панцирь (вместо шипов): заряды от урона, уклонения и блока ----
+const SHELL_R = [2, 2.5, 3, 3.5, 4];
+function shellGain() { if (!(ST.shellR > 0)) return; const n0 = G.shellN | 0; G.shellN = Math.min(5, n0 + 1); G.shellT = 2; if (G.shellN !== n0) refreshStats(); }
+function shellTick(dt) { if (!(G.shellN > 0)) return; G.shellT -= dt; if (G.shellT <= 0) { G.shellN--; G.shellT = 2; refreshStats(); } if (!(ST.shellR > 0) && G.shellN) { G.shellN = 0; refreshStats(); } }
+function applyShellStats(st) { const n = (typeof G !== 'undefined' && G.shellN) | 0; if (!n || !(st.shellR > 0)) return; st.speed *= 1 - 0.03 * n; st.atkCd /= 1 - 0.03 * n; }
+
 // ---- Окно-реплика жителя (приглашение, сценки) ----
 function vSayBox(who, text, icon = '💬', onOk) {
   const el = $('#vl-say'); if (!el) return;
@@ -6772,6 +6850,112 @@ function drawStarOrb() {
       p.fillStyle = lit ? `rgba(255,215,110,${tw})` : 'rgba(160,150,200,0.25)'; p.beginPath(); p.arc(sx, sy, (k ? 1.4 : 2.2) * u, 0, TAU); p.fill(); }
   }
   p.restore();
+}
+
+// =====================================================================
+//  БЛОК 11.16. СТИХИИ ГЕРОИНИ (огонь, гром, яд, лёд, тьма; статусы на врагах; реакции)
+// =====================================================================
+const EL_V = { fire: [6, 10, 16, 24, 36], poison: [6, 10, 15, 23, 32], ice: [5, 9, 14, 20, 28] };
+const eSt = e => e.st || (e.st = { rcd: {} });
+function elemDmg(e, el, amount, src, crit) {
+  if (!e || e.dead || !(amount > 0)) return 0;
+  const sm = (e.st && e.st.smoke && e.st.smoke.t > 0) ? 0.85 : 1;
+  const d = amount * (e.elem === el ? 0.5 : 1) * (1 - (e.def || 0) * (1 - ST.pen) * 0.5 * sm) * (mountainWeak() ? 0.6 : 1) * (auraWeak(e) ? 0.45 : 1) * (e.tArm || 1); // своя стихия — вдвое меньше; защита наполовину; Горное давление, Аура Тэнгу и броня башни — как у обычного урона
+  dpsHit(e, src || el, d, crit); e.hp -= d;
+  if (G.texts.length < 50 || crit || e.boss) spawnText(e.x + rand(-10, 10), e.y - (e.boss ? 90 : 48), fmt(d), ELEM[el] ? ELEM[el].col : '#fff', crit ? 13 : 11); // при толпе цифры урона стихий не засоряют экран
+  if (e.hp <= 0) killEnemy(e);
+  return d;
+}
+function elemProcs(e, base) { // проки стихийных чар оружия от удара (база — урон до крита)
+  const V = ST.elV; if (!V || e.dead) return;
+  if (V.fire > 0) applyElem(e, 'fire', base, 'fire');
+  if (V.poison > 0 && !e.dead) applyElem(e, 'poison', base, 'poison');
+  if (V.ice > 0 && !e.dead) applyElem(e, 'ice', base, 'ice');
+}
+const stackDps = (old, x, n, k = 1) => old + (x - old) * Math.min(1, k / Math.max(1, n)); // каждый стак горит силой своего удара: новый сдвигает среднюю силу на 1/n (а не держит самый сильный удар)
+function applyElem(e, el, base, src, o = {}) {
+  if (!e || e.dead) return; const s = eSt(e);
+  if (el === 'fire') { const f = s.fire || (s.fire = { n: 0, t: 0, dps: 0, tick: 0.5 }); if (f.t <= 0) { f.n = 0; f.dps = 0; f.tick = 0.5; } f.n = o.pet && f.n >= 1 ? f.n : Math.min(5, f.n + (o.n || 1)); f.t = 3; f.dps = stackDps(f.dps, o.dps != null ? o.dps : base * ST.elV.fire, f.n, o.n || 1); } // огонь питомца не складывается в стаки
+  else if (el === 'poison') { const p = s.poison || (s.poison = { n: 0, t: 0, dps: 0, tick: 0.5 }); if (p.t <= 0) { p.n = 0; p.dps = 0; p.tick = 0.5; } p.n = Math.min(5, p.n + (o.n || 1)); p.t = 4; p.dps = stackDps(p.dps, o.dps != null ? o.dps : base * ST.elV.poison, p.n, o.n || 1); }
+  else if (el === 'ice') {
+    const c = s.ice || (s.ice = { n: 0, t: 0 }); if (c.t <= 0) c.n = 0; c.n = Math.min(5, c.n + 1); c.t = 3;
+    if (base > 0 && ST.elV.ice > 0) elemDmg(e, 'ice', base * ST.elV.ice, 'ice'); if (e.dead) return;
+    const fz = s.frz || (s.frz = { t: 0, cd: 0 }); if (c.n >= 5 && !e.boss && !e.mini && fz.cd <= G.time) { fz.t = 1; fz.cd = G.time + 4; spawnText(e.x, e.y - 70, 'Заморозка', '#8fd8ff', 12); }
+  }
+  else if (el === 'dark') { s.shadow = { t: 2 }; }
+  else if (el === 'thunder') {
+    s.zap = { t: 2 }; const st = s.stun || (s.stun = { t: 0, cd: 0 });
+    if (Math.random() < 0.1 * ((s.spark && s.spark.t > 0) ? 2 : 1)) { if (e.boss) { if (st.cd <= G.time) { st.t = 0.1; st.cd = G.time + 3; } } else st.t = Math.max(st.t, 0.4 * ((s.spark && s.spark.t > 0) ? 2 : 1)); }
+  }
+  vReact(e, el, base);
+}
+function vReact(e, el, base) { // реакции стихий: две стихии на враге одновременно
+  const s = e.st; if (!s || e.dead) return;
+  const on = { fire: !!(s.fire && s.fire.t > 0 && s.fire.n > 0), poison: !!(s.poison && s.poison.t > 0 && s.poison.n > 0), ice: !!(s.ice && s.ice.t > 0 && s.ice.n > 0), thunder: !!(s.zap && s.zap.t > 0), dark: !!(s.shadow && s.shadow.t > 0) };
+  const go = (k, a, b) => { if (!((el === a && on[b]) || (el === b && on[a]))) return false; if ((s.rcd[k] || 0) > G.time) return false; s.rcd[k] = G.time + 2; const R = REACT[k]; G.lastReact = R.name; if (G.texts.length < 50 || e.boss) spawnText(e.x, e.y - (e.boss ? 120 : 78), R.name + '!', R.col, 14, true); return true; };
+  if (go('smoke', 'fire', 'poison')) s.smoke = { t: 6 };
+  if (go('steam', 'fire', 'ice')) {
+    for (const x of G.enemies) if (!x.dead && dist(x.x, x.y, e.x, e.y) < 150 && (x === e || !((x.steamT || 0) > G.time))) { if (x !== e) x.steamT = G.time + 1; dealDamage(x, (base || ST.dmg) * 0.3, { noProc: true, noKb: true, small: true, quiet: true, col: '#ffd0b0', src: 'react' }); } // соседа пар задевает не чаще раза в секунду
+    if (s.ice) { s.ice.n = 0; s.ice.t = 0; } if (s.frz) s.frz.t = 0;
+    if (G.enemies.length <= 15) P('ring', e.x, e.y - 20, 0, 0, 0.45, 150, '255,210,180');
+  }
+  if (go('spark', 'ice', 'thunder')) s.spark = { t: 3 };
+  if (go('toxic', 'thunder', 'poison')) vToxicBurst(e);
+  if (S.oni) for (const o of ['fire', 'poison', 'ice', 'thunder']) if (el === 'dark' ? on[o] : (el === o && on.dark)) { if (go('eclipse', 'dark', o)) { if (o === 'fire' || o === 'poison') s[o].ecl = G.time + s[o].t; /* ×1,5 на оставшееся время, а не навсегда */ else if (o === 'ice') s.ice.n = Math.min(5, Math.ceil(s.ice.n * 1.5)); else if (s.stun) s.stun.t *= 1.5; } break; }
+}
+function drawElemIcons(ctx, e) { // значки статусов над врагом (до 3), цветом стихии, без мерцания
+  const s = e.st; if (!s || e.dead) return; let n = 0; const y = e.y - (e.boss ? 132 : 70);
+  const L = [s.fire && s.fire.t > 0 && 'fire', s.poison && s.poison.t > 0 && 'poison', s.ice && s.ice.t > 0 && 'ice', s.zap && s.zap.t > 0 && 'thunder', s.shadow && s.shadow.t > 0 && 'dark'];
+  for (const k of L) { if (!k || n >= 3) continue; const x = e.x - 14 + n * 14; ctx.fillStyle = 'rgba(10,12,24,0.7)'; ctx.fillRect(x - 5, y - 5, 10, 10); ctx.fillStyle = ELEM[k].col; ctx.fillRect(x - 3.5, y - 3.5, 7, 7); n++; }
+}
+const REACT = {
+  smoke: { name: 'Едкий дым', col: '#d7ff8a' }, steam: { name: 'Пар', col: '#ffd0b0' }, spark: { name: 'Ледяная искра', col: '#bfeaff' },
+  toxic: { name: 'Токсичный разряд', col: '#9dff6a' }, eclipse: { name: 'Затмение', col: '#c06bff' },
+};
+function vToxicBurst(e) { // весь оставшийся урон яда — за 1 секунду
+  const s = e.st, p = s && s.poison; if (!p || p.t <= 0 || !p.n) return;
+  const left = p.n * p.dps * p.t; s.pb = { dmg: left, t: 1, tick: 0.5 }; p.n = 0; p.t = 0; p.dps = 0; // яд расходуется: остаток выходит отдельным «взрывом» за 1 с
+  burst(e.x, e.y - 26, 8, '157,255,106', 160, 0.4, 3, 'glow');
+}
+function vToxicChain(list) { // яд с любой цели цепи переходит на все цели цепи
+  const src = list.find(x => x.st && ((x.st.poison && x.st.poison.t > 0 && x.st.poison.n > 0) || (x.st.pb && x.st.pb.t > 0))); if (!src) return; const p = src.st.poison;
+  const n = p && p.n ? p.n : 1, dps = p && p.dps ? p.dps : (src.st.pb.dmg / 4), t = p && p.t ? p.t : 4;
+  for (const x of list) { if (x.dead) continue; const s = eSt(x); if (!(s.poison && s.poison.t > 0 && s.poison.n > 0) && !(s.pb && s.pb.t > 0)) s.poison = { n: Math.ceil(n / 2), t, dps, tick: 0.5 }; vToxicBurst(x); } // на соседей — половина стаков
+}
+const elemHealMul = e => (e.st && e.st.poison && e.st.poison.t > 0) ? 0.5 : 1; // отравленный враг лечится вдвое слабее
+const elemFrozen = e => !!(e.st && e.st.frz && e.st.frz.t > 0);
+function elemSlow(e) { const c = e.st && e.st.ice; if (!c || c.t <= 0 || !c.n) return 1; const k = 1 - 0.08 * c.n; return (e.boss || e.mini) ? Math.max(0.75, k) : k; } // боссы и стражи башни — только замедление до −25%
+const fireDpsNow = e => { const f = e.st && e.st.fire; return f ? f.dps * ((f.ecl || 0) > G.time ? 1.5 : 1) : 0; };
+const darkMul = e => 1 + Math.min(0.4, Math.max(0, 1 - e.hp / e.maxHp) / 2); // +1% за каждые 2% недостающего HP, до +40%
+const elemHold = e => !!(e.st && ((e.st.stun && e.st.stun.t > 0) || (e.st.frz && e.st.frz.t > 0)));
+function elemTick(e, dt) {
+  const s = e.st; if (!s) return false;
+  const f = s.fire;
+  if (f && f.t > 0) {
+    f.t -= dt; f.tick -= dt;
+    if (Math.random() < dt * (G.enemies.length > 15 ? 5 : 14)) P('fire', e.x + rand(-10, 10), e.y - rand(10, 45) * (e.boss ? 1.8 : 1), rand(-10, 10), rand(-60, -30), 0.5, 6, '255,140,50');
+    if (f.tick <= 1e-9) { f.tick += 0.5; let d = f.n * fireDpsNow(e) * 0.5, c = false; if (Math.random() < ST.critChance) { d *= ST.critDmg; c = true; } elemDmg(e, 'fire', d, 'fire', c); if (e.dead) return true; }
+    if (f.t <= 0) { f.n = 0; f.dps = 0; }
+  }
+  const p = s.poison;
+  if (p && p.t > 0) { p.t -= dt; p.tick -= dt; if (p.tick <= 1e-9) { p.tick += 0.5; elemDmg(e, 'poison', p.n * p.dps * ((p.ecl || 0) > G.time ? 1.5 : 1) * 0.5, 'poison'); if (e.dead) return true; } if (p.t <= 0) { p.n = 0; p.dps = 0; } }
+  const pb = s.pb; if (pb && pb.t > 0) { pb.tick -= dt; pb.t -= dt; if (pb.tick <= 1e-9) { pb.tick += 0.5; elemDmg(e, 'poison', pb.dmg / 2, 'poison'); if (e.dead) return true; } if (pb.t <= 1e-9) s.pb = null; }
+  if (s.ice && s.ice.t > 0) { s.ice.t -= dt; if (s.ice.t <= 0) s.ice.n = 0; }
+  for (const k of ['zap', 'shadow', 'smoke', 'spark']) if (s[k] && s[k].t > 0) s[k].t -= dt;
+  if (s.stun && s.stun.t > 0) s.stun.t -= dt;
+  if (s.frz && s.frz.t > 0) s.frz.t -= dt;
+  return false;
+}
+function elemSpread(e) { // горение переходит при смерти на 2 ближайших
+  const f = e.st && e.st.fire; if (!f || f.t <= 0 || f.n <= 0) return;
+  const near = G.enemies.filter(x => x !== e && !x.dead && dist(x.x, x.y, e.x, e.y) < 260).sort((a, b) => dist(a.x, a.y, e.x, e.y) - dist(b.x, b.y, e.x, e.y)).slice(0, 2);
+  for (const x of near) applyElem(x, 'fire', 0, 'fire', { dps: f.dps, n: f.n });
+}
+function fixElemMig() { // перевод старых чар под стихии (один раз)
+  const m = S.elemMig | 0; if (m >= 2) return; const P2 = [S, S.mainStash, S.tower && S.tower.prof];
+  if (m < 1) for (const p of P2) { const w = p && p.w; if (w && Array.isArray(w.ench)) for (const e of w.ench) if (e && e.id === 'burn') e.v = round1(e.v * 0.4); } // шкала Ожога 15–90 → 6–36
+  for (const p of P2) { const a = p && p.a; if (a && Array.isArray(a.ench)) for (const e of a.ench) if (e && e.id === 'thorns') e.id = 'shell'; } // Шипы → Панцирь (та же таблица отражения)
+  S.elemMig = 2;
 }
 
 // =====================================================================
@@ -7136,7 +7320,7 @@ function update(dt) {
   updateProjectiles(dt);
   updateLoot(dt);
   updateParticles(dt);
-  updateQuests(dt); vUpdate(dt); starFxUpdate(dt);
+  updateQuests(dt); vUpdate(dt); starFxUpdate(dt); shellTick(dt);
   if (towerIn()) { towerUpdate(dt); towerAmbient(dt); }
   // атмосфера: лепестки сакуры, брызги дождя, искры горна
   const v = G.view;
