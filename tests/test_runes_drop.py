@@ -6,7 +6,7 @@ UNL = "runCmd('unlock3'); S.tower.unlocked = true; travelTo(3); fixSlots(); refr
 
 def test_frag_rank_by_floor(page):
     run(page, UNL + "window.__r = 0.99; Math.random = () => window.__r;")
-    got = js(page, "[10, 11, 25, 26, 40, 41, 60, 61, 80, 81, 100].map(f => runeFragRank(f, 1))")
+    got = js(page, "[10, 11, 25, 26, 40, 41, 60, 61, 80, 81, 100].map(f => runeFragRank(f, 99))")
     assert got == [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5]
     run(page, "window.__r = 0;")
     assert js(page, "[1, 41, 100].map(f => runeFragRank(f, 99))") == [1, 4, 5]
@@ -14,6 +14,21 @@ def test_frag_rank_by_floor(page):
     assert js(page, "runeFragRank(1, 99)") == 1                     # шанс +1 ранга ограничен 40%
     run(page, "window.__r = 0.41;")
     assert js(page, "runeFragRank(1, 99)") == 0
+
+
+def test_frag_rank_capped_by_tower_level(page):
+    run(page, UNL + "window.__r = 0.99; Math.random = () => window.__r;")
+    assert js(page, "[1, 2, 3, 7, 8, 14, 15, 24, 25].map(l => runeFragRank(100, l))") == [1, 1, 2, 2, 3, 3, 4, 4, 5]
+    assert js(page, "[1, 3, 8, 15, 25].map(runeFragCap)") == [1, 2, 3, 4, 5]
+    run(page, "window.__r = 0;")
+    assert js(page, "runeFragRank(51, 8)") == 3                     # шанс ранга выше не пробивает потолок
+    assert js(page, "runeFragRank(1, 8)") == 1
+
+
+def test_tower_tab_shows_frag_cap(page):
+    run(page, UNL + "S.tower.charges = 2; S.tower.kills = 80000; G.twLvl = 8; openTravel(); G.travelTab = 'tower'; renderTravel();")
+    txt = page.inner_text('#travel')
+    assert 'Эпический' in txt and 'фрагменты рун' in txt.lower()
 
 
 def test_frag_drop_rates(page):
