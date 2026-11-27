@@ -262,6 +262,7 @@ button.hold{touch-action:none;background:linear-gradient(90deg,rgba(255,220,120,
 .c-quick{display:flex;flex-direction:column;gap:4px;margin:8px 0;max-height:46vh;overflow:auto}
 .c-sec{display:flex;gap:8px;align-items:flex-start}.c-sec>b{min-width:92px;color:#5ff0ff;font-size:12px;padding-top:6px}.c-sec>div{display:flex;flex-wrap:wrap;gap:5px;align-items:center;color:#8a95bb;font-size:12px}
 .c-quick button.on{border-color:#8dffb0;color:#8dffb0}.c-rune{font-size:12px;margin:0 2px 0 8px}.c-rg{display:inline-flex;gap:3px;align-items:center;white-space:nowrap}.c-quick button.c-rk{padding:3px 7px;min-width:24px}
+#zamer-tag{position:fixed;right:10px;top:82px;z-index:30;pointer-events:none;font:700 12px sans-serif;color:#8fe6ff;background:rgba(5,20,40,.75);border:1px solid #8fe6ff;border-radius:8px;padding:3px 8px}
 #midas-tag{position:fixed;right:10px;top:54px;z-index:30;pointer-events:none;font:700 12px sans-serif;color:#ffd76a;background:rgba(40,30,5,.75);border:1px solid #ffd76a;border-radius:8px;padding:3px 8px}
 .c-quick button{font-size:12px;padding:5px 9px;font-family:inherit;border-radius:7px}
 .c-quick button.danger{border-color:rgba(255,90,110,.6);color:#ff9aa8}
@@ -517,6 +518,7 @@ body.in-tower .tab.active{background:linear-gradient(180deg,rgba(255,70,140,.5),
 </div>
 
 <div id="midas-tag" class="hidden">🪙 МИДАС</div>
+<div id="zamer-tag" class="hidden">📊</div>
 <div id="toasts"></div>
 <div id="vl-say" class="hidden"></div>
 
@@ -1788,6 +1790,7 @@ function damageHero(amount, src, elem) {
   if (hero.dead || G.god || hero.dashT > 0 || hero.iframe > 0) return;
   if (Math.random() < runeDodge()) { if (ST.ru.shadeArm && !((G.shadeCritCd || 0) > G.time)) { G.shadeCrit = G.time + 3; G.shadeCritCd = G.time + ST.ru.shadeArm; } spawnText(hero.x, hero.y - 70, 'Уклон', '#7fe8ff', 14); burst(hero.x, hero.y - 30, 6, '120,230,255', 160, 0.3, 2); shellGain(); return; }
   elem = elem || (src && src.elem) || null;
+  if (G.zm && G.zm.t0 !== null) G.zm.taken += amount;
   if (!elem && ST.ru.physRes) amount *= 1 - ST.ru.physRes; // Дух Клинка в доспехе: меньше нестихийного урона
   if (ST.ru.poisonedWeak && src && src.st && src.st.poison && src.st.poison.t > 0) amount *= 1 - ST.ru.poisonedWeak; // руна «Яд» в бижутерии: отравленные бьют слабее
   if (auraWeak(src)) amount *= 1.5;
@@ -1806,6 +1809,7 @@ function damageHero(amount, src, elem) {
   if (hero.hp <= 0) heroDie();
 }
 function heroDie() {
+  if (G.zm) zamerFinish('смерть');
   if (petSaveLife() || tryRevive()) return;
   hero.dead = true; hero.deadT = 2.8; hero.hp = 0; SFX.death(); addShake(12);
   burst(hero.x, hero.y - 30, 40, '255,90,120', 300, 0.8, 3); burst(hero.x, hero.y - 20, 14, '30,30,48', 100, 1, 14, 'smoke');
@@ -5612,6 +5616,7 @@ function drawRecall(ctx, t) {
   ctx.fillText(r.mode === 'home' ? 'Телепорт домой…' : 'Возвращение…', hero.x, hero.y - 92);
 }
 function travelTo(loc) {
+  if (G.zm) zamerFinish('смена карты');
   if (towerIn() && loc !== 4) { towerSwapOut(); towerOnLeave(); }
   if (loc === 4 && !towerIn()) { towerSwapIn(); applyClassText(); fixSlots(); refreshPetFx(); refreshStats(); }
   if (loc <= 3) setTimeout(() => vLocEvent(loc), 1500);
@@ -6188,6 +6193,7 @@ function updateDummy(e, dt) {
 // Учёт урона: для ДПС-метра (если включён) и для замера на чучеле
 function dpsHit(e, src, d, crit) {
   if (!(d > 0) || !e) return;
+  if (G.zm) zamerHit(e, src, d, crit);
   if (SET.dps) { G.dpsEv = G.dpsEv || []; G.dpsEv.push({ t: G.time, s: src, d }); }
   if (!e.dummy) return;
   e.wob = Math.min(1, e.wob + 0.35); G.dummyHitT = G.time;
@@ -7193,7 +7199,7 @@ function runeAction(act, item, slot, btn) {
 }
 const RUNE_ACTS = { rsel: 1, rbag: 1, rforge: 1, rins: 1, rext: 1, rrr: 1, rrp: 1, rup: 1, rscr: 1 };
 // ---------- Панель отладки (консоль 2.0): «божественные» команды и кнопки ----------
-const CMD_ALIAS = [['клинок бога', 'god_weapon'], ['доспех бога', 'god_armor'], ['бижутерия бога', 'god_jewel'], ['душа бога', 'god_soul'], ['древо бога', 'god_tree'], ['процветание', 'prosper'], ['мидас', 'midas'], ['открыть всё', 'open_all'], ['открыть все', 'open_all'], ['руны', 'runes'], ['звёзды', 'stars'], ['звезды', 'stars'], ['богатство', 'rich']];
+const CMD_ALIAS = [['клинок бога', 'god_weapon'], ['доспех бога', 'god_armor'], ['бижутерия бога', 'god_jewel'], ['душа бога', 'god_soul'], ['древо бога', 'god_tree'], ['процветание', 'prosper'], ['мидас', 'midas'], ['открыть всё', 'open_all'], ['открыть все', 'open_all'], ['руны', 'runes'], ['звёзды', 'stars'], ['звезды', 'stars'], ['богатство', 'rich'], ['замер', 'zamer']];
 function cmdAlias(line) { const l = line.toLowerCase(); for (const [a, c] of CMD_ALIAS) if (l === a || l.startsWith(a + ' ')) return c + line.slice(a.length); return line; }
 function godEnch(it) { for (const e of it.ench) if (e && ENCH[e.id]) { const D = ENCH[e.id]; e.t = 5; e.v = round1(D.vals[4] * 1.15 * 1.27); if (D.vals2) e.v2 = round1(D.vals2[4] * 1.15 * 1.27); } } // тир V, лучший бросок, горн 10
 function godItem(k) { S[k].rank = MAX_RANK; S[k].lvl = CFG.MAX_LVL; fixSlots(); godEnch(S[k]); refreshStats(); }
@@ -7212,7 +7218,7 @@ setInterval(midasTick, 200);
 function renderConsolePanel() {
   const B = (l, c, cls = '') => `<button class="${cls}" data-cmd="${c}">${l}</button>`;
   const rows = [
-    ['ГЕРОИНЯ', B('⚔ Клинок Бога', 'клинок бога') + B('◈ Доспех Бога', 'доспех бога') + B('💍 Бижутерия Бога', 'бижутерия бога') + B('✦ Душа Бога', 'душа бога') + B('★ Звёзды +10', 'звёзды 10') + B('🌳 Древо Бога', 'древо бога') + B(`♥ Бессмертие ${G.god ? '✓' : '✗'}`, 'god', G.god ? 'on' : '')],
+    ['ГЕРОИНЯ', B(G.zm ? '📊 Замер идёт…' : '📊 Замер билда', 'замер', G.zm ? 'on' : '') + B('⚔ Клинок Бога', 'клинок бога') + B('◈ Доспех Бога', 'доспех бога') + B('💍 Бижутерия Бога', 'бижутерия бога') + B('✦ Душа Бога', 'душа бога') + B('★ Звёзды +10', 'звёзды 10') + B('🌳 Древо Бога', 'древо бога') + B(`♥ Бессмертие ${G.god ? '✓' : '✗'}`, 'god', G.god ? 'on' : '')],
     ['ОНИ', B('👹 Маска Они (пробудить)', 'oni') + B('⚡ Энергия Они 100', 'energy')],
     ['МИР', B('🗺 Открыть все карты', 'открыть всё') + ' Район: ' + [0, 1, 2, 3, 4].map(z => B(z ? String(z) : 'база', 'tp ' + z)).join('') + B('☠ Убить всех', 'killall') + B('🏯 Процветание', 'процветание') + ' Скорость: ' + [1, 2, 4].map(s => B('×' + s, 'speed ' + s, G.speed === s ? 'on' : '')).join('') + B('👑 Боссы', 'boss')],
     ['БАШНЯ', B('+2 заряда', 'tower') + ' Этаж: ' + [10, 50, 90].map(f => B(String(f), 'twfloor ' + f)).join('') + ' Уровень: ' + [8, 15, 25].map(l => B(String(l), 'twlvl ' + l)).join('')],
@@ -7223,6 +7229,53 @@ function renderConsolePanel() {
     + `<div class="c-sec"><b></b><div><button data-close="1">✕ Закрыть</button>${B('🙈 Спрятать консоль', 'lock')}<button class="danger" id="c-reset" data-cmd="reset">⟲ Сброс прогресса</button></div></div>`;
   if (typeof updateResetBtn === 'function') updateResetBtn();
 }
+// ---------- Замер билда: урон за N секунд + слепок билда в файл ----------
+function zamerStart(dur) { G.zm = { dur: clamp(dur || 60, 1, 600), t0: null, ev: [], src: {}, crit: 0, el: 0, hits: 0, tgt: {}, foes: new Set(), taken: 0, react: 0, at: new Date(), loc: S.loc, abort: '' }; zamerTag(); toast('📊 Замер начнётся с первого удара'); }
+function zamerHit(e, src, d, crit) {
+  const z = G.zm; if (!z || !(d > 0)) return; if (z.t0 === null) z.t0 = G.time;
+  z.ev.push(G.time - z.t0, d); z.src[src] = (z.src[src] || 0) + d; z.hits++; if (crit) z.crit += d; if (ELEM[src] || src === 'chain' || src === 'react' || src === 'oni') z.el += d; if (src === 'react') z.react++;
+  const k = e.dummy ? 'Чучело' : e.boss ? (e.name || 'Босс') + ' (босс)' : e.mini ? 'Страж' : (e.type || 'враг'); z.tgt[k] = (z.tgt[k] || 0) + d; z.foes.add(e);
+}
+function zamerResult(z = G.zm) {
+  const ev = z.ev, n = ev.length / 2; let total = 0; for (let i = 1; i < ev.length; i += 2) total += ev[i];
+  const peak = w => { let best = 0, s = 0, j = 0; for (let i = 0; i < n; i++) { s += ev[i * 2 + 1]; while (ev[j * 2] <= ev[i * 2] - w + 1e-6) { s -= ev[j * 2 + 1]; j++; } if (s > best) best = s; } return best / w; }; // скользящее окно w секунд
+  const len = z.abort && z.t0 !== null ? Math.max(1, G.time - z.t0) : z.dur;
+  return { total, avg: total / len, peak1: peak(Math.min(1, len)), peak5: peak(Math.min(5, len)), len, src: z.src }; // короткий замер — окно не длиннее замера
+}
+const zmN = v => v >= 1e9 ? round1(v / 1e9) + ' млрд' : v >= 1e6 ? round1(v / 1e6) + ' млн' : v >= 1e3 ? round1(v / 1e3) + ' тыс.' : String(Math.round(v));
+function zamerBuild() {
+  const en = it => (it.ench || []).map(e => e && ENCH[e.id] ? `${ENCH[e.id].name} ${TIER_NAMES[e.t - 1]} ${e.v}${e.v2 !== undefined ? '/' + e.v2 : ''}` : '—');
+  const ru = k => S.runes[k].map((x, i) => x ? `${RUNES[x.id].name}${x.id === 'elem' ? '(' + ELEM[RSLOT_EL[i]].name + ')' : ''} ${RRANK[x.r].n}` : '—');
+  const p = activePet(), pid = S.pets && S.pets.active;
+  const st = {}; for (const k in ST) { const v = ST[k]; if (typeof v === 'number' || typeof v === 'boolean' || (v && typeof v === 'object')) st[k] = v; }
+  const build = { oni: !!S.oni, w: { rank: S.w.rank, lvl: S.w.lvl, ench: S.w.ench }, a: { rank: S.a.rank, lvl: S.a.lvl, ench: S.a.ench }, jewels: Object.fromEntries(JKEYS.map(k => [k, { lvl: S[k].lvl, slot4: !!S[k].slot4, ench: S[k].ench }])),
+    runes: { w: S.runes.w, a: S.runes.a, j: S.runes.j }, soul: S.soul, stars: S.stars && S.stars.b, tree: S.tree, pet: pid ? { id: pid, lvl: p && p.lvl, picks: p && p.picks, x2: p && p.x2 } : null, curses: S.curses, forge: S.forge, village: S.village && S.village.steps };
+  const txt = [`Катана Р${S.w.rank} +${S.w.lvl} [${en(S.w).join(' · ')}]`, `Доспех Р${S.a.rank} +${S.a.lvl} [${en(S.a).join(' · ')}]`,
+    'Бижутерия: ' + JKEYS.map(k => `${JEWELS[k].short} ${S[k].lvl}${S[k].slot4 ? '+4сл' : ''} [${en(S[k]).join(' · ')}]`).join('; '),
+    `Руны: катана [${ru('w').join(' · ')}] · доспех [${ru('a').join(' · ')}] · бижутерия [${ru('j').join(' · ')}]`,
+    `Душа ${soulTotal()}/${SOUL_TOTAL}${starsTotal() ? ' + ★' + starsTotal() : ''} · Древо ${TREE.reduce((a, n) => a + ((S.tree && S.tree[n.id]) || 0), 0)} ур. · ${S.oni ? 'Они' : 'Ронин'} · питомец: ${pid ? PET_SP[pid].name + ' ур. ' + (p ? p.lvl : '?') : 'нет'}`];
+  return { build, st, txt };
+}
+function zamerFinish(abort) {
+  const z = G.zm; if (!z) return; if (abort) z.abort = abort; G.zm = null; zamerTag(); if (z.t0 === null) { toast('📊 Замер отменён: ударов не было'); return; }
+  const R = zamerResult(z);
+  const B = zamerBuild(), tot = R.total || 1, pct = v => Math.round(v / tot * 100) + '%';
+  const srcs = Object.entries(R.src).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${(DPS_SRC[k] || [k])[0]} ${pct(v)}`).join(' · ');
+  const tg = Object.entries(z.tgt).sort((a, b) => b[1] - a[1]).map(x => x[0]).slice(0, 2).join(', ') || '—';
+  const at = z.at, pad = v => String(v).padStart(2, '0'), stamp = `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())}-${pad(at.getHours())}${pad(at.getMinutes())}`;
+  const zi = zoneAt(hero.x), head = [
+    `Замер билда · ${pad(at.getDate())}.${pad(at.getMonth() + 1)} ${pad(at.getHours())}:${pad(at.getMinutes())} · ${LOCS[z.loc] ? LOCS[z.loc].name : '?'}${zi > 0 ? ', район ' + zi : ''} · цель: ${tg} · ${Math.round(R.len)} с${z.abort ? ' · прерван: ' + z.abort : ''}`,
+    `Урон: среднее ${zmN(R.avg)}/с · пик за 1 с ${zmN(R.peak1)} · пик за 5 с ${zmN(R.peak5)} · всего ${zmN(R.total)}`,
+    `Источники: ${srcs || '—'}`,
+    `Криты ${pct(z.crit)} · стихии ${pct(z.el)} · реакций ${z.react} · врагов задето ${z.foes.size} · урон по героине ${zmN(z.taken)} · скорость игры ×${G.speed}${G.god ? ' · бессмертие' : ''}${SET.midas ? ' · Мидас' : ''}`,
+    'Билд: ' + B.txt.join('\n      ')];
+  const data = { v: 1, at: at.toISOString(), loc: z.loc, zone: zi, dur: z.dur, len: R.len, abort: z.abort || null, total: R.total, avg: R.avg, peak1: R.peak1, peak5: R.peak5, hits: z.hits, crit: z.crit, el: z.el, react: z.react, foes: z.foes.size, taken: z.taken, targets: z.tgt, src: R.src, speed: G.speed, god: !!G.god, build: B.build, stats: B.st };
+  const body = head.join('\n') + '\n\n---JSON---\n' + JSON.stringify(data);
+  G.zmLast = body; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'text/plain;charset=utf-8' })); a.download = `neonronin-zamer-${stamp}.txt`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  toast(z.abort ? '📊 Замер прерван — файл сохранён' : `📊 Замер готов: ${zmN(R.avg)}/с, файл сохранён`);
+}
+function zamerTag() { const t = $('#zamer-tag'); if (!t) return; const z = G.zm; t.classList.toggle('hidden', !z); if (z) t.textContent = z.t0 === null ? '📊 ждёт удара' : '📊 ' + mmss(Math.max(0, z.dur - (G.time - z.t0))); }
+setInterval(() => { const z = G.zm; if (!z) return; if (z.t0 !== null && G.time - z.t0 >= z.dur) zamerFinish(); else zamerTag(); }, 200);
 // ---------- Узы: второй навык питомца ----------
 const BOND_COUNT = { atkN: 1, cleanse: 1 }, BOND_K = [0.4, 0.52, 0.64, 0.76, 0.88, 1], BOND_TIERS = { w: [0, 1], a: [2, 3], j: [4] }; // место руны — какие уровни ветки (5/10, 20/30, 40), ранг — сила
 function bondTiers() { const o = {}; if (!S.runes || !runesOn()) return o; for (const k in BOND_TIERS) { const r = runeR(k, 'bond'); if (r >= 0) for (const i of BOND_TIERS[k]) o[i] = r; } return o; }
@@ -7281,7 +7334,7 @@ function consoleKnock() {
   const now = performance.now(); G.knock = (G.knock || []).filter(t => now - t < 3000); G.knock.push(now);
   if (G.knock.length >= 7) { G.knock = []; SET.console = true; saveSet(); toast('⌨ Консоль открыта на этом устройстве · lock — закрыть доступ'); toggleConsole(true); }
 }
-const HELP = `Новые команды (кнопки панели): клинок бога · доспех бога · бижутерия бога · душа бога · звёзды N · древо бога · процветание · мидас · открыть всё · twlvl N · богатство · руны · rune ID R · rfrag all N
+const HELP = `Новые команды (кнопки панели): замер [N] · клинок бога · доспех бога · бижутерия бога · душа бога · звёзды N · древо бога · процветание · мидас · открыть всё · twlvl N · богатство · руны · rune ID R · rfrag all N
 Команды:
   gold [N]            — добавить йены (по умолч. 10000)
   souls [N]           — добавить души (по умолч. 100)
@@ -7373,6 +7426,7 @@ function runCmd(line) {
     case 'midas': SET.midas = !SET.midas; saveSet(); updateMidasTag(); midasTick(); clog('🪙 Мидас: ' + (SET.midas ? 'ВКЛ — ресурсы не кончаются' : 'ВЫКЛ'), 'ok'); break;
     case 'open_all': S.unlock2 = true; S.unlock3 = true; S.bossKills = S.bossKills.map(k => Math.max(1, k)); S.bossKills2 = S.bossKills2.map(k => Math.max(1, k)); fixTower(); S.tower.unlocked = true; clog('🗺 Открыты все карты и Башня', 'ok'); break;
     case 'twlvl': { const l = clamp(has ? n | 0 : 8, 1, 99); S.tower.kills = Math.max(S.tower.kills, (l - 1) * 10000); S.tower.lvlSel = l; G.twLvl = l; clog(`魔 Уровень Башни: ${l} (открыто до ${towerMaxLvl()})`, 'ok'); break; }
+    case 'zamer': if (G.zm) { zamerFinish('остановлен вручную'); clog('📊 Замер остановлен', 'ok'); } else { zamerStart(has ? n : 60); clog(`📊 Замер ${G.zm.dur} с — начнётся с первого удара`, 'ok'); } break;
     case 'rich': S.gold += 1e12; S.souls += 1e6; S.jade += 1e5; S.dew = (S.dew || 0) + 1000; S.xp += 1e12; clog('Ресурсы добавлены', 'ok'); break;
     case 'runes': toggleConsole(false); openForge(); G.forgeTab = 'r'; renderForge(); return;
     case 'lock': SET.console = false; saveSet(); toggleConsole(false); toast('⌨ Консоль спрятана'); return;
