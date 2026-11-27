@@ -69,3 +69,13 @@ def test_flash_kurama_combos(page):
 
 def test_flash_raiju_combos(page):
     assert _flash_combo(page, 3, 1) == [0, 5, 5, 5]
+
+
+def test_flash_raiju_elem_wave(page):
+    run(page, "runCmd('unlock3'); runCmd('soul 100'); S.tower.unlocked = true; travelTo(3); G.god = true; S.w.rank = 12;"
+              "S.w.ench = [{id:'burn',t:5,v:52.6},{id:'frost',t:5,v:40.9},{id:'chain',t:5,v:43.8},{id:'poison',t:5,v:46.7}];"
+              "S.ring.lvl = 15; S.ring.ench = [{id:'surge',t:5,v:22,v2:25}];" + COMBOSET)
+    run(page, "runCmd('tp 1'); const b = makeBoss(1); b.hp = b.maxHp = 1e15; b.x = hero.x + 150; b.y = hero.y; G.bosses[1] = b; G.enemies.push(b); toggleAuto(true);")
+    run(page, "window.__fl = 0; setInterval(() => { if (G.flash > 0) window.__fl++; for (const e of G.enemies) if (e.boss && e.flash > 0) window.__fl++; }, 16);")
+    page.wait_for_timeout(6000)
+    assert js(page, "[window.__fl, ST.split.sum > 0.9, !!(G.bosses[1].st && G.bosses[1].st.rm && G.bosses[1].st.rm.n > 0)]") == [0, True, True]
