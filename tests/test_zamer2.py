@@ -31,3 +31,18 @@ def test_enemy_names_russian(page):
     run(page, BASE + "runCmd('замер 60');")
     r = js(page, "(() => { const m = makeEnemy('bruiser', hero.x + 300, hero.y, 1, false); zamerHit(m, 'katana', 10, false); return Object.keys(G.zm.tgt); })()")
     assert r and all(not k.isascii() for k in r)
+
+
+def test_buffs_tracked(page):
+    run(page, BASE + "runCmd('замер 60'); G.teaT = 100; G.oniSuperT = 0;")
+    with page.expect_download(timeout=10000) as dl:
+        run(page, "const d = G.dummy; d.hp = d.maxHp = 1e15; zamerHit(d, 'katana', 10, false);")
+        page.wait_for_timeout(1100)
+        run(page, "G.oniSuperT = 5;")
+        page.wait_for_timeout(700)
+        run(page, "runCmd('замер');")
+    txt = open(dl.value.path(), encoding='utf-8').read()
+    head, body = txt.split('---JSON---', 1)
+    assert 'Чай О-Тя' in head and 'Ярость Они' in head
+    d = json.loads(body)
+    assert d['buffs']['tea'] >= 1.4 and 0.3 <= d['buffs']['rage'] <= 1.0

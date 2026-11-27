@@ -19,8 +19,8 @@ def test_shadow_step_hits_path(page):
 
 def test_shadow_step_damage_value(page):
     run(page, BASE + f"S.runes.w[0] = {R % ('shade', 5)}; refreshStats(); Math.random = () => 0.5;")
-    r = js(page, "(() => { " + MOBS + " tryDash({x: 1, y: 0, mag: 1}); runeShadeStep(hero.x, hero.y, hero.x + 70, hero.y); return [1e15 - L[0].hp, ST.dmg]; })()")
-    assert abs(r[0] / (2 * r[1]) - 1) < 0.01                          # 200% урона героини
+    r = js(page, "(() => { " + MOBS + " tryDash({x: 1, y: 0, mag: 1}); runeShadeStep(hero.x, hero.y, hero.x + 70, hero.y); return [1e15 - L[0].hp, ST.dmg * ST.skillMul]; })()")
+    assert abs(r[0] / (2 * r[1]) - 1) < 0.01                          # 200% урона героини × сила способностей (как вихрь и волна)
 
 
 def test_shade_armor_crit_after_dodge(page):

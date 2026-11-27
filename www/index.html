@@ -7135,7 +7135,7 @@ function runeTxt(id, place, r, el) {
     case 'spirit': return place === 'w' ? `+${V(4, 16)}% физического урона, +${V(1, 4)}% шанса крита` : place === 'a' ? `−${V(3, 12)}% нестихийного урона` : `10 физических критов по цели → «Высвобождение духа»: удар ${V(150, 400)}% урона`;
     case 'heart': return place === 'w' ? `удар катаны +${V(0.25, 1)}% макс. здоровья к урону; ${V(2, 8)}% урона — в щит (до ${V(5, 20)}% здоровья)` : place === 'a' ? `+${V(5, 20)}% макс. здоровья` : `«Второе дыхание»: ниже 30% здоровья — лечение ${V(15, 40)}% и щит ${V(10, 25)}%, раз в 60 с`;
     case 'pierce': return place === 'w' ? `«Раскол»: попадания снижают защиту врага на 8% за стак, до ${V(30, 60)}%` : place === 'a' ? `проклятие «Хрупкость» слабее на ${V(20, 60)}%` : `«Раскол» держится на ${V(1, 4)} с дольше и спадает реже`;
-    case 'shade': return place === 'w' ? `«Теневой шаг»: рывок задевает врагов на пути — ${V(60, 200)}% урона` : place === 'a' ? `после уклонения следующий удар — крит (не чаще раза в ${V(8, 3)} с)` : `после крита уклонение +${V(3, 12)}% на 2 с`;
+    case 'shade': return place === 'w' ? `«Теневой шаг»: рывок задевает врагов на пути — ${V(60, 200)}% урона × сила способностей` : place === 'a' ? `после уклонения следующий удар — крит (не чаще раза в ${V(8, 3)} с)` : `после крита уклонение +${V(3, 12)}% на 2 с`;
     case 'time': return place === 'w' ? `${V(4, 16)}% шанс внеочередного вихря` : place === 'a' ? `откат рывка −${V(5, 20)}%` : `Они: энергия +${V(8, 32)}%, откат Ярости −${V(5, 20)}%; без маски — откат ульты питомца −${V(5, 20)}%`;
     case 'bond': return `второй навык питомца на ${place === 'w' ? '5 и 10' : place === 'a' ? '20 и 30' : '40'} ур. (сила ${Math.round(BOND_K[r] * 100)}%)`;
   }
@@ -7230,7 +7230,7 @@ function renderConsolePanel() {
   if (typeof updateResetBtn === 'function') updateResetBtn();
 }
 // ---------- Замер билда: урон за N секунд + слепок билда в файл ----------
-function zamerStart(dur) { G.zm = { dur: clamp(dur || 60, 1, 600), t0: null, ev: [], src: {}, crit: 0, el: 0, hits: 0, tgt: {}, foes: new Set(), sec: new Set(), boss: null, stopAt: 0, taken: 0, react: 0, at: new Date(), loc: S.loc, abort: '' }; zamerTag(); toast('📊 Замер начнётся с первого удара'); }
+function zamerStart(dur) { G.zm = { dur: clamp(dur || 60, 1, 600), t0: null, ev: [], src: {}, crit: 0, el: 0, hits: 0, tgt: {}, foes: new Set(), sec: new Set(), boss: null, stopAt: 0, buf: { tea: 0, rage: 0 }, taken: 0, react: 0, at: new Date(), loc: S.loc, abort: '' }; zamerTag(); toast('📊 Замер начнётся с первого удара'); }
 function zamerHit(e, src, d, crit) {
   const z = G.zm; if (!z || !(d > 0)) return; if (z.t0 === null) z.t0 = G.time;
   z.ev.push(G.time - z.t0, d); z.src[src] = (z.src[src] || 0) + d; z.hits++; if (crit) z.crit += d; if (ELEM[src] || src === 'chain' || src === 'react' || src === 'oni') z.el += d; if (src === 'react') z.react++;
@@ -7272,15 +7272,16 @@ function zamerFinish(abort) {
     `Урон: среднее ${zmN(R.avg)}/с · в бою ${zmN(R.avgCombat)}/с (${R.active} с с уроном) · пик за 1 с ${zmN(R.peak1)} · пик за 5 с ${zmN(R.peak5)} · всего ${zmN(R.total)}`,
     R.boss ? `Босс: ${R.boss.name} · урон ${zmN(R.boss.dmg)} · ${R.boss.kill !== null ? 'победа за ' + round1(R.boss.kill) + ' с' : 'не побеждён, бой ' + round1(R.boss.time) + ' с'} · ${zmN(R.boss.dps)}/с по боссу` : 'Босс: не было',
     `Источники: ${srcs || '—'}`,
+    `Бафы: Чай О-Тя ${round1(z.buf.tea)} с · Ярость Они ${round1(z.buf.rage)} с (из ${Math.round(R.len)} с)`,
     `Криты ${pct(z.crit)} · стихии ${pct(z.el)} · реакций ${z.react} · врагов задето ${z.foes.size} · урон по героине ${zmN(z.taken)} · скорость игры ×${G.speed}${G.god ? ' · бессмертие' : ''}${SET.midas ? ' · Мидас' : ''}`,
     'Билд: ' + B.txt.join('\n      ')];
-  const data = { v: 2, at: at.toISOString(), loc: z.loc, zone: zi, dur: z.dur, len: R.len, abort: z.abort || null, boss: R.boss, active: R.active, avgCombat: R.avgCombat, total: R.total, avg: R.avg, peak1: R.peak1, peak5: R.peak5, hits: z.hits, crit: z.crit, el: z.el, react: z.react, foes: z.foes.size, taken: z.taken, targets: z.tgt, src: R.src, speed: G.speed, god: !!G.god, build: B.build, stats: B.st };
+  const data = { v: 2, at: at.toISOString(), loc: z.loc, zone: zi, dur: z.dur, len: R.len, abort: z.abort || null, boss: R.boss, buffs: z.buf, active: R.active, avgCombat: R.avgCombat, total: R.total, avg: R.avg, peak1: R.peak1, peak5: R.peak5, hits: z.hits, crit: z.crit, el: z.el, react: z.react, foes: z.foes.size, taken: z.taken, targets: z.tgt, src: R.src, speed: G.speed, god: !!G.god, build: B.build, stats: B.st };
   const body = head.join('\n') + '\n\n---JSON---\n' + JSON.stringify(data);
   G.zmLast = body; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: 'text/plain;charset=utf-8' })); a.download = `neonronin-zamer-${stamp}.txt`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   toast(z.abort ? '📊 Замер прерван — файл сохранён' : `📊 Замер готов: ${zmN(R.avg)}/с, файл сохранён`);
 }
 function zamerTag() { const t = $('#zamer-tag'); if (!t) return; const z = G.zm; t.classList.toggle('hidden', !z); if (z) t.textContent = z.t0 === null ? '📊 ждёт удара' : '📊 ' + mmss(Math.max(0, z.dur - (G.time - z.t0))); }
-setInterval(() => { const z = G.zm; if (!z) return; if (z.t0 !== null && (G.time - z.t0 >= z.dur || (z.stopAt && G.time >= z.stopAt))) zamerFinish(); else zamerTag(); }, 200);
+setInterval(() => { const z = G.zm; if (!z) return; if (z.t0 !== null) { if (G.teaT > 0) z.buf.tea += 0.2; if (G.oniSuperT > 0) z.buf.rage += 0.2; } if (z.t0 !== null && (G.time - z.t0 >= z.dur || (z.stopAt && G.time >= z.stopAt))) zamerFinish(); else zamerTag(); }, 200);
 // ---------- Узы: второй навык питомца ----------
 const BOND_COUNT = { atkN: 1, cleanse: 1 }, BOND_K = [0.4, 0.52, 0.64, 0.76, 0.88, 1], BOND_TIERS = { w: [0, 1], a: [2, 3], j: [4] }; // место руны — какие уровни ветки (5/10, 20/30, 40), ранг — сила
 function bondTiers() { const o = {}; if (!S.runes || !runesOn()) return o; for (const k in BOND_TIERS) { const r = runeR(k, 'bond'); if (r >= 0) for (const i of BOND_TIERS[k]) o[i] = r; } return o; }
@@ -7295,7 +7296,7 @@ function runeShadeStep(x0, y0, x1, y1) { // Теневой шаг: рывок з
   const vx = x1 - x0, vy = y1 - y0, L2 = vx * vx + vy * vy || 1;
   for (const e of G.enemies) {
     if (e.dead || G.shadeHit.has(e)) continue; const k = clamp(((e.x - x0) * vx + (e.y - y0) * vy) / L2, 0, 1), px = x0 + vx * k, py = y0 + vy * k;
-    if (dist(e.x, e.y, px, py) < 40 + (e.r || 14)) { G.shadeHit.add(e); dealDamage(e, ST.dmg * ST.ru.shadeDmg, { src: 'shade', noKb: true }); }
+    if (dist(e.x, e.y, px, py) < 40 + (e.r || 14)) { G.shadeHit.add(e); dealDamage(e, ST.dmg * ST.ru.shadeDmg * ST.skillMul, { src: 'shade', noKb: true }); /* как вихрь и волна — растёт от силы способностей */ }
   }
   if ((G.shadeFx || 0) < 3) { G.shadeFx = (G.shadeFx || 0) + 1; const p = P('glow', x0, y0 - 28, 0, 0, 0.25, 22, '120,70,200'); p.shade = true; } // тёмный послеобраз, не больше 3 силуэтов
 }
