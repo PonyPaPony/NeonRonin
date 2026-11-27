@@ -7106,7 +7106,7 @@ function drawRuneFrag(ctx, l, y, t) { // кристаллик цвета ран�
 function applyRuneStats(st) {
   st.ru = { rc: {} }; if (!S.runes || !S.tower || !runesOn()) return; const U = st.ru; U.elDur = {}; U.reactMul = {}; for (const c of RCOMBO) { const k = comboR(c.id); if (k >= 0) U.rc[c.id] = k; } // сочетания
   const kf = runeElemR('w', 'fire'), ki = runeElemR('w', 'ice'), kt = runeElemR('w', 'thunder');
-  const sm = U.rc.storm >= 0 ? 0.7 : 1; // «Буря стихий»: каждая Стихия катаны ×0,7
+  const sm = U.rc.storm >= 0 ? Math.min(1, 0.6 + 0.1 * (S.w.ench || []).filter(c => c && ['burn', 'frost', 'chain', 'poison'].includes(c.id)).length) : 1; // «Буря стихий»: Стихии катаны ×0,6, каждая стихийная чара катаны +0,1 (4 чары — без штрафа)
   if (kf >= 0) st.elV.fire += rv(6, 24, kf) / 100 * sm; if (ki >= 0) st.elV.ice += rv(5, 20, ki) / 100 * sm; if (kt >= 0) U.zapChance = rv(4, 16, kt) / 100 * sm;
   if (U.rc.kirin >= 0) U.kirinCrit = rv(10, 25, U.rc.kirin) / 100; if (U.rc.shatter >= 0) U.shatterX = rv(30, 80, U.rc.shatter) / 100; if (U.rc.unbreak >= 0) U.unbreakK = rv(2, 5, U.rc.unbreak); if (U.rc.pack >= 0) U.packCd = rv(1, 3, U.rc.pack);
   const A = U.rc; if (A.veil >= 0) U.veil = rv(8, 20, A.veil) / 100; if (A.fortress >= 0) { st.block = Math.min(0.6, st.block + rv(5, 12, A.fortress) / 100); U.fortSh = rv(2, 6, A.fortress) / 100; } if (A.pure >= 0) { U.pureT = rv(20, 12, A.pure); if (!S.oni) st.regen += rv(0.2, 0.6, A.pure) / 100 * (st.healMul || 1); } if (A.friend >= 0) U.friendCd = rv(45, 30, A.friend); // сочетания доспеха
@@ -7134,7 +7134,7 @@ function applyRuneStats(st) {
 }
 // ---------- Сочетания рун (тройки внутри предмета) ----------
 const RCOMBO = [
-  { id: 'storm', it: 'w', n: 'Буря стихий', r: ['elem@fire', 'elem@thunder', 'elem@ice'], d: 'удары кладут огонь, гром и лёд (каждая Стихия ×0,7), реакции на цели — раз в 1 с' },
+  { id: 'storm', it: 'w', n: 'Буря стихий', r: ['elem@fire', 'elem@thunder', 'elem@ice'], d: 'удары кладут огонь, гром и лёд, реакции на цели — раз в 1 с; Стихии слабее на 40%, каждая стихийная чара катаны убирает 10% (4 чары — без штрафа)' },
   { id: 'ronin', it: 'w', n: 'Путь ронина', r: ['spirit', 'shade', 'pierce'], d: '«Теневой шаг» всегда критует и кладёт 3 стака «Раскола»' },
   { id: 'kirin', it: 'w', n: 'Явление Кирина', r: ['spirit', 'elem@thunder', 'pierce'], d: 'все молнии бьют цель героини и могут критовать (+10→25% шанса)' },
   { id: 'shatter', it: 'w', n: 'Ледяной раскол', r: ['spirit', 'elem@ice', 'pierce'], d: 'физ. крит по замедленной цели: +30→80% крит. урона, лёд снимается' },

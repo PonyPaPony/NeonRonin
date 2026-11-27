@@ -60,10 +60,17 @@ MOBS = """const mk = (dx, dy) => { const e = makeEnemy('bruiser', hero.x + dx, h
 
 def test_storm(page):
     run(page, BASE + "put('w', ['elem', 'elem', 'elem']);")
-    assert abs(js(page, "ST.elV.fire") - 0.24 * 0.7) < 1e-9 and abs(js(page, "ST.elV.ice") - 0.20 * 0.7) < 1e-9
-    assert abs(js(page, "ST.ru.zapChance") - 0.16 * 0.7) < 1e-9
+    assert abs(js(page, "ST.elV.fire") - 0.24 * 0.6) < 1e-9 and abs(js(page, "ST.elV.ice") - 0.20 * 0.6) < 1e-9
+    assert abs(js(page, "ST.ru.zapChance") - 0.16 * 0.6) < 1e-9          # без стихийных чар — ×0,6
     r = js(page, "(() => { " + DUMMY + " applyElem(d, 'fire', 100, 'fire'); applyElem(d, 'ice', 100, 'ice'); return d.st.rcd.steam - G.time; })()")
     assert abs(r - 1) < 1e-6                                        # перезарядка реакций на цели 1 с
+
+
+def test_storm_enchants_soften_penalty(page):
+    E = "{id: '%s', t: 5, v: 1}"
+    for ench, k in [([], 0.6), (['burn', 'crit'], 0.7), (['burn', 'frost'], 0.8), (['burn', 'frost', 'chain'], 0.9), (['burn', 'frost', 'chain', 'poison'], 1.0)]:
+        run(page, BASE + "S.w.ench = [" + ", ".join(E % x for x in ench) + "]; put('w', ['elem', 'elem', 'elem']);")
+        assert abs(js(page, "ST.ru.zapChance") - 0.16 * k) < 1e-9, ench   # каждая стихийная чара катаны −0,1 штрафа
 
 
 def test_ronin(page):
