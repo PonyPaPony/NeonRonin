@@ -253,13 +253,16 @@ button.hold{touch-action:none;background:linear-gradient(90deg,rgba(255,220,120,
 .quest.trial{border-color:rgba(199,125,255,.55)!important;box-shadow:0 0 20px -8px #b45cff}
 @media (max-width:820px){.s-body{grid-template-columns:1fr}.soul-grid{grid-template-columns:1fr}}
 /* ---------- Консоль ---------- */
-#console{position:fixed;left:0;right:0;top:0;height:48vh;background:rgba(5,7,15,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(80,240,255,.4);
+#console{position:fixed;left:0;right:0;top:0;height:72vh;background:rgba(5,7,15,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(80,240,255,.4);
  font-family:Consolas,"Courier New",monospace;display:flex;flex-direction:column;padding:10px 14px;z-index:20;box-shadow:0 10px 40px rgba(0,0,0,.6)}
 .c-head{color:#5ff0ff;font-weight:700;display:flex;gap:10px;align-items:center}
 .c-head span{color:#6a7699;font-weight:400;font-size:12px}
 #c-log{flex:1;overflow:auto;font-size:13px;line-height:1.5;color:#a8ecff;white-space:pre-wrap;margin-top:6px}
 #c-log .err{color:#ff7a8a}#c-log .ok{color:#8dffb0}#c-log .cmd{color:#ffd36a}
-.c-quick{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.c-quick{display:flex;flex-direction:column;gap:4px;margin:8px 0;max-height:46vh;overflow:auto}
+.c-sec{display:flex;gap:8px;align-items:flex-start}.c-sec>b{min-width:92px;color:#5ff0ff;font-size:12px;padding-top:6px}.c-sec>div{display:flex;flex-wrap:wrap;gap:5px;align-items:center;color:#8a95bb;font-size:12px}
+.c-quick button.on{border-color:#8dffb0;color:#8dffb0}.c-rune{font-size:12px;margin:0 2px 0 8px}.c-rg{display:inline-flex;gap:3px;align-items:center;white-space:nowrap}.c-quick button.c-rk{padding:3px 7px;min-width:24px}
+#midas-tag{position:fixed;right:10px;top:54px;z-index:30;pointer-events:none;font:700 12px sans-serif;color:#ffd76a;background:rgba(40,30,5,.75);border:1px solid #ffd76a;border-radius:8px;padding:3px 8px}
 .c-quick button{font-size:12px;padding:5px 9px;font-family:inherit;border-radius:7px}
 .c-quick button.danger{border-color:rgba(255,90,110,.6);color:#ff9aa8}
 #c-in{width:100%;font:inherit;font-size:14px;color:#fff;background:#0c1020;border:1px solid rgba(80,240,255,.35);border-radius:8px;padding:9px 12px;outline:none}
@@ -513,6 +516,7 @@ body.in-tower .tab.active{background:linear-gradient(180deg,rgba(255,70,140,.5),
   <input id="c-in" placeholder="Команда… (например: gold 50000)" autocomplete="off" spellcheck="false">
 </div>
 
+<div id="midas-tag" class="hidden">🪙 МИДАС</div>
 <div id="toasts"></div>
 <div id="vl-say" class="hidden"></div>
 
@@ -7188,6 +7192,37 @@ function runeAction(act, item, slot, btn) {
   renderForge();
 }
 const RUNE_ACTS = { rsel: 1, rbag: 1, rforge: 1, rins: 1, rext: 1, rrr: 1, rrp: 1, rup: 1, rscr: 1 };
+// ---------- Панель отладки (консоль 2.0): «божественные» команды и кнопки ----------
+const CMD_ALIAS = [['клинок бога', 'god_weapon'], ['доспех бога', 'god_armor'], ['бижутерия бога', 'god_jewel'], ['душа бога', 'god_soul'], ['древо бога', 'god_tree'], ['процветание', 'prosper'], ['мидас', 'midas'], ['открыть всё', 'open_all'], ['открыть все', 'open_all'], ['руны', 'runes'], ['звёзды', 'stars'], ['звезды', 'stars'], ['богатство', 'rich']];
+function cmdAlias(line) { const l = line.toLowerCase(); for (const [a, c] of CMD_ALIAS) if (l === a || l.startsWith(a + ' ')) return c + line.slice(a.length); return line; }
+function godEnch(it) { for (const e of it.ench) if (e && ENCH[e.id]) { const D = ENCH[e.id]; e.t = 5; e.v = round1(D.vals[4] * 1.15 * 1.27); if (D.vals2) e.v2 = round1(D.vals2[4] * 1.15 * 1.27); } } // тир V, лучший бросок, горн 10
+function godItem(k) { S[k].rank = MAX_RANK; S[k].lvl = CFG.MAX_LVL; fixSlots(); godEnch(S[k]); refreshStats(); }
+function godJewel() { for (const k of JKEYS) { S[k].lvl = JMAX; S[k].slot4 = true; } fixSlots(); for (const k of JKEYS) godEnch(S[k]); refreshStats(); }
+function godSoul() { for (const so of SOUL) S.soul[so.id] = SOUL_MAX; refreshStats(); if (G.soulOpen) renderSoul(); }
+function godStars(n) { if (!starsOpen()) return false; const z = S.stars; for (let i = 0; i < n; i++) z.b[SOUL[starsTotal() % SOUL.length].id]++; z.peak = Math.max(z.peak, starsTotal()); refreshStats(); return true; }
+function godTree() { if (!S.tree) S.tree = {}; for (const n of TREE) S.tree[n.id] = n.max; refreshStats(); if (G.treeOpen) renderTree(); }
+function godVillage() { const v = S.village; v.shards = [true, true, true, true]; v.crystal = true; v.intro = true; for (const b of VILLAGE) v.steps[b.id] = V_MAX; v.queue = []; fixVillage(); refreshStats(); }
+function midasTick() { // Мидас: ресурсы не кончаются, пока включён (только на этом устройстве)
+  if (!SET.midas || typeof S !== 'object' || !S) return; const B = 1e15;
+  if (!(S.gold >= B)) S.gold = B; if (!(S.souls >= B)) S.souls = B; if (!(S.jade >= B)) S.jade = B; if (!(S.xp >= B)) S.xp = B; if (!(S.dew >= 1e6)) S.dew = 1e6;
+  if (S.runes) for (let i = 0; i < 6; i++) if (S.runes.frag[i] < 999) S.runes.frag[i] = 999; if (!((S.jSeal || 0) >= 3)) S.jSeal = 3;
+}
+function updateMidasTag() { const t = $('#midas-tag'); if (t) t.classList.toggle('hidden', !SET.midas); }
+setInterval(midasTick, 200);
+function renderConsolePanel() {
+  const B = (l, c, cls = '') => `<button class="${cls}" data-cmd="${c}">${l}</button>`;
+  const rows = [
+    ['ГЕРОИНЯ', B('⚔ Клинок Бога', 'клинок бога') + B('◈ Доспех Бога', 'доспех бога') + B('💍 Бижутерия Бога', 'бижутерия бога') + B('✦ Душа Бога', 'душа бога') + B('★ Звёзды +10', 'звёзды 10') + B('🌳 Древо Бога', 'древо бога') + B(`♥ Бессмертие ${G.god ? '✓' : '✗'}`, 'god', G.god ? 'on' : '')],
+    ['ОНИ', B('👹 Маска Они (пробудить)', 'oni') + B('⚡ Энергия Они 100', 'energy')],
+    ['МИР', B('🗺 Открыть все карты', 'открыть всё') + ' Район: ' + [0, 1, 2, 3, 4].map(z => B(z ? String(z) : 'база', 'tp ' + z)).join('') + B('☠ Убить всех', 'killall') + B('🏯 Процветание', 'процветание') + ' Скорость: ' + [1, 2, 4].map(s => B('×' + s, 'speed ' + s, G.speed === s ? 'on' : '')).join('') + B('👑 Боссы', 'boss')],
+    ['БАШНЯ', B('+2 заряда', 'tower') + ' Этаж: ' + [10, 50, 90].map(f => B(String(f), 'twfloor ' + f)).join('') + ' Уровень: ' + [8, 15, 25].map(l => B(String(l), 'twlvl ' + l)).join('')],
+    ['ЭКОНОМИКА', B(`🪙 Мидас ${SET.midas ? '✓' : '✗'}`, 'мидас', SET.midas ? 'on' : '') + B('¥ ◆ ✧ 💧 ✦ +много', 'богатство')],
+    ['РУНЫ', Object.keys(RUNES).map(id => `<span class="c-rg"><span class="c-rune" style="color:${RUNES[id].col}">${RUNES[id].icon} ${RUNES[id].name}</span>` + [0, 1, 2, 3, 4, 5].map(r => `<button class="c-rk" style="border-color:${RRANK[r].col}" title="${RRANK[r].n}" data-cmd="rune ${id} ${r}">${r + 1}</button>`).join('') + '</span>').join('') + '<br>' + B('+100 фрагментов каждого ранга', 'rfrag all 100') + B('🧩 Открыть вкладку рун', 'руны') + '<button disabled title="появится вместе с сочетаниями (2б)">Набор под сочетание ▾</button>'],
+  ];
+  $('#c-quick').innerHTML = rows.map(([t, h]) => `<div class="c-sec"><b>${t}</b><div>${h}</div></div>`).join('')
+    + `<div class="c-sec"><b></b><div><button data-close="1">✕ Закрыть</button>${B('🙈 Спрятать консоль', 'lock')}<button class="danger" id="c-reset" data-cmd="reset">⟲ Сброс прогресса</button></div></div>`;
+  if (typeof updateResetBtn === 'function') updateResetBtn();
+}
 // ---------- Узы: второй навык питомца ----------
 const BOND_COUNT = { atkN: 1, cleanse: 1 }, BOND_K = [0.4, 0.52, 0.64, 0.76, 0.88, 1], BOND_TIERS = { w: [0, 1], a: [2, 3], j: [4] }; // место руны — какие уровни ветки (5/10, 20/30, 40), ранг — сила
 function bondTiers() { const o = {}; if (!S.runes || !runesOn()) return o; for (const k in BOND_TIERS) { const r = runeR(k, 'bond'); if (r >= 0) for (const i of BOND_TIERS[k]) o[i] = r; } return o; }
@@ -7238,7 +7273,7 @@ function clog(msg, cls = '') { const d = document.createElement('div'); if (cls)
 function toggleConsole(force) {
   G.consoleOpen = force === undefined ? !G.consoleOpen : force; $('#console').classList.toggle('hidden', !G.consoleOpen);
   for (const k in keys) keys[k] = false; mouse.down = false;
-  if (G.consoleOpen) setTimeout(() => cIn.focus(), 0); else cIn.blur();
+  if (G.consoleOpen) { renderConsolePanel(); setTimeout(() => cIn.focus(), 0); } else cIn.blur();
 }
 // Консоль скрыта: открывается после 7 нажатий ~ подряд за 3 секунды. Доступ запоминается на устройстве (SET.console), команда lock — закрыть снова.
 const consoleUnlocked = () => !!SET.console;
@@ -7246,7 +7281,8 @@ function consoleKnock() {
   const now = performance.now(); G.knock = (G.knock || []).filter(t => now - t < 3000); G.knock.push(now);
   if (G.knock.length >= 7) { G.knock = []; SET.console = true; saveSet(); toast('⌨ Консоль открыта на этом устройстве · lock — закрыть доступ'); toggleConsole(true); }
 }
-const HELP = `Команды:
+const HELP = `Новые команды (кнопки панели): клинок бога · доспех бога · бижутерия бога · душа бога · звёзды N · древо бога · процветание · мидас · открыть всё · twlvl N · богатство · руны · rune ID R · rfrag all N
+Команды:
   gold [N]            — добавить йены (по умолч. 10000)
   souls [N]           — добавить души (по умолч. 100)
   jade [N]            — добавить осколки нефрита ✧ (по умолч. 50)
@@ -7273,7 +7309,7 @@ const HELP = `Команды:
   lock                — снова спрятать консоль (откроется 7 нажатиями ~ за 3 с)`;
 function updateResetBtn() { const b = $('#c-reset'); if (!b) return; const armed = G.resetArmT && performance.now() < G.resetArmT; b.textContent = armed ? '⚠ Точно сбросить? Нажми ещё раз' : '⟲ Сброс прогресса'; b.style.background = armed ? 'linear-gradient(180deg,#ff5a6e,#b3122a)' : ''; b.style.color = armed ? '#fff' : ''; }
 function runCmd(line) {
-  line = line.trim(); if (!line) return; clog('> ' + line, 'cmd'); cHist.push(line); cHistI = cHist.length;
+  line = line.trim(); if (!line) return; clog('> ' + line, 'cmd'); cHist.push(line); cHistI = cHist.length; line = cmdAlias(line);
   const [cmd, a1] = line.split(/\s+/), n = parseFloat(a1), has = !isNaN(n);
   const rankSet = (key, v) => { if (!has || v < 1 || v > MAX_RANK) return clog('Нужен ранг 1–12', 'err'); S[key].rank = v | 0; fixSlots(); refreshStats(); clog(`${key === 'w' ? 'Катана' : 'Одежда'}: ранг ${v | 0} — ${(key === 'w' ? WEAPON_RANKS : ARMOR_RANKS)[(v | 0) - 1].name}`, 'ok'); };
   switch (cmd.toLowerCase()) {
@@ -7281,7 +7317,7 @@ function runCmd(line) {
     case 'gold': S.gold += has ? n : 10000; clog(`¥ = ${fmt(S.gold)}`, 'ok'); break;
     case 'souls': S.souls += has ? n : 100; clog(`◆ = ${fmt(S.souls)}`, 'ok'); break;
     case 'rank_weapon': rankSet('w', n); break;
-    case 'rfrag': { const a2 = parseFloat(line.split(/\s+/)[2]); S.runes.frag[clamp(has ? n | 0 : 0, 0, 5)] += isNaN(a2) ? 10 : a2; clog('Фрагменты рун: ' + S.runes.frag.join(' / '), 'ok'); break; }
+    case 'rfrag': { const a2 = parseFloat(line.split(/\s+/)[2]); if (a1 === 'all') { for (let i = 0; i < 6; i++) S.runes.frag[i] += isNaN(a2) ? 10 : a2; clog('Фрагменты рун: ' + S.runes.frag.join(' / '), 'ok'); break; } S.runes.frag[clamp(has ? n | 0 : 0, 0, 5)] += isNaN(a2) ? 10 : a2; clog('Фрагменты рун: ' + S.runes.frag.join(' / '), 'ok'); break; }
     case 'rune': { const a2 = parseFloat(line.split(/\s+/)[2]); if (!RUNES[a1]) { clog('Руны: ' + Object.keys(RUNES).join(', '), 'err'); break; } S.runes.bag.push(runeMk(a1, clamp(isNaN(a2) ? 0 : a2 | 0, 0, 5))); clog('Руна в сумке', 'ok'); break; }
     case 'rank_armor': rankSet('a', n); break;
     case 'lvl_weapon': case 'lvl_armor': { const k = cmd === 'lvl_weapon' ? 'w' : 'a'; if (!has) return clog('Нужен уровень 0–8', 'err'); S[k].lvl = clamp(n | 0, 0, CFG.MAX_LVL); refreshStats(); clog(`Закалка: +${S[k].lvl}`, 'ok'); break; }
@@ -7327,10 +7363,22 @@ function runCmd(line) {
     case 'twkills': S.tower.kills = has ? n : 50000; clog(`Убито в башне: ${S.tower.kills} · уровень ${towerMaxLvl()}`, 'ok'); break;
     case 'twcp': S.tower.cp = clamp(has ? n | 0 : 91, 1, 91); fixTower(); clog(`Контрольная точка: ${S.tower.cp}`, 'ok'); break;
     case 'dsouls': if (!towerIn()) return clog('Демонические души — только внутри башни', 'err'); S.gold += has ? n : 100000; clog(`❖ = ${fmt(S.gold)}`, 'ok'); break;
+    case 'god_weapon': godItem('w'); clog('⚔ Клинок Бога: ранг 12, +8, чары тир V', 'ok'); break;
+    case 'god_armor': godItem('a'); clog('◈ Доспех Бога: ранг 12, +8, чары тир V', 'ok'); break;
+    case 'god_jewel': godJewel(); clog('💍 Бижутерия Бога: ур. 15, 4-й слот, чары тир V', 'ok'); break;
+    case 'god_soul': godSoul(); clog('✦ Душа Бога: 160/160', 'ok'); break;
+    case 'stars': if (!godStars(has ? clamp(n | 0, 1, 1000) : 10)) clog('Звёзды открываются после полной души (Душа Бога)', 'err'); else clog(`★ Звёзд: ${starsTotal()}`, 'ok'); break;
+    case 'god_tree': godTree(); clog('🌳 Древо Бога: всё на максимуме', 'ok'); break;
+    case 'prosper': godVillage(); clog('🏯 Процветание: все постройки деревни готовы', 'ok'); break;
+    case 'midas': SET.midas = !SET.midas; saveSet(); updateMidasTag(); midasTick(); clog('🪙 Мидас: ' + (SET.midas ? 'ВКЛ — ресурсы не кончаются' : 'ВЫКЛ'), 'ok'); break;
+    case 'open_all': S.unlock2 = true; S.unlock3 = true; S.bossKills = S.bossKills.map(k => Math.max(1, k)); S.bossKills2 = S.bossKills2.map(k => Math.max(1, k)); fixTower(); S.tower.unlocked = true; clog('🗺 Открыты все карты и Башня', 'ok'); break;
+    case 'twlvl': { const l = clamp(has ? n | 0 : 8, 1, 99); S.tower.kills = Math.max(S.tower.kills, (l - 1) * 10000); S.tower.lvlSel = l; G.twLvl = l; clog(`魔 Уровень Башни: ${l} (открыто до ${towerMaxLvl()})`, 'ok'); break; }
+    case 'rich': S.gold += 1e12; S.souls += 1e6; S.jade += 1e5; S.dew = (S.dew || 0) + 1000; S.xp += 1e12; clog('Ресурсы добавлены', 'ok'); break;
+    case 'runes': toggleConsole(false); openForge(); G.forgeTab = 'r'; renderForge(); return;
     case 'lock': SET.console = false; saveSet(); toggleConsole(false); toast('⌨ Консоль спрятана'); return;
     default: clog(`Неизвестная команда «${cmd}». Набери help`, 'err');
   }
-  save(); if (G.forgeOpen) renderForge();
+  save(); if (G.forgeOpen) renderForge(); if (G.consoleOpen) renderConsolePanel();
 }
 cIn.addEventListener('keydown', e => {
   if (e.code === 'Enter') { runCmd(cIn.value); cIn.value = ''; }
@@ -7341,8 +7389,8 @@ cIn.addEventListener('keydown', e => {
   const Q = [['¥ +10K', 'gold 10000'], ['¥ +1M', 'gold 1000000'], ['◆ +100', 'souls 100'], ['✧ +50', 'jade 50'], ['Бижутерия 10', 'jewel 10'], ['Задания ✓', 'quests'], ['⛩ Открыть храм', 'unlock'], ['Локация ⇄', 'loc'], ['✦ +1M', 'xp 1000000'], ['Душа 60%', 'soul 60'], ['Катана Р8', 'rank_weapon 8'], ['Одежда Р8', 'rank_armor 8'], ['🏔 Открыть горы', 'unlock3'], ['Душа 80%', 'soul 80'], ['💧 +50', 'dew 50'], ['Предметы +5', 'items 5'], ['Катана Р12', 'rank_weapon 12'], ['Одежда Р12', 'rank_armor 12'], ['Древняя кузница 4', 'kills3 20000'], ['Маски Они', 'masks'], ['Энергия Они', 'energy'], ['🐾 Все питомцы', 'pet all'], ['Питомец 50 ур.', 'petlvl 50'], ['🌈 Яйцо пони', 'egg pony'], ['Катана Р1', 'rank_weapon 1'], ['Р2', 'rank_weapon 2'], ['Р3', 'rank_weapon 3'], ['Р4', 'rank_weapon 4'],
     ['Одежда Р1', 'rank_armor 1'], ['Р2', 'rank_armor 2'], ['Р3', 'rank_armor 3'], ['Р4', 'rank_armor 4'], ['Кузница 10', 'forge 10'], ['God', 'god'], ['Kill all', 'killall'],
     ['×1', 'speed 1'], ['×2', 'speed 2'], ['×4', 'speed 4'], ['ТП база', 'tp 0'], ['ТП 1', 'tp 1'], ['ТП 2', 'tp 2'], ['ТП 3', 'tp 3'], ['ТП 4', 'tp 4'], ['Боссы', 'boss'], ['Help', 'help']];
-  $('#c-quick').innerHTML = Q.map(([l, c]) => `<button data-cmd="${c}">${l}</button>`).join('') + '<button class="danger" id="c-reset" data-cmd="reset">⟲ Сброс прогресса</button>';
-  $('#c-quick').addEventListener('click', e => { const b = e.target.closest('[data-cmd]'); if (b) { runCmd(b.dataset.cmd); cIn.focus(); } });
+  void Q;
+  $('#c-quick').addEventListener('click', e => { if (e.target.closest('[data-close]')) { toggleConsole(false); return; } const b = e.target.closest('[data-cmd]'); if (b && !b.disabled) { runCmd(b.dataset.cmd); cIn.focus(); } });
 })();
 
 // =====================================================================
@@ -7628,7 +7676,7 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 function init() {
-  loadSave(); setupLocation(S.loc || 1); refreshStats(); hero.hp = ST.maxHp; hero.shield = ST.shieldMax; resize(); vInit();
+  loadSave(); setupLocation(S.loc || 1); refreshStats(); hero.hp = ST.maxHp; hero.shield = ST.shieldMax; resize(); vInit(); updateMidasTag();
   clog('Neon Ronin · чит-консоль. Набери help для списка команд.');
   setInterval(save, 5000);
   requestAnimationFrame(frame);
