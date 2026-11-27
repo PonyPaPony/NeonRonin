@@ -210,3 +210,10 @@ def test_sharp_hint_for_elem_katana(page):
     assert 'Всплеск' not in js(page, "ENCH.sharp.fmt({v: 22, v2: 25})")
     run(page, "ench(['burn', 'poison', 'crit', null]);")
     assert 'лучше «Всплеск стихий»' in js(page, "ENCH.sharp.fmt({v: 22, v2: 25})")
+
+
+def test_surge_hint_for_phys_katana(page):
+    run(page, BASE + "ench(['burn', 'poison', 'crit', null]);")
+    assert 'Острота' not in js(page, "ENCH.surge.fmt({v: 22, v2: 25})")
+    run(page, "ench(['chain', 'crit', 'execute', 'vamp']);")
+    assert 'лучше «Острота»' in js(page, "ENCH.surge.fmt({v: 22, v2: 25})")
