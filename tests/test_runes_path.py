@@ -48,3 +48,24 @@ def test_flash_kurama_runes(page):
 
 def test_flash_raiju_runes(page):
     assert _flash(page, 3, 1) == 0
+
+
+COMBOSET = ("S.ring.lvl = S.brace.lvl = S.neck.lvl = Math.max(1, S.ring.lvl);"
+            "const _m = ids => ids.map(id => ({id, r: 5, f: [0,0,0,0,0,0]}));"
+            "S.runes.w = _m(['elem', 'elem', 'elem']); S.runes.a = _m(['elem', 'elem', 'elem']); S.runes.j = _m(['spirit', 'shade', 'time']); refreshStats();")
+
+
+def _flash_combo(page, loc, z):
+    run(page, f"runCmd('unlock3'); runCmd('soul 100'); S.tower.unlocked = true; travelTo({loc}); G.god = true; {COMBOSET}")
+    run(page, f"runCmd('tp {z}'); const b = makeBoss({z}); b.hp = b.maxHp = 1e15; b.x = hero.x + 150; b.y = hero.y; G.bosses[{z}] = b; G.enemies.push(b); toggleAuto(true);")
+    run(page, "window.__fl = 0; setInterval(() => { hero.dashCd = 0; tryDash({x: Math.random() < 0.5 ? 1 : -1, y: 0, mag: 1}); }, 700); setInterval(() => { if (G.flash > 0) window.__fl++; for (const e of G.enemies) if (e.boss && e.flash > 0) window.__fl++; }, 16);")
+    page.wait_for_timeout(6000)
+    return js(page, "[window.__fl, ST.ru.rc.storm, ST.ru.rc.veil, ST.ru.rc.sakura]")
+
+
+def test_flash_kurama_combos(page):
+    assert _flash_combo(page, 2, 4) == [0, 5, 5, 5]
+
+
+def test_flash_raiju_combos(page):
+    assert _flash_combo(page, 3, 1) == [0, 5, 5, 5]

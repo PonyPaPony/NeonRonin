@@ -34,7 +34,7 @@ def test_tab_actions_flow(page):
 
 def test_card_shows_three_places(page):
     run(page, BASE + "S.runes.w[0] = {id:'elem', r:2, f:[0,0,0,0,0,0]}; G.runeSel = {item:'w', slot:0};" + OPEN)
-    r = js(page, "[...document.querySelectorAll('#f-right .rtxt')].map(x => [x.dataset.place, x.classList.contains('on'), x.textContent])")
+    r = js(page, "[...document.querySelectorAll('#f-right .rtxt[data-place]')].map(x => [x.dataset.place, x.classList.contains('on'), x.textContent])")
     assert [x[0] for x in r] == ['w', 'a', 'j']
     assert [x[1] for x in r] == [True, False, False]
     assert 'Стихия' in page.inner_text('#f-right') and all(x[2] for x in r)
