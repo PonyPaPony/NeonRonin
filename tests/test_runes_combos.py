@@ -110,10 +110,12 @@ def test_toxic(page):
 
 def test_unbreakable_wave(page):
     run(page, BASE + "put('w', ['heart', 'pierce', 'time']); Math.random = () => 0.99;")
-    r = js(page, "(() => { G.enemies.length = 0; " + MOBS + " const a = mk(40, 0), b = mk(-60, 30); hero.shield = ST.ru.shCap; const sh = hero.shield; hero.swingCount = 3; heroAttack(a); return [hero.shield <= sh / 2 + ST.maxHp * 0.021, 1e15 - b.hp >= sh / 2 * 5 * 0.9]; })()")
+    r = js(page, "(() => { G.enemies.length = 0; " + MOBS + " const a = mk(40, 0), b = mk(-60, 30); hero.shield = ST.ru.shCap; const sh = hero.shield; hero.swingCount = 3; heroAttack(a); return [hero.shield <= sh / 2 + ST.maxHp * 0.021, 1e15 - b.hp >= sh / 2 * 5 * ST.skillMul * 0.9]; })()")   # волна растёт с силой способностей
     assert r == [True, True]
-    r = js(page, "(() => { G.enemies.length = 0; " + MOBS + " const a = mk(40, 0); hero.shield = ST.ru.shCap * 0.5; const sh = hero.shield; hero.swingCount = 3; heroAttack(a); return hero.shield >= sh; })()")
-    assert r is True                                                 # щит не полон — волны нет
+    r = js(page, "(() => { G.enemies.length = 0; " + MOBS + " const a = mk(40, 0); hero.shield = ST.ru.shCap * 0.5; const sh = hero.shield; hero.swingCount = 3; heroAttack(a); return hero.shield <= sh / 2 + ST.maxHp * 0.011; })()")
+    assert r is True                                                 # половины щита хватает
+    r = js(page, "(() => { G.enemies.length = 0; " + MOBS + " const a = mk(40, 0); hero.shield = ST.ru.shCap * 0.4; const sh = hero.shield; hero.swingCount = 3; heroAttack(a); return hero.shield >= sh; })()")
+    assert r is True                                                 # меньше половины — волны нет
     r = js(page, "(() => { G.enemies.length = 0; " + MOBS + " const a = mk(40, 0); hero.shield = ST.ru.shCap; const sh = hero.shield; hero.swingCount = 1; heroAttack(a); return hero.shield >= sh - 1e-6; })()")
     assert r is True                                                 # без вихря — волны нет
 

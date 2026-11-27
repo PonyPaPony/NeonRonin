@@ -203,3 +203,10 @@ def test_review_pack_in_tower_arena(page):
     run(page, BASE + "S.pets.owned.cat = {lvl: 20, xp: 0, picks: []}; S.pets.active = 'cat'; spawnPetEntity(); put('w', ['bond', 'shade', 'time']);")
     r = js(page, "(() => { const L = S.loc; S.loc = 4; G.pet.x = TW.AX1 - 30; G.pet.y = TW.CY; runePack(1, 0); const x = G.pet.x; S.loc = L; return x <= TW.AX1 - 20; })()")
     assert r is True
+
+
+def test_sharp_hint_for_elem_katana(page):
+    run(page, BASE + "ench(['burn', 'crit', null, null]);")
+    assert 'Всплеск' not in js(page, "ENCH.sharp.fmt({v: 22, v2: 25})")
+    run(page, "ench(['burn', 'poison', 'crit', null]);")
+    assert 'лучше «Всплеск стихий»' in js(page, "ENCH.sharp.fmt({v: 22, v2: 25})")

@@ -606,7 +606,7 @@ const ENCH = {
   magnet:  { slot: 'a', name: 'Магнит лута',   icon: '◎', vals: [40, 70, 110, 160, 230], fmt: e => `+${e.v}% к радиусу сбора лута` },
   dodge:   { slot: 'a', name: 'Уклонение',     icon: '≋', vals: [4, 7, 10, 14, 18],      fmt: e => `${e.v}% шанс полностью избежать удара` },
   // чары бижутерии
-  sharp:   { slot: 'j', name: 'Острота',       icon: '🗡', vals: [4, 7, 11, 15, 22], vals2: [5, 8, 12, 18, 25], fmt: e => `+${e.v}% к физическому урону (катана, вихрь, волна, танец теней, аура) и +${e.v2}% крит. урона` },
+  sharp:   { slot: 'j', name: 'Острота',       icon: '🗡', vals: [4, 7, 11, 15, 22], vals2: [5, 8, 12, 18, 25], fmt: e => `+${e.v}% к физическому урону (катана, вихрь, волна, танец теней, аура) и +${e.v2}% крит. урона${(((typeof S !== 'undefined' && S.w && S.w.ench) || []).filter(c => c && SPLIT_ENCH[c.id]).length >= 2) ? ' · у твоей катаны 2+ стихийные чары — часть вихря и волны стихийная, для неё лучше «Всплеск стихий»' : ''}` },
   surge:   { slot: 'j', name: 'Всплеск стихий', icon: '✴', vals: [4, 7, 11, 15, 22], vals2: [5, 8, 12, 18, 25], fmt: e => `+${e.v}% к стихийному урону; прямые стихийные удары (стихийная часть вихря и волны, молнии, реакции) могут критовать, +${e.v2}% к их крит. урону` },
   gold:    { slot: 'j', name: 'Золотая жила',  icon: '¥', vals: [10, 18, 28, 40, 60],    fmt: e => `+${e.v}% йен с врагов` },
   luck:    { slot: 'j', name: 'Удача',         icon: '☘', vals: [10, 18, 28, 40, 60],    fmt: e => `+${e.v}% к шансу выпадения душ и нефрита и к шансу лучшего броска чар в кузнице` },
@@ -1699,7 +1699,7 @@ function hitFx(e, crit, o) {
 function heroAttack(target) {
   const ang = Math.atan2(target.y - hero.y, target.x - hero.x); hero.swingCount++;
   const extra = S.w.rank >= 2 && hero.swingCount % 4 !== 0 && ST.ru.timeWhirl > 0 && Math.random() < ST.ru.timeWhirl, whirl = S.w.rank >= 2 && (hero.swingCount % 4 === 0 || extra), arc = whirl ? TAU : 2.4; // Время: иногда вихрь вне очереди
-  const toxic = extra && ST.ru.rc.toxic >= 0; let wave = 0; if (whirl && ST.ru.unbreakK && ST.ru.shCap > 0 && hero.shield >= ST.ru.shCap * 0.99) { wave = hero.shield * 0.5; hero.shield -= wave; } // Ядовитая гроза; Несокрушимый
+  const toxic = extra && ST.ru.rc.toxic >= 0; let wave = 0; if (whirl && ST.ru.unbreakK && ST.ru.shCap > 0 && hero.shield >= ST.ru.shCap * 0.5 - 1e-6) { wave = hero.shield * 0.5; hero.shield -= wave; } // Ядовитая гроза; Несокрушимый: от половины рунного щита, тратит половину
   startSwing(hero, ang, whirl); SFX.swing(S.w.rank);
   const range = ST.range * (whirl ? 1.18 : 1);
   for (const e of G.enemies) {
@@ -1708,7 +1708,7 @@ function heroAttack(target) {
     dealDamage(e, ST.dmg * (whirl ? 1.3 * ST.skillMul : 1) + (ST.ru.heartHp || 0) * ST.maxHp, whirl ? { src: 'whirl' } : undefined); // Сердце Стража: + доля макс. HP к удару
     if (S.oni && !e.dead) { dealDamage(e, ST.dmg * 0.45 * darkMul(e), { noProc: true, noKb: true, small: true, col: '#c06bff', src: 'oni', el: 'dark' }); applyElem(e, 'dark', ST.dmg * 0.45, 'oni'); }
     if (toxic && !e.dead) runeBolt(e);
-    if (wave && !e.dead) dealDamage(e, wave * ST.ru.unbreakK, { noProc: true, noKb: true, noCrit: true, src: 'guardwave', col: '#ff8aa8' });
+    if (wave && !e.dead) dealDamage(e, wave * ST.ru.unbreakK * ST.skillMul, { noProc: true, noKb: true, noCrit: true, src: 'guardwave', col: '#ff8aa8' });
   }
   if (wave) P('ring', hero.x, hero.y - 20, 0, 0, 0.45, range * 1.1, '255,138,168');
   if (whirl) P('ring', hero.x, hero.y - 20, 0, 0, 0.35, range, RANK_FX[S.w.rank - 1]);
@@ -7171,7 +7171,7 @@ const RCOMBO = [
   { id: 'shatter', it: 'w', n: 'Ледяной раскол', r: ['spirit', 'elem@ice', 'pierce'], d: 'физ. крит по замедленной цели: +30→80% крит. урона, лёд снимается' },
   { id: 'acid', it: 'w', n: 'Едкая кислота', r: ['poison', 'elem@fire', 'pierce'], d: '«Едкий дым» сразу кладёт полный «Раскол»' },
   { id: 'toxic', it: 'w', n: 'Ядовитая гроза', r: ['poison', 'elem@thunder', 'time'], d: 'внеочередной вихрь бьёт молнией каждого задетого' },
-  { id: 'unbreak', it: 'w', n: 'Несокрушимый', r: ['heart', 'pierce', 'time'], d: 'при полном рунном щите вихрь тратит половину щита на ударную волну (×2→5)' },
+  { id: 'unbreak', it: 'w', n: 'Несокрушимый', r: ['heart', 'pierce', 'time'], d: 'при щите не меньше половины рунного вихрь тратит половину щита на ударную волну (×2→5 и × сила способностей)' },
   { id: 'pack', it: 'w', n: 'Стая', r: ['bond', 'shade', 'time'], d: 'питомец повторяет рывок (50% «Теневого шага»), рывок −1→3 с отката ульты' },
   { id: 'veil', it: 'a', n: 'Стихийный покров', r: ['elem@fire', 'elem@thunder', 'elem@ice'], d: 'раз в 10 с — стихийный щит 8→20% здоровья' },
   { id: 'fortress', it: 'a', n: 'Крепость', r: ['heart', 'spirit', 'pierce'], d: '+5→12% блока, каждый блок даёт щит 2→6% здоровья' },
