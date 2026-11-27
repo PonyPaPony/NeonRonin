@@ -149,7 +149,7 @@ select{font:inherit;font-size:12px;color:#fff;background:#151829;border:1px soli
 .rslot{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:58px;padding:4px;border:2px solid var(--el);border-radius:10px;background:rgba(10,12,24,.55);color:#e9ecff}
 .rslot .rk{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:2px solid var(--rk);font-size:18px;font-weight:800}
 .rslot small{font-size:10px;opacity:.8;margin-top:2px}.rslot.on{box-shadow:0 0 0 2px #ffd76a inset}
-.rtxt{font-size:12px;padding:4px 6px;margin:3px 0;border-radius:6px;opacity:.65}.rtxt.on{opacity:1;background:rgba(255,215,106,.12);outline:1px solid rgba(255,215,106,.45)}
+.rtxt{font-size:12px;padding:4px 6px;margin:3px 0;border-radius:6px;opacity:.65}.rtxt.on{opacity:1;background:rgba(255,215,106,.12);outline:1px solid rgba(255,215,106,.45)}.rcg{margin:6px 0 2px}.rcgh{font-size:12px;font-weight:700;opacity:.8;margin:4px 0;cursor:pointer}.rcmb{border-radius:8px;margin:3px 0;background:rgba(255,255,255,.04)}.rcmb>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;min-height:30px;cursor:pointer;list-style:none;font-size:13px}.rcmb>summary::-webkit-details-marker{display:none}.rcmb.on{background:rgba(255,215,106,.12);outline:1px solid rgba(255,215,106,.45)}.rcmb.on .rcn{color:#ffd76a;font-weight:700}.rtoks{display:flex;gap:4px;flex:none}.rtok{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 3px;border:1px dashed;border-radius:6px;font-size:13px;opacity:.45}.rtok.have{opacity:1;border-style:solid;background:rgba(255,255,255,.06)}.rtok i{font-style:normal;font-size:10px;margin-left:1px}.rcd{font-size:12px;padding:0 8px 7px;opacity:.85}@media (pointer:coarse){.rcmb>summary{min-height:40px;font-size:14px}.rtok{min-width:28px;height:28px}}
 .rbtns{flex-wrap:wrap}.rfrag{display:grid;grid-template-columns:1fr 50px auto;align-items:center;gap:6px;font-size:12px;margin:3px 0}.rfrag button{min-height:30px;padding:2px 8px}
 .rbag{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}.rcombo:empty{display:none}
 @media (max-width:780px){.rgrid{grid-template-columns:1fr}.rslot{min-height:56px}}
@@ -7211,10 +7211,18 @@ function runeArm(act, key) { // подтверждение вторым нажа
   renderForge(); return false;
 }
 const runeArmed = (act, key) => { const c = G.runeConfirm; return c && c.act === act && c.key === key && performance.now() - c.t <= 3000; };
+function runeComboList(id, place) { // сочетания руны: свой предмет раскрыт, остальные свёрнуты; строка = название + значки рун, описание по нажатию
+  const IT = { w: 'катана', a: 'доспех', j: 'бижутерия' }, first = place || 'w', order = [first].concat(RITEMS.filter(k => k !== first));
+  const tok = (t, have) => { const e = t.startsWith('elem@') ? t.slice(5) : null, R = RUNES[e ? 'elem' : t]; return `<span class="rtok ${have ? 'have' : ''}" title="${rtokName(t)}" style="color:${e ? ELEM[e].col : R.col};border-color:${e ? ELEM[e].col : R.col}">${R.icon}${e ? `<i>${ELEM[e].icon || ''}</i>` : ''}</span>`; };
+  const row = c => { const on = comboR(c.id) >= 0, left = runeTokens(c.it).filter(Boolean); const ic = c.r.map(t => { const j = left.indexOf(t); if (j >= 0) left.splice(j, 1); return tok(t, j >= 0); }).join('');
+    return `<details class="rcmb ${on ? 'on' : ''}"><summary><span class="rcn">${on ? '✦ ' : ''}${c.n}</span><span class="rtoks">${ic}</span></summary><div class="rcd">${c.d}</div></details>`; };
+  return order.map((k, i) => { const L = RCOMBO.filter(c => c.it === k && c.r.some(t => t.split('@')[0] === id)); if (!L.length) return '';
+    const body = L.map(row).join(''); return i === 0 ? `<div class="rcg"><div class="rcgh">Сочетания · ${IT[k]} (${L.length})</div>${body}</div>` : `<details class="rcg"><summary class="rcgh">${IT[k][0].toUpperCase() + IT[k].slice(1)} (${L.length})</summary>${body}</details>`; }).join('');
+}
 function runeCardHtml(x, place, el) {
   const head = `<div class="irow"><div><div class="iname" style="color:${RUNES[x.id].col}">${RUNES[x.id].icon} ${RUNES[x.id].name}</div><div class="stars" style="color:${RRANK[x.r].col}">${RRANK[x.r].n} · ранг ${x.r + 1}/6</div></div></div>`;
-  const cmb = RCOMBO.filter(c => c.r.some(t => t.split('@')[0] === x.id)).map(c => `<b>${c.n}</b> (${{ w: 'катана', a: 'доспех', j: 'бижутерия' }[c.it]}: ${c.r.map(rtokName).join(' + ')})`);
-  return head + ['w', 'a', 'j'].map(p => `<div class="rtxt ${p === place ? 'on' : ''}" data-place="${p}"><b>${RPLACE[p]}:</b> ${runeTxt(x.id, p, x.r, x.id === 'elem' && p === place ? el : null)}</div>`).join('') + (cmb.length ? `<div class="rtxt" style="opacity:.9"><b>Сочетания:</b> ${cmb.join(' · ')}</div>` : '');
+  const cmb = runeComboList(x.id, place);
+  return head + ['w', 'a', 'j'].map(p => `<div class="rtxt ${p === place ? 'on' : ''}" data-place="${p}"><b>${RPLACE[p]}:</b> ${runeTxt(x.id, p, x.r, x.id === 'elem' && p === place ? el : null)}</div>`).join('') + cmb;
 }
 function renderRuneTab(R) {
   const Rn = S.runes; let sel = G.runeSel || (G.runeSel = { item: 'w', slot: 0 }); if (sel.bag !== undefined && !Rn.bag[sel.bag]) sel = G.runeSel = { item: 'w', slot: 0 };

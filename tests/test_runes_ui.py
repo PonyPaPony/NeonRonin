@@ -81,3 +81,15 @@ def test_tab_fps_lo(browser, srv):
     fr = med([_tab_fps(browser, srv, 'r') for _ in range(3)])
     print('fps j', fj, 'r', fr)
     assert fr >= 0.9 * fj
+
+
+def test_combo_list_compact(page):
+    run(page, "runCmd('unlock3'); runCmd('soul 100'); S.tower.unlocked = true; travelTo(3); fixSlots(); S.w.rank = 12; S.ring.lvl = S.brace.lvl = S.neck.lvl = 1; S.gold = 1e15;"
+              "S.runes.w = ['spirit', 'elem', 'pierce'].map(id => ({id, r: 5, f: [0,0,0,0,0,0]})); refreshStats(); G.runeSel = {item: 'w', slot: 2}; openForge(); G.forgeTab = 'r'; renderForge();")
+    r = js(page, """(() => { const c = document.querySelector('#f-right .itemcard'); const g = [...c.querySelectorAll('.rcg')];
+      return [g.length, g[0].querySelector('.rcgh').textContent, g[0].tagName, g[1].tagName, c.querySelectorAll('.rcmb').length,
+              [...g[0].querySelectorAll('.rcmb')].filter(x => x.classList.contains('on')).map(x => x.querySelector('.rcn').textContent),
+              g[0].querySelectorAll('.rcmb.on .rtok.have').length, !!c.querySelector('.rcmb .rcd')]; })()""")
+    assert r[0] == 3 and 'Сочетания' in r[1] and 'катана' in r[1] and r[2] == 'DIV' and r[3] == 'DETAILS'
+    assert r[4] == 7                                                  # Пробой: 5 катаны + 1 доспех + 1 бижутерия
+    assert r[5] == ['✦ Явление Кирина'] and r[6] == 3 and r[7] is True   # собранное отмечено, описание по нажатию
