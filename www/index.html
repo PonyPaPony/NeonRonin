@@ -143,6 +143,16 @@ select{font:inherit;font-size:12px;color:#fff;background:#151829;border:1px soli
 .heat i::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 10px,rgba(255,255,255,.18) 10px 13px);background-size:26px 100%;animation:flow .8s linear infinite}
 @keyframes flow{to{background-position:26px 0}}
 @media (max-width:780px){.f-body{grid-template-columns:1fr}.slots,.abil{grid-template-columns:1fr}.pv-wrap canvas{width:100%}}
+/* ---------- Руны ---------- */
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.rblock{padding:10px}.rslots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.rslot{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:58px;padding:4px;border:2px solid var(--el);border-radius:10px;background:rgba(10,12,24,.55);color:#e9ecff}
+.rslot .rk{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:2px solid var(--rk);font-size:18px;font-weight:800}
+.rslot small{font-size:10px;opacity:.8;margin-top:2px}.rslot.on{box-shadow:0 0 0 2px #ffd76a inset}
+.rtxt{font-size:12px;padding:4px 6px;margin:3px 0;border-radius:6px;opacity:.65}.rtxt.on{opacity:1;background:rgba(255,215,106,.12);outline:1px solid rgba(255,215,106,.45)}
+.rbtns{flex-wrap:wrap}.rfrag{display:grid;grid-template-columns:1fr 50px auto;align-items:center;gap:6px;font-size:12px;margin:3px 0}.rfrag button{min-height:30px;padding:2px 8px}
+.rbag{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}.rcombo:empty{display:none}
+@media (max-width:780px){.rgrid{grid-template-columns:1fr}.rslot{min-height:56px}}
 /* ---------- Бижутерия ---------- */
 .jsel{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .jbtn{display:flex;align-items:center;gap:10px;text-align:left;padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.28)}
@@ -353,6 +363,7 @@ body.in-tower .tab.active{background:linear-gradient(180deg,rgba(255,70,140,.5),
       <button class="tab" data-act="tab" data-tab="w">⚔ Катана</button>
       <button class="tab" data-act="tab" data-tab="a">◈ Одежда</button>
       <button class="tab" data-act="tab" data-tab="j">💍 Бижутерия</button>
+      <button class="tab hidden" id="tab-r" data-act="tab" data-tab="r">符 Руны</button>
       <button class="tab" data-act="tab" data-tab="f">🔥 Горн кузницы</button>
       <button class="tab hidden" id="tab-af" data-act="tab" data-tab="af">⛰ Древняя кузница</button>
     </div>
@@ -846,7 +857,7 @@ function fixPets() {
   if (!S.pets || typeof S.pets !== 'object') S.pets = defaultPets();
   const P0 = S.pets, d = defaultPets(); for (const k in d) if (P0[k] === undefined) P0[k] = d[k];
   if (typeof P0.owned !== 'object' || !P0.owned) P0.owned = {};
-  for (const id of Object.keys(P0.owned)) { if (!PET_SP[id]) { delete P0.owned[id]; continue; } const p = P0.owned[id]; p.lvl = clamp(p.lvl | 0, 1, PET_MAX_LVL); p.xp = Math.max(0, +p.xp || 0); if (!Array.isArray(p.picks)) p.picks = []; p.picks = p.picks.slice(0, 6).map(v => v === 0 || v === 1 ? v : null); }
+  for (const id of Object.keys(P0.owned)) { if (!PET_SP[id]) { delete P0.owned[id]; continue; } const p = P0.owned[id]; p.lvl = clamp(p.lvl | 0, 1, PET_MAX_LVL); p.xp = Math.max(0, +p.xp || 0); if (!Array.isArray(p.picks)) p.picks = []; p.picks = p.picks.slice(0, 6).map(v => v === 0 || v === 1 ? v : null); p.x2 = Array.isArray(p.x2) ? p.x2.slice(0, 5).map(v => v === 0 || v === 1 ? v : null) : []; }
   P0.slots = clamp(P0.slots | 0, 1, PET_SLOTS_MAX);
   if (P0.active && !P0.owned[P0.active]) P0.active = null;
   if (!Array.isArray(P0.eggs)) P0.eggs = []; P0.eggs = P0.eggs.filter(e => e && PET_SP[e.sp]).map(e => ({ sp: e.sp, k: Math.max(0, e.k | 0) }));
@@ -860,6 +871,7 @@ const activePet = () => S.pets && S.pets.active ? S.pets.owned[S.pets.active] : 
 function petFx() {
   const fx = {}, id = S.pets && S.pets.active, p = id && S.pets.owned[id]; if (!p) return fx;
   PET_TREE[id].forEach((tier, i) => { const c = p.picks[i]; if ((c === 0 || c === 1) && p.lvl >= PET_TIERS[i]) { const o = tier[c].fx; for (const k in o) { if (k === 'ult') fx.ult = o.ult; else fx[k] = (fx[k] || 0) + o[k]; } } });
+  if (typeof bondFx === 'function') bondFx(fx, id, p); // руна «Узы»: второй навык уровня
   return fx;
 }
 var PFX = {};
@@ -956,7 +968,7 @@ function updatePetUlt(dt, p, f) {
   p.ultT -= dt; if (p.ultT > 0) return;
   const inFight = G.enemies.some(e => !e.dead && dist(e.x, e.y, hero.x, hero.y) < 500);
   if (!inFight && u !== 'cauldron') { p.ultT = 1; return; }
-  p.ultT = PET_ULT_CD[u]; p.happyT = 1;
+  p.ultT = runePetCd(u); p.happyT = 1;
   const nm = PET_TREE[p.sp][5].find(o => o.fx.ult === u).n; spawnText(p.x, p.y - 48, `${PET_SP[p.sp].icon} ${nm}!`, PET_SP[p.sp].col2, 15, true);
   if (u === 'goldrush') { p.ultOn = 8; G.goldRush = 8; }
   else if (u === 'firestorm') { p.ultOn = 6; p.tickT = 0; }
@@ -970,7 +982,7 @@ function updatePetUlt(dt, p, f) {
 // «Девять жизней» кота: вызывается перед смертью
 function petSaveLife() {
   if (PFX.ult !== 'ninelives' || !G.pet || G.pet.ultT > 0) return false;
-  G.pet.ultT = PET_ULT_CD.ninelives; hero.hp = ST.maxHp * 0.2; hero.iframe = 1.5; hero.dead = false;
+  G.pet.ultT = runePetCd('ninelives'); hero.hp = ST.maxHp * 0.2; hero.iframe = 1.5; hero.dead = false;
   banner('🐱 Девять жизней!', 'Кот спас героиню от гибели'); burst(hero.x, hero.y - 30, 40, '255,106,213', 300, 0.8, 3, 'glow'); SFX.up();
   return true;
 }
@@ -1189,9 +1201,10 @@ function renderPets() {
     <div class="desc">Специальность: <b>${S0.role}</b>. Опыт питомец получает за собранный лут и победы рядом с героиней.</div>
     <div class="mrow">${P0.active === id ? '<button disabled>✓ Сопровождает героиню</button>' : `<button class="primary" data-act="pact" data-id="${id}">Взять с собой</button>`}
       <button data-act="ptreat" data-id="${id}" ${S.gold >= treatPrice() && p.lvl < PET_MAX_LVL ? '' : 'disabled'}>🍡 Лакомство +20% уровня<span class="pr g">¥${fmt(treatPrice())}</span></button></div>`;
-  const rows = PET_TREE[id].map((tier, i) => {
+  const bt = bondTiers(), rows = PET_TREE[id].map((tier, i) => {
     const req = PET_TIERS[i], c = p.picks[i], open = p.lvl >= req, ult = i === 5;
-    return `<div class="ptier ${open ? '' : 'locked'}"><div class="pt-lv">${ult ? '★ ' : ''}${req} ур.</div>${tier.map((o, k) => `<button class="popt ${c === k ? 'chosen' : ''} ${c !== undefined && c !== null && c !== k ? 'other' : ''}" data-act="ppick" data-id="${id}" data-i="${i}" data-k="${k}" ${open && (c === undefined || c === null) ? '' : 'disabled'}><b>${o.n}</b><small>${o.d}</small></button>`).join('')}</div>`;
+    const x2 = (p.x2 || [])[i], bk = bt[i], has = c === 0 || c === 1;
+    return `<div class="ptier ${open ? '' : 'locked'}"><div class="pt-lv">${ult ? '★ ' : ''}${req} ур.</div>${tier.map((o, k) => { const two = !ult && has && c !== k && (bk !== undefined || x2 === k); if (two) return `<button class="popt ${x2 === k ? 'chosen' : ''}" style="outline:2px dashed #ffd76a;outline-offset:-3px" data-act="pick2" data-id="${id}" data-i="${i}" data-k="${k}" ${open && bk !== undefined && x2 !== k ? '' : 'disabled'}><b>絆 ${o.n}</b><small>${o.d} · ${bk !== undefined ? 'сила ' + Math.round(BOND_K[bk] * 100) + '%' : 'нужна руна «Узы»'}</small></button>`; return `<button class="popt ${c === k ? 'chosen' : ''} ${c !== undefined && c !== null && c !== k ? 'other' : ''}" data-act="ppick" data-id="${id}" data-i="${i}" data-k="${k}" ${open && (c === undefined || c === null) ? '' : 'disabled'}><b>${o.n}</b><small>${o.d}</small></button>`; }).join('')}</div>`;
   }).join('');
   const any = p.picks.some(v => v === 0 || v === 1);
   $('#pt-right').innerHTML = `<div class="ctitle">Навыки · выбери одну ветку на каждом уровне</div>${rows}<div class="mrow" style="margin-top:8px"><button data-act="presp" data-id="${id}" ${any && S.jade >= respecPrice() ? '' : 'disabled'}>↺ Сбросить выбор<span class="pr j">✧${respecPrice()}</span></button></div>`;
@@ -1216,7 +1229,8 @@ $('#pets').addEventListener('click', ev => {
   else if (act === 'pact') { P0.active = b.dataset.id; spawnPetEntity(); refreshPetFx(); refreshStats(); toast(`${PET_SP[P0.active].icon} ${PET_SP[P0.active].short} теперь с тобой`); }
   else if (act === 'ptreat') { const c = treatPrice(); if (S.gold < c) return; S.gold -= c; const p = P0.owned[b.dataset.id]; petGainXp(petNeed(p.lvl) * 0.2, b.dataset.id); SFX.coin(); }
   else if (act === 'ppick') { const p = P0.owned[b.dataset.id], i = +b.dataset.i, k = +b.dataset.k; if (p.lvl < PET_TIERS[i] || (p.picks[i] === 0 || p.picks[i] === 1)) return; p.picks[i] = k; refreshPetFx(); refreshStats(); SFX.up(); toast(`${PET_SP[b.dataset.id].icon} Навык: ${PET_TREE[b.dataset.id][i][k].n}`); }
-  else if (act === 'presp') { const c = respecPrice(); if (S.jade < c) return; S.jade -= c; P0.owned[b.dataset.id].picks = []; refreshPetFx(); refreshStats(); SFX.click(); }
+  else if (act === 'pick2') { const p = P0.owned[b.dataset.id], i = +b.dataset.i, k = +b.dataset.k; if (bondTiers()[i] === undefined || p.picks[i] === k || !(p.picks[i] === 0 || p.picks[i] === 1)) return; if (!p.x2) p.x2 = []; p.x2[i] = k; refreshPetFx(); refreshStats(); SFX.up(); toast(`絆 Второй навык: ${PET_TREE[b.dataset.id][i][k].n}`); }
+  else if (act === 'presp') { const c = respecPrice(); if (S.jade < c) return; S.jade -= c; P0.owned[b.dataset.id].picks = []; P0.owned[b.dataset.id].x2 = []; refreshPetFx(); refreshStats(); SFX.click(); }
   else if (act === 'nqtake') { if (P0.nq.active) return; P0.nq.active = P0.nq.offers.splice(+b.dataset.i, 1)[0]; ensureNQ(); SFX.up(); }
   else if (act === 'nqdrop') { P0.nq.active = null; SFX.click(); }
   else if (act === 'nqclaim') {
@@ -1370,7 +1384,7 @@ function computeStats() {
   st.res = { fire: Math.min(0.8, (bark + treeVal('fire')) / 100), ice: Math.min(0.8, (bark + treeVal('ice')) / 100), thunder: Math.min(0.8, (bark + treeVal('thunder')) / 100), poison: Math.min(0.8, treeVal('poison') / 100), dark: 0 };
   st.curseRes = Math.min(0.9, treeVal('curse') / 100);
   st.acc = treeVal('eye') / 100; st.pen = Math.min(0.8, treeVal('pierce') / 100);
-  applyPetStats(st); applyVillageStats(st); applyStarStats(st); applyShellStats(st);
+  applyPetStats(st); applyVillageStats(st); applyStarStats(st); applyShellStats(st); applyRuneStats(st);
   return st;
 }
 
@@ -1409,7 +1423,7 @@ function fixSlots() {
   if (!S.daily || typeof S.daily !== 'object' || typeof S.daily.day !== 'string') S.daily = null; else for (const k of ['board', 'nq', 'trials']) S.daily[k] = Math.max(0, S.daily[k] | 0);
   applyClassText(); fixPets(); refreshPetFx();
   if (!Array.isArray(S.quests.trials)) S.quests.trials = []; S.quests.trials = S.quests.trials.filter(q => q && Array.isArray(q.mods)); for (const q of S.quests.active) if (q.trial && !Array.isArray(q.mods)) q.mods = [];
-  fixTower(); fixVillage(); fixStars();
+  fixTower(); fixVillage(); fixStars(); fixRunes();
 }
 function loadSave() {
   try { const raw = localStorage.getItem(CFG.SAVE_KEY); if (raw) { const d = JSON.parse(raw); S = Object.assign(defaultSave(), d); } } catch (e) { S = defaultSave(); }
@@ -1608,7 +1622,7 @@ const G = {
 const mkHeroObj = () => ({ x: SPAWN.x, y: SPAWN.y, r: 14, face: 1, moving: false, runPhase: 0, swing: null, swingDir: 1, bladeAng: 0.6, trail: [], trailLive: false, hair: new Ribbon(7, 4.4), scarf: new Ribbon(11, 6), obi: new Ribbon(5, 4.2), bob: 0 });
 const hero = Object.assign(mkHeroObj(), { hp: 100, shield: 0, atkTimer: 0, swingCount: 0, dashCd: 0, dashT: 0, dashDx: 1, dashDy: 0, iframe: 0, lastHurt: 99, dead: false, deadT: 0, hurtFlash: 0, auraT: 0, faceLock: 0, shadowCd: 0 });
 let ST = computeStats();
-function refreshStats() { ST = computeStats(); hero.hp = Math.min(hero.hp, ST.maxHp); hero.shield = Math.min(hero.shield, ST.shieldMax); }
+function refreshStats() { ST = computeStats(); hero.hp = Math.min(hero.hp, ST.maxHp); hero.shield = Math.min(hero.shield, Math.max(ST.shieldMax, (ST.ru && ST.ru.shCap) || 0, G.breathT > G.time ? hero.shield : 0)); }
 
 // ---------- Эффекты / частицы ----------
 function P(type, x, y, vx, vy, life, size, color) { if (G.particles.length > [160, 420, 1000][GFX.level] || (GFX.level < 2 && Math.random() < (GFX.level ? 0.35 : 0.65))) return {}; const o = { type, x, y, vx, vy, life, max: life, size, color, rot: Math.random() * TAU, vr: rand(-4, 4) }; G.particles.push(o); return o; }
@@ -1677,26 +1691,28 @@ function hitFx(e, crit, o) {
 }
 function heroAttack(target) {
   const ang = Math.atan2(target.y - hero.y, target.x - hero.x); hero.swingCount++;
-  const whirl = S.w.rank >= 2 && hero.swingCount % 4 === 0, arc = whirl ? TAU : 2.4;
+  const whirl = S.w.rank >= 2 && (hero.swingCount % 4 === 0 || (ST.ru.timeWhirl > 0 && Math.random() < ST.ru.timeWhirl)), arc = whirl ? TAU : 2.4; // Время: иногда вихрь вне очереди
   startSwing(hero, ang, whirl); SFX.swing(S.w.rank);
   const range = ST.range * (whirl ? 1.18 : 1);
   for (const e of G.enemies) {
     if (e.dead) continue; const d = dist(e.x, e.y, hero.x, hero.y); if (d > range + e.r) continue;
     if (!whirl && Math.abs(angDiff(ang, Math.atan2(e.y - hero.y, e.x - hero.x))) > arc / 2 + 0.25) continue;
-    dealDamage(e, ST.dmg * (whirl ? 1.3 * ST.skillMul : 1), whirl ? { src: 'whirl' } : undefined);
+    dealDamage(e, ST.dmg * (whirl ? 1.3 * ST.skillMul : 1) + (ST.ru.heartHp || 0) * ST.maxHp, whirl ? { src: 'whirl' } : undefined); // Сердце Стража: + доля макс. HP к удару
     if (S.oni && !e.dead) { dealDamage(e, ST.dmg * 0.45 * darkMul(e), { noProc: true, noKb: true, small: true, col: '#c06bff', src: 'oni', el: 'dark' }); applyElem(e, 'dark', ST.dmg * 0.45, 'oni'); }
   }
   if (whirl) P('ring', hero.x, hero.y - 20, 0, 0, 0.35, range, RANK_FX[S.w.rank - 1]);
   if (S.w.rank >= 3) G.waves.push({ x: hero.x + Math.cos(ang) * 20, y: hero.y + Math.sin(ang) * 20, ang, speed: 640, life: 0.75, max: 0.75, dmg: ST.dmg * 0.6 * ST.skillMul, hit: new Set(), r: 34, rank: S.w.rank });
 }
-const PHYS_SRC = { katana: 1, whirl: 1, wave: 1, shadow: 1, aura: 1 };
-const physMul = o => (!o.el && PHYS_SRC[o.src || 'katana']) ? 1 + (ST.sharp || 0) : 1; // Острота — только физический урон катаны и её приёмов
+const PHYS_SRC = { katana: 1, whirl: 1, wave: 1, shadow: 1, aura: 1, spirit: 1, shade: 1 };
+const physMul = o => (!o.el && PHYS_SRC[o.src || 'katana']) ? (1 + (ST.sharp || 0)) * (1 + ((ST.ru && ST.ru.spiritPhys) || 0)) : 1; // Острота — только физический урон катаны и её приёмов
 function dealDamage(e, base, o = {}) {
   if (e.dead) return;
   let dmg = base * rand(0.9, 1.1), crit = false;
   if (e.eva && !o.small && Math.random() < Math.max(0, e.eva - ST.acc)) { spawnText(e.x + rand(-10, 10), e.y - (e.boss ? 105 : 55), 'Промах', '#9aa3c9', 12); return; }
-  if (!o.noCrit && Math.random() < ST.critChance) { crit = true; dmg *= ST.critDmg; }
-  if (e.def) dmg *= 1 - e.def * (1 - ST.pen) * ((e.st && e.st.smoke && e.st.smoke.t > 0) ? 0.85 : 1);
+  const gc = !o.noCrit && !o.small && !o.noProc && G.shadeCrit > G.time; if (gc) G.shadeCrit = 0; // Тень в доспехе: после уклонения — гарантированный крит
+  if (!o.noCrit && (gc || Math.random() < ST.critChance)) { crit = true; dmg *= ST.critDmg; if (ST.ru.dodgeBuff && !o.small && !o.noProc) G.dodgeBuffT = G.time + 2; }
+  if (e.def) dmg *= 1 - e.def * (1 - ST.pen) * ((e.st && e.st.smoke && e.st.smoke.t > 0) ? 0.85 : 1) * (1 - runeCrack(e));
+  if (ST.ru.crack && !String(o.src || '').startsWith('pet')) runeCrackAdd(e); // Пробой: каждое попадание — стак «Раскола»
   if (o.el && e.elem === o.el) dmg *= 0.5; // враг своей стихии
   dmg *= physMul(o);
   if (mountainWeak()) dmg *= 0.6;
@@ -1705,13 +1721,15 @@ function dealDamage(e, base, o = {}) {
   if (e.tArm) dmg *= e.tArm;
   dpsHit(e, o.src || 'katana', dmg, crit);
   e.hp -= dmg; if (!e.boss && !(e.flashCd > 0)) { e.flash = 0.07; e.flashCd = 0.35; } hero.lastCombat = 0;
+  if (ST.ru.heartSh && !o.noProc && (!o.src || o.src === 'whirl')) runeHeartShield(dmg);
+  if (crit && ST.ru.burst && !o.el && PHYS_SRC[o.src || 'katana'] && o.src !== 'spirit') runeMark(e);
   const top = e.y - (e.boss ? 105 : 55);
   if (!o.quiet || G.texts.length < 50) spawnText(e.x + rand(-10, 10), top, fmt(dmg), crit ? '#ffd84a' : o.col || '#ffffff', o.small ? 11 : crit ? 22 : 15, crit);
   if (!o.small) { hitFx(e, crit, o); SFX.hit(crit); }
   if (!o.noKb && !e.boss) { const a = Math.atan2(e.y - hero.y, e.x - hero.x), kb = crit ? 280 : 170; e.kx += Math.cos(a) * kb; e.ky += Math.sin(a) * kb; }
   if (!o.noProc) {
     if (ST.vamp > 0) heal(Math.min(dmg * ST.vamp, ST.maxHp * 0.012));
-    elemProcs(e, base);
+    elemProcs(e, base); if (ST.ru.zapChance && !e.dead) runeZap(e, base);
     if (ST.chain > 0 && Math.random() < ST.chain) chainLightning(e, ST.chainN, ST.dmg * 0.5 * ST.skillMul);
     if (crit && S.w.rank >= 4) shadowDance(e);
   }
@@ -1764,8 +1782,10 @@ function killEnemy(e) {
 function dropLoot(type, x, y, val) { G.loot.push({ type, x, y, z: 0, vz: rand(180, 320), vx: rand(-170, 170), vy: rand(-130, 130), val, t: 0, spin: rand(TAU), attract: false }); }
 function damageHero(amount, src, elem) {
   if (hero.dead || G.god || hero.dashT > 0 || hero.iframe > 0) return;
-  if (Math.random() < ST.dodge) { spawnText(hero.x, hero.y - 70, 'Уклон', '#7fe8ff', 14); burst(hero.x, hero.y - 30, 6, '120,230,255', 160, 0.3, 2); shellGain(); return; }
+  if (Math.random() < runeDodge()) { if (ST.ru.shadeArm && !((G.shadeCritCd || 0) > G.time)) { G.shadeCrit = G.time + 3; G.shadeCritCd = G.time + ST.ru.shadeArm; } spawnText(hero.x, hero.y - 70, 'Уклон', '#7fe8ff', 14); burst(hero.x, hero.y - 30, 6, '120,230,255', 160, 0.3, 2); shellGain(); return; }
   elem = elem || (src && src.elem) || null;
+  if (!elem && ST.ru.physRes) amount *= 1 - ST.ru.physRes; // Дух Клинка в доспехе: меньше нестихийного урона
+  if (ST.ru.poisonedWeak && src && src.st && src.st.poison && src.st.poison.t > 0) amount *= 1 - ST.ru.poisonedWeak; // руна «Яд» в бижутерии: отравленные бьют слабее
   if (auraWeak(src)) amount *= 1.5;
   if (mountainWeak()) amount *= 1.4;
   if (G.petStance > 0) amount *= 0.4;
@@ -1775,7 +1795,7 @@ function damageHero(amount, src, elem) {
   if (ST.block > 0 && Math.random() < ST.block) { amount *= 0.4; spawnText(hero.x, hero.y - 84, 'Блок', '#ffd76a', 13); P('ring', hero.x, hero.y - 28, 0, 0, 0.25, 30, '255,215,110'); }
   const raw = amount; amount *= (1 - ST.reduce) * (1 - (ST.vReduce || 0)); hero.lastHurt = 0; hero.iframe = 0.12;
   if (hero.shield > 0) { const a = Math.min(hero.shield, amount); hero.shield -= a; amount -= a; P('ring', hero.x, hero.y - 28, 0, 0, 0.25, 36, '90,220,255'); }
-  if (amount > 0) { hero.hp -= amount; hero.hurtFlash = 0.18; spawnText(hero.x + rand(-8, 8), hero.y - 72, '-' + fmt(amount), elem ? ELEM[elem].col : '#ff5a6e', 15); SFX.hurt(); if (elem && hero.hp > 0) applyElemEffect(elem, amount * (1 - (ST.res && ST.res[elem] || 0))); }
+  if (amount > 0) { const hp0 = hero.hp; hero.hp -= amount; if (ST.ru.breath && hero.hp > 0) runeBreath(hp0); hero.hurtFlash = 0.18; spawnText(hero.x + rand(-8, 8), hero.y - 72, '-' + fmt(amount), elem ? ELEM[elem].col : '#ff5a6e', 15); SFX.hurt(); if (elem && hero.hp > 0) applyElemEffect(elem, amount * (1 - (ST.res && ST.res[elem] || 0))); }
   addShake(5);
   shellGain();
   if (src && !src.dead && shellOn) { const t = raw * ST.shellRefl; dpsHit(src, 'thorns', t); src.hp -= t; spawnText(src.x, src.y - 60, fmt(t), '#7dff9a', 12); burst(src.x, src.y - 26, 5, '120,255,150', 160, 0.3, 2); if (src.hp <= 0) killEnemy(src); }
@@ -1797,7 +1817,7 @@ function heroRespawn() {
 }
 function tryDash(dir) {
   if (hero.dashCd > 0 || hero.dead) return false; const inp = dir || inputDir();
-  const dx = inp.mag ? inp.x : hero.face, dy = inp.mag ? inp.y : 0; hero.dashDx = dx; hero.dashDy = dy; hero.dashT = 0.17; hero.dashCd = ST.dashCd; SFX.dash(); starDashFx();
+  const dx = inp.mag ? inp.x : hero.face, dy = inp.mag ? inp.y : 0; hero.dashDx = dx; hero.dashDy = dy; hero.dashT = 0.17; hero.dashCd = ST.dashCd; SFX.dash(); starDashFx(); if (ST.ru.shadeDmg) { G.shadeHit.clear(); G.shadeFx = 0; } // Тень: новый рывок — новые задетые
   burst(hero.x, hero.y - 20, 10, '120,230,255', 140, 0.4, 3, 'glow'); return true;
 }
 
@@ -2000,11 +2020,12 @@ function updateLoot(dt) {
       if (l.type === 'gold') { const gv = Math.max(1, Math.round(l.val * ST.goldMul * (G.goldRush > 0 ? 2 : 1) * (PFX.doubleCoin && Math.random() < PFX.doubleCoin ? 2 : 1))); petGainXp(0.3); S.gold += gv; G.goldPop += gv; SFX.coin(); questEvent('gold', gv); }
       else if (l.type === 'jade') { S.jade += l.val; spawnText(hero.x, hero.y - 80, `+${l.val} ✧`, '#7dffb0', 16, true); SFX.soul(); burst(hero.x, hero.y - 30, 10, '110,255,170', 160, 0.5, 3, 'glow'); questEvent('jade', l.val); }
       else if (l.type === 'vshard') vOnShard(l.val);
+      else if (l.type === 'rfrag') runeFragPick(l.val);
       else { const sv2 = Math.max(1, Math.round(l.val * (ST.soulMul || 1))); S.souls += sv2; spawnText(hero.x, hero.y - 80, `+${sv2} ◆`, '#d6a6ff', 16, true); SFX.soul(); burst(hero.x, hero.y - 30, 10, '200,140,255', 160, 0.5, 3, 'glow'); }
       if (!l.petPick && G.pet && dist(G.pet.x, G.pet.y, hero.x, hero.y) < 450) nqEvent('collect', zoneAt(l.x)); // лут, собранный вместе с питомцем
       G.loot.splice(i, 1); continue;
     }
-    if (l.t > 60 && l.type !== 'vshard') G.loot.splice(i, 1);
+    if (l.t > 60 && l.type !== 'vshard' && l.type !== 'rfrag') G.loot.splice(i, 1);
   }
   G.xpPopT -= dt; if (G.xpPop > 0 && G.xpPopT <= 0) { spawnText(hero.x - 24, hero.y - 56, '+' + fmt(G.xpPop) + ' ✦', '#c9a6ff', 12); G.xpPop = 0; G.xpPopT = 0.6; }
   G.goldPopT -= dt; if (G.goldPop > 0 && G.goldPopT <= 0) { spawnText(hero.x + 16, hero.y - 66, '+' + CUR() + fmt(G.goldPop), towerIn() ? '#ff9ad0' : '#ffd76a', 13); G.goldPop = 0; G.goldPopT = 0.3; }
@@ -2057,7 +2078,7 @@ function updateHero(dt) {
   }
   h.moving = inp.mag > 0 || h.dashT > 0;
   const ox = h.x, oy = h.y;
-  if (h.dashT > 0) { h.dashT -= dt; h.x += h.dashDx * 980 * dt; h.y += h.dashDy * 980 * dt; P('glow', h.x + rand(-6, 6), h.y - 28 + rand(-16, 16), 0, 0, 0.3, 11, '110,220,255'); }
+  if (h.dashT > 0) { h.dashT -= dt; const dx0 = h.x, dy0 = h.y; h.x += h.dashDx * 980 * dt; h.y += h.dashDy * 980 * dt; if (ST.ru.shadeDmg) runeShadeStep(dx0, dy0, h.x, h.y); P('glow', h.x + rand(-6, 6), h.y - 28 + rand(-16, 16), 0, 0, 0.3, 11, '110,220,255'); }
   else if (inp.mag) { h.x += inp.x * ST.speed * heroSpdMul() * dt; h.y += inp.y * ST.speed * heroSpdMul() * dt; if (h.faceLock <= 0 && Math.abs(inp.x) > 0.1) h.face = inp.x > 0 ? 1 : -1; }
   resolveRects(h, h.r); vWallBlock(h, ox); h.x = clamp(h.x, 20, CFG.WORLD_W - 20); h.y = clamp(h.y, 60, CFG.WORLD_H - 40);
   if (autoMove && h.dashT <= 0) {
@@ -2081,6 +2102,7 @@ function updateHero(dt) {
   else if (h.lastHurt > 4 && !noRegen) heal(ST.maxHp * OOC_REGEN * dt);
   if (ST.regen > 0 && !noRegen) heal(ST.maxHp * ST.regen * dt);
   h.regenRate = noRegen ? 0 : ST.maxHp * ((h.x < CFG.BASE_X ? 0.3 : (h.lastHurt > 4 ? OOC_REGEN : 0)) + ST.regen);
+  if (G.breathT && G.breathT <= G.time) { G.breathT = 0; h.shield = Math.min(h.shield, Math.max(ST.shieldMax, ST.ru.shCap || 0)); } // щит «Второго дыхания» — на 4 с
   if (h.lastHurt > 3 && h.shield < ST.shieldMax) h.shield = Math.min(ST.shieldMax, h.shield + ST.shieldMax * 0.25 * dt);
   if (S.a.rank >= 4) {
     h.auraT -= dt;
@@ -3614,6 +3636,7 @@ function drawLoot(ctx, t) {
       const g = ctx.createLinearGradient(l.x, y - 6, l.x, y + 6); g.addColorStop(0, '#fff1a8'); g.addColorStop(1, '#d08a18');
       ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(l.x, y, sx, 6, 0, 0, TAU); ctx.fill(); ctx.strokeStyle = '#a8650e'; ctx.lineWidth = 0.8; ctx.stroke();
     } else if (l.type === 'vshard') { drawShardLoot(ctx, l, y, t);
+    } else if (l.type === 'rfrag') { drawRuneFrag(ctx, l, y, t);
     } else if (l.type === 'jade') {
       const pu = 1 + 0.12 * Math.sin(t * 5 + l.spin), yy = y - 3;
       ctx.save(); ctx.globalCompositeOperation = 'lighter'; const jg = ctx.createRadialGradient(l.x, yy, 0, l.x, yy, 16 * pu); jg.addColorStop(0, 'rgba(120,255,180,0.7)'); jg.addColorStop(1, 'rgba(60,220,140,0)'); ctx.fillStyle = jg; ctx.beginPath(); ctx.arc(l.x, yy, 16 * pu, 0, TAU); ctx.fill(); ctx.restore();
@@ -3951,6 +3974,7 @@ function renderForge() {
   $('#f-sub').innerHTML = `Горн ур. <b>${S.forge}</b>/10 · макс. тир чар <b style="color:${TIER_COLORS[mt - 1]}">${TIER_NAMES[mt - 1]}</b>`;
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === G.forgeTab));
   const inT = towerIn(); $('#tab-af').classList.toggle('hidden', inT || (!S.unlock3 && !S.oni)); if (inT && G.forgeTab === 'af') G.forgeTab = 'w';
+  const rOk = !inT && !!(S.tower && S.tower.unlocked); $('#tab-r').classList.toggle('hidden', !rOk); if (!rOk && G.forgeTab === 'r') G.forgeTab = 'w';
   document.querySelector('#forge .f-title').textContent = inT ? 'Демоническая кузница' : S.loc === 3 ? 'Древняя кузница' : 'Кузница Ками'; document.querySelector('#forge .f-emblem').textContent = inT ? '魔' : '鍛';
   const row = (ic, c, n, v) => `<div class="st"><span class="si" style="color:${c}">${ic}</span><span>${n}</span><b>${v}</b></div>`;
   $('#f-stats').innerHTML = row('⚔', '#ffb36b', 'Урон', fmt(ST.dmg)) + row('♥', '#ff6a86', 'Здоровье', fmt(ST.maxHp)) + row('✦', '#ffd84a', 'Крит', `${(ST.critChance * 100).toFixed(1)}% · ×${ST.critDmg.toFixed(2)}`)
@@ -3959,6 +3983,7 @@ function renderForge() {
     + (ST.goldMul > 1 ? row('¥', '#ffd76a', 'Йены с врагов', '+' + Math.round((ST.goldMul - 1) * 100) + '%') : '') + (ST.luck > 1 ? row('☘', '#7dffb0', 'Удача', '+' + Math.round((ST.luck - 1) * 100) + '%') : '') + (ST.skillMul > 1 ? row('✺', '#ff9cf0', 'Урон способностей', '+' + Math.round((ST.skillMul - 1) * 100) + '%') : '');
   const cap = $('#pv-cap');
   if (G.forgeTab === 'f') cap.innerHTML = `<b style="color:#ffb36b">Горн кузницы</b><small>уровень ${S.forge} · ${'🔥'.repeat(Math.ceil(S.forge / 2))}</small>`;
+  else if (G.forgeTab === 'r') cap.innerHTML = `<b style="color:#ffd76a">符 Руны</b><small>фрагменты: ${S.runes.frag.join(' · ')}</small>`;
   else if (G.forgeTab === 'af') cap.innerHTML = `<b style="color:#9fe6ff">Древняя кузница</b><small>уровень ${aforgeLevel()}/4 · убито в горах ${fmt(S.kills3 || 0)}</small>`;
   else if (G.forgeTab === 'j') { const l = S[G.jewelSel].lvl, J = JEWELS[G.jewelSel]; cap.innerHTML = `<b style="color:${jewelColor(l)}">${J.name}${l ? ' +' + l : ''}</b><small>${l ? J.stat.toUpperCase() + ' ' + J.fmt(J.val(l)) : 'НЕ ВЫКОВАНО'}</small>`; }
   else { const it = S[G.forgeTab], RK = G.forgeTab === 'w' ? WEAPON_RANKS : ARMOR_RANKS; cap.innerHTML = `<b style="color:${RANK_COLORS[it.rank - 1]}">${RK[it.rank - 1].name} +${it.lvl}</b><small>${rankStars(it.rank)} · ${RANK_NAMES[it.rank - 1].toUpperCase()}</small>`; }
@@ -3976,6 +4001,7 @@ function renderForge() {
     return;
   }
   if (G.forgeTab === 'j') { renderJewelTab(R); return; }
+  if (G.forgeTab === 'r') { renderRuneTab(R); return; }
   if (G.forgeTab === 'af') { R.innerHTML = aforgeHtml(); return; }
   const key = G.forgeTab, it = S[key], RK = key === 'w' ? WEAPON_RANKS : ARMOR_RANKS, info = RK[it.rank - 1], rc = RANK_COLORS[it.rank - 1];
   const statName = key === 'w' ? 'Урон' : 'Здоровье', statOf = st => key === 'w' ? st.dmg : st.maxHp;
@@ -4003,6 +4029,7 @@ function forgeAction(act, item, slot, btn) {
   if (act === 'close') { closeForge(); return; }
   if (act === 'tab') { G.forgeTab = btn.dataset.tab; SFX.click(); renderForge(); return; }
   if (act === 'jsel') { G.jewelSel = item; SFX.click(); renderForge(); return; }
+  if (RUNE_ACTS[act]) { runeAction(act, item, slot, btn); return; }
   if (act === 'look') { S.look[item] = slot === S[item].rank ? 0 : slot; SFX.click(); save(); renderForge(); return; }
   const it = item ? S[item] : null, name = item === 'w' ? 'Катана' : 'Одежда';
   const pay = (g, s = 0, j = 0) => { [g, s, j] = towerCost(g, s, j); if (S.gold < g || S.souls < s || S.jade < j) { SFX.fail(); toast('Не хватает ресурсов'); return false; } S.gold -= g; S.souls -= s; S.jade -= j; return true; };
@@ -4082,7 +4109,7 @@ function updatePreview(dt) {
   for (let i = 0; i < 5; i++) { const bx = W * (0.18 + i * 0.16), sw = Math.sin(ph.t * 0.5 + i * 1.3) * 30 * (W / 260), bg = p.createLinearGradient(0, 0, 0, H * 0.85); bg.addColorStop(0, hexA(tc, 0.1)); bg.addColorStop(1, hexA(tc, 0)); p.fillStyle = bg; p.beginPath(); p.moveTo(bx - 5 * (W / 260), 0); p.lineTo(bx + 5 * (W / 260), 0); p.lineTo(bx + sw + 34 * (W / 260), H * 0.85); p.lineTo(bx + sw - 34 * (W / 260), H * 0.85); p.closePath(); p.fill(); }
   p.restore();
   p.fillStyle = 'rgba(255,255,255,0.045)'; p.font = `700 ${130 * (W / 260)}px "Yu Gothic","Meiryo",sans-serif`; p.textAlign = 'center'; p.textBaseline = 'middle';
-  p.fillText(G.forgeTab === 'a' ? '鎧' : G.forgeTab === 'f' ? '炎' : G.forgeTab === 'j' ? '飾' : '刀', W / 2, H * 0.4);
+  p.fillText(G.forgeTab === 'r' ? '符' : G.forgeTab === 'a' ? '鎧' : G.forgeTab === 'f' ? '炎' : G.forgeTab === 'j' ? '飾' : '刀', W / 2, H * 0.4);
   const sc = W / 260 * 2.2; p.setTransform(sc, 0, 0, sc, W * 0.42, H * 0.8);
   p.save(); p.globalCompositeOperation = 'lighter'; p.scale(1, 0.32);
   p.strokeStyle = hexA(tc, 0.55); p.lineWidth = 1.2; p.beginPath(); p.arc(0, 0, 46, 0, TAU); p.stroke();
@@ -5189,9 +5216,9 @@ function drawHeroOni(ctx, h, wr, ar, t) {
 // ---------- Стихийные эффекты и проклятия на героине ----------
 function applyElemEffect(elem, dealt) {
   const h = hero; if (h.dead || dealt <= 0) return;
-  if (elem === 'fire') { h.hburn = { t: 3, tick: 0.5, dps: dealt * 0.1 }; burst(h.x, h.y - 30, 8, ELEM.fire.rgb, 160, 0.4, 3, 'glow'); }
-  else if (elem === 'poison') { h.hpoison = { t: 4, tick: 0.5, dps: dealt * 0.1 }; burst(h.x, h.y - 30, 8, ELEM.poison.rgb, 140, 0.5, 3, 'glow'); }
-  else if (elem === 'ice') { if (!(h.slowT > 0)) spawnText(h.x, h.y - 92, '❄ Замедление', ELEM.ice.col, 12); h.slowT = 1.5; burst(h.x, h.y - 30, 8, ELEM.ice.rgb, 140, 0.5, 3, 'glow'); }
+  if (elem === 'fire') { if (!ST.ru.noBurn) h.hburn = { t: 3, tick: 0.5, dps: dealt * 0.1 }; burst(h.x, h.y - 30, 8, ELEM.fire.rgb, 160, 0.4, 3, 'glow'); }
+  else if (elem === 'poison') { if (!ST.ru.noPoison) h.hpoison = { t: 4, tick: 0.5, dps: dealt * 0.1 }; burst(h.x, h.y - 30, 8, ELEM.poison.rgb, 140, 0.5, 3, 'glow'); }
+  else if (elem === 'ice') { if (ST.ru.noSlow) return; if (!(h.slowT > 0)) spawnText(h.x, h.y - 92, '❄ Замедление', ELEM.ice.col, 12); h.slowT = 1.5; burst(h.x, h.y - 30, 8, ELEM.ice.rgb, 140, 0.5, 3, 'glow'); }
   else if (elem === 'thunder') { addBolt(h.x + rand(-20, 20), h.y - 160, h.x, h.y - 28, ELEM.thunder.rgb, 2); }
 }
 function tryCurse(chance = 0.55) {
@@ -5221,7 +5248,7 @@ function updateHeroStatus(dt) {
   for (const k of ['hburn', 'hpoison']) {
     const s = h[k]; if (!s || s.t <= 0) continue; s.t -= dt; s.tick -= dt;
     if (Math.random() < dt * 10) P('glow', h.x + rand(-10, 10), h.y - rand(10, 50), 0, -30, 0.5, 5, k === 'hburn' ? ELEM.fire.rgb : ELEM.poison.rgb);
-    if (s.tick <= 0) { s.tick = 0.5; const d = s.dps * 0.5; if (!G.god) { h.hp -= d; spawnText(h.x + rand(-8, 8), h.y - 70, '-' + fmt(d), k === 'hburn' ? '#ff9a3d' : '#9dff6a', 11); if (h.hp <= 0) { heroDie(); return; } } }
+    if (s.tick <= 0) { s.tick = 0.5; const d = s.dps * 0.5; if (!G.god) { const hp0 = h.hp; h.hp -= d; if (ST.ru.breath && h.hp > 0) runeBreath(hp0); spawnText(h.x + rand(-8, 8), h.y - 70, '-' + fmt(d), k === 'hburn' ? '#ff9a3d' : '#9dff6a', 11); if (h.hp <= 0) { heroDie(); return; } } }
   }
   if (h.x < CFG.BASE_X && (curseTotal() > 0 || (h.hburn && h.hburn.t > 0) || (h.hpoison && h.hpoison.t > 0))) cleanseAll('base');
   const ds = dist(h.x, h.y, SHOP.x, SHOP.y);
@@ -5465,11 +5492,11 @@ function tryOniSuper() {
   if (G.oniSuperT > 0) return;
   if (S.oniCd > 0) { toast(`👹 Ярость Они перезаряжается: ${mmss(S.oniCd)}`); SFX.fail(); return; }
   if ((S.oniE || 0) < 100) { toast(`👹 Не хватает энергии Они: ${Math.floor(S.oniE || 0)}/100 — бей врагов (бижутерия ускоряет набор)`); SFX.fail(); return; }
-  S.oniE = 0; S.oniCd = Math.max(60, ONI_SUPER_CD - (PFX.superCd || 0)); const k = hero.hp / ST.maxHp; G.oniSuperT = ONI_SUPER_T + (PFX.superDur || 0); refreshStats(); hero.hp = ST.maxHp * k;
+  S.oniE = 0; S.oniCd = Math.max(60, (ONI_SUPER_CD - (PFX.superCd || 0)) * (1 - (ST.ru.oniCd || 0))); const k = hero.hp / ST.maxHp; G.oniSuperT = ONI_SUPER_T + (PFX.superDur || 0); refreshStats(); hero.hp = ST.maxHp * k;
   banner('👹 ЯРОСТЬ ОНИ', `+50% ко всем характеристикам на ${ONI_SUPER_T} с`); flashScreen(0.3); addShake(12); SFX.boom();
   burst(hero.x, hero.y - 30, 60, '255,60,50', 380, 0.9, 4, 'glow'); P('ring', hero.x, hero.y, 0, 0, 0.7, 220, '255,80,60');
 }
-function gainOniEnergy(mult = 1) { if (!S.oni || G.oniSuperT > 0) return; S.oniE = Math.min(100, (S.oniE || 0) + oniEnergyGain() * mult); }
+function gainOniEnergy(mult = 1) { if (!S.oni || G.oniSuperT > 0) return; S.oniE = Math.min(100, (S.oniE || 0) + oniEnergyGain() * mult * (1 + (ST.ru.oniE || 0))); }
 
 // ---------- HUD: статусы, расходники, энергия Они ----------
 function drawHUD3(ctx, sw, sh, t) {
@@ -5848,6 +5875,7 @@ function towerOnKill(e) {
   // добыча: только демонические души
   const n = e.boss ? 14 : e.mini ? 6 : randi(1, 2), val = Math.max(1, Math.round(e.gold * (e.elite && !e.mini ? 1 + (PFX.eliteGold || 0) : 1) / n));
   for (let i = 0; i < n; i++) dropLoot('gold', e.x, e.y, val);
+  runeFragDrop(e);
   if (!tw) return;
   if (e.floorMob) tw.killed++;
   if (e === tw.boss) {
@@ -6136,7 +6164,7 @@ const DUMMY = { x: 790, y: 1740 }, DUMMY_T = 15, DPS_WIN = 10;
 const DPS_SRC = {
   katana: ['Удар катаны', '#ffffff'], whirl: ['Вихрь клинка', '#9ff8ff'], wave: ['Волна', '#c9a6ff'], shadow: ['Танец теней', '#ff9cf0'],
   chain: ['Гром (молния)', '#9fdcff'], burn: ['Ожог', '#ff9a3d'], fire: ['Огонь', '#ff7a3a'], poison: ['Яд', '#9dff6a'], ice: ['Лёд', '#8fd8ff'], execute: ['Казнь', '#ff4d6d'], aura: ['Аура доспеха', '#8ff6ff'],
-  oni: ['Клинок Они (тьма)', '#c06bff'], react: ['Реакции стихий', '#ffd0b0'], thorns: ['Панцирь (отражение)', '#7dff9a'], pet: ['Питомец', '#ffd0f0'], petult: ['Ульта питомца', '#ffd76a'],
+  oni: ['Клинок Они (тьма)', '#c06bff'], react: ['Реакции стихий', '#ffd0b0'], thorns: ['Панцирь (отражение)', '#7dff9a'], spirit: ['Дух клинка', '#ffd0a0'], shade: ['Тень', '#b58cff'], pet: ['Питомец', '#ffd0f0'], petult: ['Ульта питомца', '#ffd76a'],
 };
 function makeDummy() {
   const z = Math.max(1, locMaxZone()), Z = ZONES[z], hp = ENEMY_TYPES.bruiser.hp * Z.hpM;
@@ -6860,7 +6888,8 @@ const eSt = e => e.st || (e.st = { rcd: {} });
 function elemDmg(e, el, amount, src, crit) {
   if (!e || e.dead || !(amount > 0)) return 0;
   const sm = (e.st && e.st.smoke && e.st.smoke.t > 0) ? 0.85 : 1;
-  const d = amount * (e.elem === el ? 0.5 : 1) * (1 - (e.def || 0) * (1 - ST.pen) * 0.5 * sm) * (mountainWeak() ? 0.6 : 1) * (auraWeak(e) ? 0.45 : 1) * (e.tArm || 1); // своя стихия — вдвое меньше; защита наполовину; Горное давление, Аура Тэнгу и броня башни — как у обычного урона
+  if (ST.ru.crack && !String(src || '').startsWith('pet')) runeCrackAdd(e);
+  const d = amount * (e.elem === el ? 0.5 : 1) * (1 - (e.def || 0) * (1 - ST.pen) * 0.5 * sm * (1 - runeCrack(e))) * (mountainWeak() ? 0.6 : 1) * (auraWeak(e) ? 0.45 : 1) * (e.tArm || 1); // своя стихия — вдвое меньше; защита наполовину; Горное давление, Аура Тэнгу и броня башни — как у обычного урона
   dpsHit(e, src || el, d, crit); e.hp -= d;
   if (G.texts.length < 50 || crit || e.boss) spawnText(e.x + rand(-10, 10), e.y - (e.boss ? 90 : 48), fmt(d), ELEM[el] ? ELEM[el].col : '#fff', crit ? 13 : 11); // при толпе цифры урона стихий не засоряют экран
   if (e.hp <= 0) killEnemy(e);
@@ -6875,16 +6904,16 @@ function elemProcs(e, base) { // проки стихийных чар оружи
 const stackDps = (old, x, n, k = 1) => old + (x - old) * Math.min(1, k / Math.max(1, n)); // каждый стак горит силой своего удара: новый сдвигает среднюю силу на 1/n (а не держит самый сильный удар)
 function applyElem(e, el, base, src, o = {}) {
   if (!e || e.dead) return; const s = eSt(e);
-  if (el === 'fire') { const f = s.fire || (s.fire = { n: 0, t: 0, dps: 0, tick: 0.5 }); if (f.t <= 0) { f.n = 0; f.dps = 0; f.tick = 0.5; } f.n = o.pet && f.n >= 1 ? f.n : Math.min(5, f.n + (o.n || 1)); f.t = 3; f.dps = stackDps(f.dps, o.dps != null ? o.dps : base * ST.elV.fire, f.n, o.n || 1); } // огонь питомца не складывается в стаки
+  if (el === 'fire') { const f = s.fire || (s.fire = { n: 0, t: 0, dps: 0, tick: 0.5 }); if (f.t <= 0) { f.n = 0; f.dps = 0; f.tick = 0.5; } f.n = o.pet && f.n >= 1 ? f.n : Math.min(5, f.n + (o.n || 1)); f.t = 3 * runeDur('fire'); f.dps = stackDps(f.dps, o.dps != null ? o.dps : base * ST.elV.fire, f.n, o.n || 1); } // огонь питомца не складывается в стаки
   else if (el === 'poison') { const p = s.poison || (s.poison = { n: 0, t: 0, dps: 0, tick: 0.5 }); if (p.t <= 0) { p.n = 0; p.dps = 0; p.tick = 0.5; } p.n = Math.min(5, p.n + (o.n || 1)); p.t = 4; p.dps = stackDps(p.dps, o.dps != null ? o.dps : base * ST.elV.poison, p.n, o.n || 1); }
   else if (el === 'ice') {
-    const c = s.ice || (s.ice = { n: 0, t: 0 }); if (c.t <= 0) c.n = 0; c.n = Math.min(5, c.n + 1); c.t = 3;
+    const c = s.ice || (s.ice = { n: 0, t: 0 }); if (c.t <= 0) c.n = 0; c.n = Math.min(5, c.n + 1); c.t = 3 * runeDur('ice');
     if (base > 0 && ST.elV.ice > 0) elemDmg(e, 'ice', base * ST.elV.ice, 'ice'); if (e.dead) return;
     const fz = s.frz || (s.frz = { t: 0, cd: 0 }); if (c.n >= 5 && !e.boss && !e.mini && fz.cd <= G.time) { fz.t = 1; fz.cd = G.time + 4; spawnText(e.x, e.y - 70, 'Заморозка', '#8fd8ff', 12); }
   }
   else if (el === 'dark') { s.shadow = { t: 2 }; }
   else if (el === 'thunder') {
-    s.zap = { t: 2 }; const st = s.stun || (s.stun = { t: 0, cd: 0 });
+    s.zap = { t: 2 * runeDur('thunder') }; const st = s.stun || (s.stun = { t: 0, cd: 0 });
     if (Math.random() < 0.1 * ((s.spark && s.spark.t > 0) ? 2 : 1)) { if (e.boss) { if (st.cd <= G.time) { st.t = 0.1; st.cd = G.time + 3; } } else st.t = Math.max(st.t, 0.4 * ((s.spark && s.spark.t > 0) ? 2 : 1)); }
   }
   vReact(e, el, base);
@@ -6893,20 +6922,22 @@ function vReact(e, el, base) { // реакции стихий: две стихи
   const s = e.st; if (!s || e.dead) return;
   const on = { fire: !!(s.fire && s.fire.t > 0 && s.fire.n > 0), poison: !!(s.poison && s.poison.t > 0 && s.poison.n > 0), ice: !!(s.ice && s.ice.t > 0 && s.ice.n > 0), thunder: !!(s.zap && s.zap.t > 0), dark: !!(s.shadow && s.shadow.t > 0) };
   const go = (k, a, b) => { if (!((el === a && on[b]) || (el === b && on[a]))) return false; if ((s.rcd[k] || 0) > G.time) return false; s.rcd[k] = G.time + 2; const R = REACT[k]; G.lastReact = R.name; if (G.texts.length < 50 || e.boss) spawnText(e.x, e.y - (e.boss ? 120 : 78), R.name + '!', R.col, 14, true); return true; };
-  if (go('smoke', 'fire', 'poison')) s.smoke = { t: 6 };
+  if (go('smoke', 'fire', 'poison')) s.smoke = { t: 6 * runeReact('fire', 'poison') };
   if (go('steam', 'fire', 'ice')) {
-    for (const x of G.enemies) if (!x.dead && dist(x.x, x.y, e.x, e.y) < 150 && (x === e || !((x.steamT || 0) > G.time))) { if (x !== e) x.steamT = G.time + 1; dealDamage(x, (base || ST.dmg) * 0.3, { noProc: true, noKb: true, small: true, quiet: true, col: '#ffd0b0', src: 'react' }); } // соседа пар задевает не чаще раза в секунду
+    for (const x of G.enemies) if (!x.dead && dist(x.x, x.y, e.x, e.y) < 150 && (x === e || !((x.steamT || 0) > G.time))) { if (x !== e) x.steamT = G.time + 1; dealDamage(x, (base || ST.dmg) * 0.3 * runeReact('fire', 'ice'), { noProc: true, noKb: true, small: true, quiet: true, col: '#ffd0b0', src: 'react' }); } // соседа пар задевает не чаще раза в секунду
     if (s.ice) { s.ice.n = 0; s.ice.t = 0; } if (s.frz) s.frz.t = 0;
     if (G.enemies.length <= 15) P('ring', e.x, e.y - 20, 0, 0, 0.45, 150, '255,210,180');
   }
-  if (go('spark', 'ice', 'thunder')) s.spark = { t: 3 };
-  if (go('toxic', 'thunder', 'poison')) vToxicBurst(e);
+  if (go('spark', 'ice', 'thunder')) s.spark = { t: 3 * runeReact('ice', 'thunder') };
+  if (go('toxic', 'thunder', 'poison')) { vToxicBurst(e); if (s.pb) s.pb.dmg *= runeReact('thunder', 'poison'); }
   if (S.oni) for (const o of ['fire', 'poison', 'ice', 'thunder']) if (el === 'dark' ? on[o] : (el === o && on.dark)) { if (go('eclipse', 'dark', o)) { if (o === 'fire' || o === 'poison') s[o].ecl = G.time + s[o].t; /* ×1,5 на оставшееся время, а не навсегда */ else if (o === 'ice') s.ice.n = Math.min(5, Math.ceil(s.ice.n * 1.5)); else if (s.stun) s.stun.t *= 1.5; } break; }
 }
 function drawElemIcons(ctx, e) { // значки статусов над врагом (до 3), цветом стихии, без мерцания
   const s = e.st; if (!s || e.dead) return; let n = 0; const y = e.y - (e.boss ? 132 : 70);
   const L = [s.fire && s.fire.t > 0 && 'fire', s.poison && s.poison.t > 0 && 'poison', s.ice && s.ice.t > 0 && 'ice', s.zap && s.zap.t > 0 && 'thunder', s.shadow && s.shadow.t > 0 && 'dark'];
   for (const k of L) { if (!k || n >= 3) continue; const x = e.x - 14 + n * 14; ctx.fillStyle = 'rgba(10,12,24,0.7)'; ctx.fillRect(x - 5, y - 5, 10, 10); ctx.fillStyle = ELEM[k].col; ctx.fillRect(x - 3.5, y - 3.5, 7, 7); n++; }
+  const mk = s.mk && s.mk.n > 0 && s.mk.t > G.time ? s.mk.n : 0, cr = s.cr && s.cr.n > 0 && ST.ru.crack ? runeCrackN(e) : 0; // руны: метки «Высвобождения» и стаки «Раскола»
+  if (mk || cr) { ctx.font = '700 10px sans-serif'; ctx.textAlign = 'center'; if (mk) { ctx.fillStyle = '#ffd0a0'; ctx.fillText('刃' + mk, e.x + 34, y + 4); } if (cr) { ctx.fillStyle = '#c9d4ff'; ctx.fillText('破' + cr, e.x - 36, y + 4); } }
 }
 const REACT = {
   smoke: { name: 'Едкий дым', col: '#d7ff8a' }, steam: { name: 'Пар', col: '#ffd0b0' }, spark: { name: 'Ледяная искра', col: '#bfeaff' },
@@ -6922,7 +6953,7 @@ function vToxicChain(list) { // яд с любой цели цепи перех�
   const n = p && p.n ? p.n : 1, dps = p && p.dps ? p.dps : (src.st.pb.dmg / 4), t = p && p.t ? p.t : 4;
   for (const x of list) { if (x.dead) continue; const s = eSt(x); if (!(s.poison && s.poison.t > 0 && s.poison.n > 0) && !(s.pb && s.pb.t > 0)) s.poison = { n: Math.ceil(n / 2), t, dps, tick: 0.5 }; vToxicBurst(x); } // на соседей — половина стаков
 }
-const elemHealMul = e => (e.st && e.st.poison && e.st.poison.t > 0) ? 0.5 : 1; // отравленный враг лечится вдвое слабее
+const elemHealMul = e => (e.st && e.st.poison && e.st.poison.t > 0) ? 0.5 - ((ST.ru && ST.ru.antiheal) || 0) * Math.min(5, e.st.poison.n || 0) / 5 : 1; // отравленный враг лечится вдвое слабее
 const elemFrozen = e => !!(e.st && e.st.frz && e.st.frz.t > 0);
 function elemSlow(e) { const c = e.st && e.st.ice; if (!c || c.t <= 0 || !c.n) return 1; const k = 1 - 0.08 * c.n; return (e.boss || e.mini) ? Math.max(0.75, k) : k; } // боссы и стражи башни — только замедление до −25%
 const fireDpsNow = e => { const f = e.st && e.st.fire; return f ? f.dps * ((f.ecl || 0) > G.time ? 1.5 : 1) : 0; };
@@ -6958,6 +6989,245 @@ function fixElemMig() { // перевод старых чар под стихи�
   S.elemMig = 2;
 }
 
+// =====================================================================
+//  БЛОК 11.17. РУНЫ (фрагменты из Башни, 8 рун, слоты катаны/доспеха/бижутерии)
+//  Руны лежат в S.runes (не на предметах и не в профиле Башни) и выключены в Башне.
+// =====================================================================
+const RRANK = [
+  { n: 'Простой', col: '#cfd6e0', m: 1 }, { n: 'Необычный', col: '#5fd16b', m: 1.4 }, { n: 'Редкий', col: '#4fa8ff', m: 1.9 },
+  { n: 'Эпический', col: '#b66bff', m: 2.5 }, { n: 'Легендарный', col: '#ffb340', m: 3.2 }, { n: 'Мифический', col: '#ff6a3c', m: 4 },
+];
+const rv = (lo, hi, r) => lo + (hi - lo) * (RRANK[clamp(r | 0, 0, 5)].m - 1) / 3; // значение руны ранга r: lo — Простой, hi — Мифический
+const RUNES = {
+  elem: { name: 'Стихия', icon: '元', col: '#ffb36b' }, poison: { name: 'Яд', icon: '毒', col: '#9dff6a' }, spirit: { name: 'Дух Клинка', icon: '刃', col: '#ffd0a0' },
+  heart: { name: 'Сердце Стража', icon: '心', col: '#ff8aa8' }, pierce: { name: 'Пробой', icon: '破', col: '#c9d4ff' }, shade: { name: 'Тень', icon: '影', col: '#b58cff' },
+  time: { name: 'Время', icon: '時', col: '#8fe6ff' }, bond: { name: 'Узы', icon: '絆', col: '#ffd76a' },
+};
+const RSLOT_EL = ['fire', 'thunder', 'ice'], RJ = ['ring', 'brace', 'neck'], RITEMS = ['w', 'a', 'j'], RBAG_MAX = 40, RFORGE_N = 10, RUP_N = 20;
+G.shadeHit = new Set(); G.shadeCrit = 0; G.dodgeBuffT = 0; G.runeTap = { act: '', t: -1e9 };
+const RFULL = 'Сумка рун полна (40) — разбери или вставь лишние';
+const defaultRunes = () => ({ frag: [0, 0, 0, 0, 0, 0], bag: [], w: [null, null, null], a: [null, null, null], j: [null, null, null] });
+function runesOn() { return !(S.loc === 4 || S.mainStash) && !!(S.tower && S.tower.unlocked); } // S.loc === 4 — башня (towerIn нельзя: computeStats)
+function runeAt(item, slot) { const R = S.runes, x = R && R[item] && R[item][slot]; if (!x) return null; if (item === 'j' && !((S[RJ[slot]] && S[RJ[slot]].lvl) >= 1)) return null; return x; } // руна украшения спит, пока украшения нет
+function runeR(item, id) { let r = -1; for (let i = 0; i < 3; i++) { const x = runeAt(item, i); if (x && x.id === id && x.r > r) r = x.r; } return r; }
+function runeElemR(item, el) { const x = runeAt(item, RSLOT_EL.indexOf(el)); return x && x.id === 'elem' ? x.r : -1; }
+const runeOk = (x) => x && typeof x === 'object' && RUNES[x.id] && Number.isInteger(x.r) && x.r >= 0 && x.r <= 5;
+const runeMk = (id, r, f) => ({ id, r, f: Array.isArray(f) && f.length === 6 ? f.map(v => Math.max(0, v | 0)) : [0, 0, 0, 0, 0, 0] });
+function runeScrapGain(x) { const R = S.runes; for (let i = 0; i < 6; i++) R.frag[i] += Math.floor((x.f[i] || 0) * 0.3); }
+function fixRunes() {
+  const d = defaultRunes(); let R = S.runes; if (!R || typeof R !== 'object') R = S.runes = d;
+  R.frag = Array.isArray(R.frag) ? d.frag.map((_, i) => Math.max(0, Math.floor(+R.frag[i] || 0))) : d.frag;
+  R.bag = Array.isArray(R.bag) ? R.bag.filter(runeOk).map(x => runeMk(x.id, x.r, x.f)) : [];
+  for (const k of RITEMS) {
+    const a = Array.isArray(R[k]) ? R[k] : [], seen = {};
+    R[k] = [0, 1, 2].map(i => { const x = a[i]; if (!runeOk(x)) return null; const y = runeMk(x.id, x.r, x.f); if (y.id !== 'elem') { if (seen[y.id]) { R.bag.push(y); return null; } seen[y.id] = 1; } return y; }); // одна руна вида на предмет (кроме Стихии)
+  }
+  while (R.bag.length > RBAG_MAX) runeScrapGain(R.bag.pop());
+  refreshPetFx();
+}
+function runeNo(msg) { toast(msg); SFX.fail(); return false; }
+function runeDone() { refreshPetFx(); refreshStats(); save(); return true; }
+function runeConflict(item, slot, id) { if (id === 'elem') return false; for (let i = 0; i < 3; i++) if (i !== slot && S.runes[item][i] && S.runes[item][i].id === id) return true; return false; }
+function runeInsertCost(item, slot, r) {
+  let n = slot + 1; if (item === 'j') { n = 1; for (let i = 0; i < 3; i++) if (i !== slot && S.runes.j[i]) n++; } // бижутерия — по числу рун в наборе
+  return Math.round(400 * villageGM() * [1, 2, 4, 8, 16, 32][r] * Math.pow(2, n - 1));
+}
+const runeRerollCost = (item, slot, pick) => { const x = S.runes[item][slot]; const c = runeInsertCost(item, slot, x.r); return pick ? { frag: 15, gold: Math.round(c * 1.25) } : { frag: 3, gold: Math.round(c * 0.25) }; };
+const runeUpgradeCost = (item, slot) => { const x = S.runes[item][slot]; return { frag: RUP_N, gold: runeInsertCost(item, slot, x.r + 1) }; };
+function runeForge(r) {
+  const R = S.runes; r = r | 0; if (r < 0 || r > 5) return false;
+  if (R.bag.length >= RBAG_MAX) return runeNo(RFULL);
+  if (R.frag[r] < RFORGE_N) return runeNo('Не хватает фрагментов');
+  R.frag[r] -= RFORGE_N; const f = [0, 0, 0, 0, 0, 0]; f[r] = RFORGE_N; R.bag.push(runeMk(pick(Object.keys(RUNES)), r, f)); return runeDone();
+}
+function runeInsert(bi, item, slot) {
+  const R = S.runes, x = R.bag[bi]; if (!x || !R[item] || slot < 0 || slot > 2 || R[item][slot]) return false;
+  if (runeConflict(item, slot, x.id)) return runeNo(`${RUNES[x.id].name}: только одна такая руна на ${item === 'j' ? 'набор украшений' : 'предмет'}`);
+  const g = runeInsertCost(item, slot, x.r); if (S.gold < g) return runeNo('Не хватает йен');
+  S.gold -= g; R.bag.splice(bi, 1); R[item][slot] = x; return runeDone();
+}
+function runeExtract(item, slot) {
+  const R = S.runes, x = R[item] && R[item][slot]; if (!x) return false;
+  if (R.bag.length >= RBAG_MAX) return runeNo(RFULL);
+  R[item][slot] = null; R.bag.push(x); return runeDone();
+}
+function runeReroll(item, slot, toId = null) {
+  const R = S.runes, x = R[item] && R[item][slot]; if (!x) return false;
+  const c = runeRerollCost(item, slot, !!toId);
+  let id = toId;
+  if (toId) { if (!RUNES[toId] || toId === x.id) return false; if (runeConflict(item, slot, toId)) return runeNo('Такая руна уже есть в этом предмете'); }
+  else { const opts = Object.keys(RUNES).filter(k => k !== x.id && !runeConflict(item, slot, k)); if (!opts.length) return false; id = pick(opts); }
+  if (R.frag[x.r] < c.frag) return runeNo('Не хватает фрагментов'); if (S.gold < c.gold) return runeNo('Не хватает йен');
+  R.frag[x.r] -= c.frag; S.gold -= c.gold; x.f[x.r] += c.frag; x.id = id; return runeDone();
+}
+function runeUpgrade(item, slot) {
+  const R = S.runes, x = R[item] && R[item][slot]; if (!x || x.r >= 5) return false;
+  const c = runeUpgradeCost(item, slot), r1 = x.r + 1;
+  if (R.frag[r1] < c.frag) return runeNo('Не хватает фрагментов ранга «' + RRANK[r1].n + '»'); if (S.gold < c.gold) return runeNo('Не хватает йен');
+  R.frag[r1] -= c.frag; S.gold -= c.gold; x.f[r1] += c.frag; x.r = r1; return runeDone();
+}
+// ---------- Фрагменты рун: только в Башне ----------
+function runeFragRank(f, lvl) { let r = f <= 10 ? 0 : f <= 25 ? 1 : f <= 40 ? 2 : f <= 60 ? 3 : f <= 80 ? 4 : 5; if (Math.random() < Math.min(0.4, 0.005 * (lvl || 1))) r = Math.min(5, r + 1); return r; } // уровень башни — шанс фрагмента рангом выше
+function runeFragDrop(e) {
+  const n = e.boss ? 5 : e.mini ? 2 : Math.random() < (e.elite ? 0.1 : 0.015) ? 1 : 0; if (!n) return;
+  const f = (G.tw && G.tw.floor) || 1, lvl = (S.tower && S.tower.run && S.tower.run.lvl) || 1;
+  for (let i = 0; i < n; i++) dropLoot('rfrag', e.x, e.y, runeFragRank(f, lvl));
+}
+function runeFragPick(r) { r = clamp(r | 0, 0, 5); S.runes.frag[r]++; spawnText(hero.x, hero.y - 80, `+1 符 ${RRANK[r].n}`, RRANK[r].col, 15, true); SFX.soul(); burst(hero.x, hero.y - 30, 8, hexRGB(RRANK[r].col), 140, 0.45, 3, 'glow'); }
+function drawRuneFrag(ctx, l, y, t) { // кристаллик цвета ранга, мягкое свечение без белого
+  const col = RRANK[clamp(l.val | 0, 0, 5)].col, rgb = hexRGB(col), pu = 1 + 0.1 * Math.sin(t * 3 + l.spin), yy = y - 3, sx = Math.abs(Math.cos(l.spin * 0.5)) * 3.5 + 2;
+  ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = `rgba(${rgb},0.25)`; ctx.beginPath(); ctx.arc(l.x, yy, 13 * pu, 0, TAU); ctx.fill(); ctx.restore();
+  ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(l.x, yy - 9); ctx.lineTo(l.x + sx, yy - 1); ctx.lineTo(l.x, yy + 7); ctx.lineTo(l.x - sx, yy - 1); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(20,16,40,0.7)'; ctx.lineWidth = 0.8; ctx.stroke();
+}
+// ---------- Эффекты рун: числа (в st.ru) ----------
+function applyRuneStats(st) {
+  st.ru = {}; if (!S.runes || !S.tower || !runesOn()) return; const U = st.ru; U.elDur = {}; U.reactMul = {};
+  const kf = runeElemR('w', 'fire'), ki = runeElemR('w', 'ice'), kt = runeElemR('w', 'thunder');
+  if (kf >= 0) st.elV.fire += rv(6, 24, kf) / 100; if (ki >= 0) st.elV.ice += rv(5, 20, ki) / 100; if (kt >= 0) U.zapChance = rv(4, 16, kt) / 100;
+  for (const el of RSLOT_EL) {
+    const a = runeElemR('a', el); if (a >= 0) { st.res[el] = Math.min(0.8, st.res[el] + rv(4, 16, a) / 100); if (el === 'fire') U.noBurn = 1; else if (el === 'ice') U.noSlow = 1; else { st.cdr = Math.min(0.6, st.cdr + rv(1, 4, a) / 100); st.dashCd = 1.5 * (1 - st.cdr); } }
+    const j = runeElemR('j', el); if (j >= 0) { U.elDur[el] = 1 + rv(10, 40, j) / 100; U.reactMul[el] = rv(8, 32, j) / 100; }
+  }
+  const p = runeR('w', 'poison'); if (p >= 0) { st.elV.poison += rv(6, 24, p) / 100; U.antiheal = rv(5, 25, p) / 100; }
+  const pa = runeR('a', 'poison'); if (pa >= 0) { st.res.poison = Math.min(0.8, st.res.poison + rv(5, 20, pa) / 100); U.noPoison = 1; st.curseRes = Math.min(0.9, st.curseRes + rv(5, 20, pa) / 100); }
+  const pj = runeR('j', 'poison'); if (pj >= 0) U.poisonedWeak = rv(4, 15, pj) / 100;
+  const sw = runeR('w', 'spirit'); if (sw >= 0) { U.spiritPhys = rv(4, 16, sw) / 100; st.critChance = Math.min(1, st.critChance + rv(1, 4, sw) / 100); }
+  const sa = runeR('a', 'spirit'); if (sa >= 0) U.physRes = rv(3, 12, sa) / 100;
+  const sj = runeR('j', 'spirit'); if (sj >= 0) U.burst = rv(150, 400, sj) / 100;
+  const ha = runeR('a', 'heart'); if (ha >= 0) { const k = 1 + rv(5, 20, ha) / 100; st.maxHp *= k; st.shieldMax *= k; }
+  const hw = runeR('w', 'heart'); if (hw >= 0) { U.heartHp = rv(0.25, 1, hw) / 100; U.heartSh = rv(2, 8, hw) / 100; U.shCap = Math.max(st.shieldMax, st.maxHp * rv(5, 20, hw) / 100); }
+  const hj = runeR('j', 'heart'); if (hj >= 0) U.breath = { heal: rv(15, 40, hj) / 100, sh: rv(10, 25, hj) / 100 };
+  const pw = runeR('w', 'pierce'), pq = runeR('j', 'pierce'); if (pw >= 0) U.crack = { cap: rv(30, 60, pw) / 100, hold: 3 + (pq >= 0 ? rv(1, 4, pq) : 0), step: 1.5 + (pq >= 0 ? rv(1, 4, pq) * 0.5 : 0) };
+  const pa2 = runeR('a', 'pierce'); if (pa2 >= 0) st.frail = 1 + (st.frail - 1) * (1 - rv(20, 60, pa2) / 100);
+  const tw = runeR('w', 'shade'); if (tw >= 0) U.shadeDmg = rv(60, 200, tw) / 100;
+  const ta = runeR('a', 'shade'); if (ta >= 0) U.shadeArm = rv(8, 3, ta);
+  const tj = runeR('j', 'shade'); if (tj >= 0) U.dodgeBuff = rv(3, 12, tj) / 100;
+  const mw = runeR('w', 'time'); if (mw >= 0) U.timeWhirl = rv(4, 16, mw) / 100;
+  const ma = runeR('a', 'time'); if (ma >= 0) st.dashCd *= 1 - rv(5, 20, ma) / 100;
+  const mj = runeR('j', 'time'); if (mj >= 0) { const k = rv(5, 20, mj) / 100; if (S.oni) { U.oniE = rv(8, 32, mj) / 100; U.oniCd = k; } else U.petCd = k; }
+}
+// ---------- Вкладка «符 Руны» в кузнице ----------
+const RPLACE = { w: '⚔ В катане', a: '◈ В доспехе', j: '💍 В бижутерии' };
+const r1 = v => round1(v);
+function runeTxt(id, place, r, el) {
+  const V = (lo, hi) => r1(rv(lo, hi, r)), E = ELEM[el] || ELEM.fire;
+  switch (id) {
+    case 'elem': {
+      const one = e => place === 'w' ? (e === 'fire' ? `🔥 удары кладут стак огня: ${V(6, 24)}% урона удара в сек.` : e === 'ice' ? `❄ удары кладут стак льда: +${V(5, 20)}% урона льдом и замедление` : `ϟ удары вешают «заряд», ${V(4, 16)}% шанс молнии с неба`)
+        : place === 'a' ? `${ELEM[e].icon} сопротивление стихии «${ELEM[e].name}» +${V(4, 16)}%` + (e === 'fire' ? ', без горения' : e === 'ice' ? ', без замедления' : `, откат способностей −${V(1, 4)}%`)
+        : `${ELEM[e].icon} статусы стихии дольше на ${V(10, 40)}%, реакции с ней сильнее на ${V(8, 32)}%`;
+      return el ? one(el) : RSLOT_EL.map(one).join(' · ');
+    }
+    case 'poison': return place === 'w' ? `стак яда: ${V(6, 24)}% урона удара в сек.; отравленный враг лечится до ${r1(50 + rv(5, 25, r))}% слабее` : place === 'a' ? `сопротивление яду и проклятиям +${V(5, 20)}%, героиню не отравляют` : `отравленные враги бьют героиню на ${V(4, 15)}% слабее`;
+    case 'spirit': return place === 'w' ? `+${V(4, 16)}% физического урона, +${V(1, 4)}% шанса крита` : place === 'a' ? `−${V(3, 12)}% нестихийного урона` : `10 физических критов по цели → «Высвобождение духа»: удар ${V(150, 400)}% урона`;
+    case 'heart': return place === 'w' ? `удар катаны +${V(0.25, 1)}% макс. здоровья к урону; ${V(2, 8)}% урона — в щит (до ${V(5, 20)}% здоровья)` : place === 'a' ? `+${V(5, 20)}% макс. здоровья` : `«Второе дыхание»: ниже 30% здоровья — лечение ${V(15, 40)}% и щит ${V(10, 25)}%, раз в 60 с`;
+    case 'pierce': return place === 'w' ? `«Раскол»: попадания снижают защиту врага на 8% за стак, до ${V(30, 60)}%` : place === 'a' ? `проклятие «Хрупкость» слабее на ${V(20, 60)}%` : `«Раскол» держится на ${V(1, 4)} с дольше и спадает реже`;
+    case 'shade': return place === 'w' ? `«Теневой шаг»: рывок задевает врагов на пути — ${V(60, 200)}% урона` : place === 'a' ? `после уклонения следующий удар — крит (не чаще раза в ${V(8, 3)} с)` : `после крита уклонение +${V(3, 12)}% на 2 с`;
+    case 'time': return place === 'w' ? `${V(4, 16)}% шанс внеочередного вихря` : place === 'a' ? `откат рывка −${V(5, 20)}%` : `Они: энергия +${V(8, 32)}%, откат Ярости −${V(5, 20)}%; без маски — откат ульты питомца −${V(5, 20)}%`;
+    case 'bond': return `второй навык питомца на ${place === 'w' ? '5 и 10' : place === 'a' ? '20 и 30' : '40'} ур. (сила ${Math.round(BOND_K[r] * 100)}%)`;
+  }
+  return '';
+}
+const runeItemName = (item, slot) => item === 'j' ? JEWELS[RJ[slot]].short : (item === 'w' ? 'Катана' : 'Доспех') + ' · слот ' + (slot + 1);
+function runeArm(act, key) { // подтверждение вторым нажатием (3 с); слишком быстрое второе нажатие (подлаг) не считается
+  const c = G.runeConfirm, now = performance.now();
+  if (c && c.act === act && c.key === key && now - c.t >= 300 && now - c.t <= 3000) { G.runeConfirm = null; return true; }
+  if (!(c && c.act === act && c.key === key && now - c.t < 300)) G.runeConfirm = { act, key, t: now };
+  renderForge(); return false;
+}
+const runeArmed = (act, key) => { const c = G.runeConfirm; return c && c.act === act && c.key === key && performance.now() - c.t <= 3000; };
+function runeCardHtml(x, place, el) {
+  const head = `<div class="irow"><div><div class="iname" style="color:${RUNES[x.id].col}">${RUNES[x.id].icon} ${RUNES[x.id].name}</div><div class="stars" style="color:${RRANK[x.r].col}">${RRANK[x.r].n} · ранг ${x.r + 1}/6</div></div></div>`;
+  return head + ['w', 'a', 'j'].map(p => `<div class="rtxt ${p === place ? 'on' : ''}" data-place="${p}"><b>${RPLACE[p]}:</b> ${runeTxt(x.id, p, x.r, x.id === 'elem' && p === place ? el : null)}</div>`).join('');
+}
+function renderRuneTab(R) {
+  const Rn = S.runes; let sel = G.runeSel || (G.runeSel = { item: 'w', slot: 0 }); if (sel.bag !== undefined && !Rn.bag[sel.bag]) sel = G.runeSel = { item: 'w', slot: 0 };
+  const slotB = (item, i) => {
+    const x = Rn[item][i], el = RSLOT_EL[i], on = sel.item === item && sel.slot === i, sleep = item === 'j' && !((S[RJ[i]] && S[RJ[i]].lvl) >= 1);
+    return `<button class="rslot ${on ? 'on' : ''}" data-act="rsel" data-item="${item}" data-slot="${i}" style="--el:${ELEM[el].col};--rk:${x ? RRANK[x.r].col : 'rgba(255,255,255,.12)'}"><span class="rk">${x ? RUNES[x.id].icon : '＋'}</span><small>${ELEM[el].icon} ${item === 'j' ? JEWELS[RJ[i]].short : 'слот ' + (i + 1)}${sleep ? ' · спит' : ''}</small></button>`;
+  };
+  const blocks = [['w', '⚔ Катана'], ['a', '◈ Доспех'], ['j', '💍 Бижутерия']].map(([k, n]) => `<div class="card rblock"><div class="ctitle">${n}</div><div class="rslots">${[0, 1, 2].map(i => slotB(k, i)).join('')}</div><div class="rcombo" id="rune-combo-${k}"></div></div>`).join('');
+  let card = '';
+  if (sel.bag !== undefined) {
+    const x = Rn.bag[sel.bag], key = 'b' + sel.bag;
+    const ins = ['w', 'a', 'j'].flatMap(k => [0, 1, 2].filter(i => !Rn[k][i]).map(i => { const g = runeInsertCost(k, i, x.r), bad = runeConflict(k, i, x.id); return `<button data-act="rins" data-item="${k}" data-slot="${i}" ${bad || S.gold < g ? 'disabled' : ''}>${runeItemName(k, i)}<span class="pr g">¥${fmt(g)}</span></button>`; })).join('');
+    card = runeCardHtml(x, null, null) + `<div class="ctitle">Вставить в свободный слот</div><div class="btns rbtns">${ins || '<div class="note">Свободных слотов нет — извлеки руну</div>'}</div>`
+      + `<div class="btns"><button class="danger" data-act="rscr" data-slot="${sel.bag}">${runeArmed('rscr', key) ? '⚠ Точно разобрать? Нажми ещё раз' : '♻ Разобрать'}<span class="sub">вернётся 30% фрагментов</span></button></div>`;
+  } else {
+    const x = Rn[sel.item][sel.slot], el = RSLOT_EL[sel.slot], key = sel.item + sel.slot;
+    if (!x) card = `<div class="iname">${runeItemName(sel.item, sel.slot)} · ${ELEM[el].icon}</div><div class="note">Пустой слот. Выбери руну в сумке справа и вставь её. Руна «Стихия» здесь станет стихией «${ELEM[el].name}».</div>`;
+    else {
+      const rr = runeRerollCost(sel.item, sel.slot, false), rp = runeRerollCost(sel.item, sel.slot, true), up = x.r < 5 ? runeUpgradeCost(sel.item, sel.slot) : null, f = Rn.frag;
+      const picks = Object.keys(RUNES).filter(k => k !== x.id).map(k => `<button data-act="rrp" data-item="${sel.item}" data-slot="${sel.slot}" data-id="${k}" ${runeConflict(sel.item, sel.slot, k) || f[x.r] < rp.frag || S.gold < rp.gold ? 'disabled' : ''}>${runeArmed('rrp', key + ':' + k) ? '⚠ Точно? ' : ''}${RUNES[k].icon} ${RUNES[k].name}</button>`).join('');
+      card = runeCardHtml(x, sel.item, el) + `<div class="btns rbtns"><button data-act="rext" data-item="${sel.item}" data-slot="${sel.slot}">⬆ Извлечь<span class="sub">бесплатно</span></button>`
+        + `<button data-act="rrr" data-item="${sel.item}" data-slot="${sel.slot}" ${f[x.r] < rr.frag || S.gold < rr.gold ? 'disabled' : ''}>${runeArmed('rrr', key) ? '⚠ Точно? Ещё раз' : '🎲 Переброс'}<span class="pr">符${rr.frag}</span><span class="pr g">¥${fmt(rr.gold)}</span></button>`
+        + (up ? `<button class="primary" data-act="rup" data-item="${sel.item}" data-slot="${sel.slot}" ${f[x.r + 1] < up.frag || S.gold < up.gold ? 'disabled' : ''}>💎 Огранка → ${RRANK[x.r + 1].n}<span class="pr">符${up.frag}</span><span class="pr g">¥${fmt(up.gold)}</span></button>` : '') + `</div>`
+        + `<div class="ctitle">Выбрать руну (${rp.frag} фрагм. ${RRANK[x.r].n} + ¥${fmt(rp.gold)})</div><div class="btns rbtns">${picks}</div>`;
+    }
+  }
+  const frag = RRANK.map((k, r) => `<div class="rfrag"><span style="color:${k.col}">符 ${k.n}</span><b>${Rn.frag[r]}</b><button data-act="rforge" data-slot="${r}" ${Rn.frag[r] >= RFORGE_N && Rn.bag.length < RBAG_MAX ? '' : 'disabled'}>Выковать (${RFORGE_N})</button></div>`).join('');
+  const bag = Rn.bag.map((x, i) => `<button class="rslot rbagi ${sel.bag === i ? 'on' : ''}" data-act="rbag" data-slot="${i}" style="--el:${RRANK[x.r].col};--rk:${RRANK[x.r].col}"><span class="rk">${RUNES[x.id].icon}</span><small>${RUNES[x.id].name}</small></button>`).join('');
+  R.innerHTML = `<div class="rgrid">${blocks}</div><div class="card itemcard" style="--rc:#ffd76a">${card}</div>`
+    + `<div class="card"><div class="ctitle">Фрагменты рун (падают в Башне демонов)</div>${frag}<div class="ctitle">Сумка рун ${Rn.bag.length}/${RBAG_MAX}</div><div class="rbag">${bag || '<div class="note">Пусто — выкуй руну из 10 фрагментов</div>'}</div></div>`;
+}
+function runeAction(act, item, slot, btn) {
+  const sel = G.runeSel || {}, now = performance.now();
+  if (act !== 'rsel' && act !== 'rbag') { const L = G.runeTap; if (now - L.t < 300 && (L.act === act || (act === 'rext' && L.act === 'rins'))) return; G.runeTap = { act, t: now }; } // подлаг: второе касание по тратящей кнопке сразу после первого не считается
+  if (act === 'rsel') { G.runeSel = { item, slot }; SFX.click(); }
+  else if (act === 'rbag') { G.runeSel = { bag: slot }; SFX.click(); }
+  else if (act === 'rforge') { if (runeForge(slot)) { G.runeSel = { bag: S.runes.bag.length - 1 }; SFX.up(); toast(`符 Выкована руна: ${RUNES[S.runes.bag[S.runes.bag.length - 1].id].name}`); } }
+  else if (act === 'rins') { if (sel.bag !== undefined && runeInsert(sel.bag, item, slot)) { G.runeSel = { item, slot }; SFX.up(); panelHit(); } }
+  else if (act === 'rext') { if (runeExtract(item, slot)) { G.runeSel = { bag: S.runes.bag.length - 1 }; SFX.click(); } }
+  else if (act === 'rrr') { if (!runeArm('rrr', item + slot)) return; if (runeReroll(item, slot)) { SFX.up(); toast(`🎲 Новая руна: ${RUNES[S.runes[item][slot].id].name}`); } }
+  else if (act === 'rrp') { if (!runeArm('rrp', item + slot + ':' + btn.dataset.id)) return; if (runeReroll(item, slot, btn.dataset.id)) SFX.up(); }
+  else if (act === 'rup') { if (runeUpgrade(item, slot)) { SFX.up(); panelHit(); toast(`💎 Огранка: ${RRANK[S.runes[item][slot].r].n}`); } }
+  else if (act === 'rscr') { if (!runeArm('rscr', 'b' + slot)) return; if (runeScrap(slot)) { const n = S.runes.bag.length; G.runeSel = n ? { bag: Math.min(slot, n - 1) } : { item: 'w', slot: 0 }; SFX.click(); } }
+  renderForge();
+}
+const RUNE_ACTS = { rsel: 1, rbag: 1, rforge: 1, rins: 1, rext: 1, rrr: 1, rrp: 1, rup: 1, rscr: 1 };
+// ---------- Узы: второй навык питомца ----------
+const BOND_COUNT = { atkN: 1, cleanse: 1 }, BOND_K = [0.4, 0.52, 0.64, 0.76, 0.88, 1], BOND_TIERS = { w: [0, 1], a: [2, 3], j: [4] }; // место руны — какие уровни ветки (5/10, 20/30, 40), ранг — сила
+function bondTiers() { const o = {}; if (!S.runes || !runesOn()) return o; for (const k in BOND_TIERS) { const r = runeR(k, 'bond'); if (r >= 0) for (const i of BOND_TIERS[k]) o[i] = r; } return o; }
+function bondFx(fx, id, p) {
+  const bt = bondTiers(); for (const i in bt) { const c = p.picks[i], x = p.x2 && p.x2[i]; if (!(c === 0 || c === 1) || !(x === 0 || x === 1) || x === c || p.lvl < PET_TIERS[i]) continue;
+    const o = PET_TREE[id][i][x].fx, kk = BOND_K[bt[i]]; for (const k in o) { if (k === 'ult') continue; const v = o[k]; fx[k] = (fx[k] || 0) + (BOND_COUNT[k] ? Math.max(1, Math.round(v * kk)) : v * kk); } }
+}
+// ---------- Тень и Время ----------
+const runeDodge = () => ST.dodge + ((G.dodgeBuffT || 0) > G.time ? Math.max(0, Math.min(ST.ru.dodgeBuff || 0, 0.45 - ST.dodge)) : 0); // Тень в бижутерии: после крита уклонение выше (общий предел 45%)
+const runePetCd = u => PET_ULT_CD[u] * (1 - ((ST.ru && ST.ru.petCd) || 0));
+function runeShadeStep(x0, y0, x1, y1) { // Теневой шаг: рывок задевает врагов на пути, каждого один раз
+  const vx = x1 - x0, vy = y1 - y0, L2 = vx * vx + vy * vy || 1;
+  for (const e of G.enemies) {
+    if (e.dead || G.shadeHit.has(e)) continue; const k = clamp(((e.x - x0) * vx + (e.y - y0) * vy) / L2, 0, 1), px = x0 + vx * k, py = y0 + vy * k;
+    if (dist(e.x, e.y, px, py) < 40 + (e.r || 14)) { G.shadeHit.add(e); dealDamage(e, ST.dmg * ST.ru.shadeDmg, { src: 'shade', noKb: true }); }
+  }
+  if ((G.shadeFx || 0) < 3) { G.shadeFx = (G.shadeFx || 0) + 1; const p = P('glow', x0, y0 - 28, 0, 0, 0.25, 22, '120,70,200'); p.shade = true; } // тёмный послеобраз, не больше 3 силуэтов
+}
+// ---------- Пробой: «Раскол» (стаки спадают лениво — без тиков на кадр) ----------
+function runeCrackN(e) { const c = e.st && e.st.cr; if (!c || !c.n) return 0; const C = ST.ru.crack || { hold: 3, step: 1.5 }, el = G.time - c.last - C.hold; if (el > 0) { const k = 1 + Math.floor(el / C.step); c.n = Math.max(0, c.n - k); c.last += k * C.step; } return c.n; }
+function runeCrack(e) { if (!e.st || !e.st.cr) return 0; const n = runeCrackN(e); return n && ST.ru.crack ? Math.min(ST.ru.crack.cap, 0.08 * n) : 0; }
+function runeCrackAdd(e) { const s = eSt(e), c = s.cr || (s.cr = { n: 0, last: G.time }); runeCrackN(e); c.n = Math.min(Math.ceil(ST.ru.crack.cap / 0.08), c.n + 1); c.last = G.time; }
+// ---------- Дух Клинка: метки физических критов → «Высвобождение духа» ----------
+function runeMark(e) {
+  if (e.dead) return; const s = eSt(e), m = s.mk || (s.mk = { n: 0, t: 0 }); if (m.t < G.time) m.n = 0; m.n++; m.t = G.time + 4;
+  if (m.n >= 10) { m.n = 0; P('ring', e.x, e.y - 24, 0, 0, 0.4, e.boss ? 110 : 70, '255,208,160'); dealDamage(e, ST.dmg * ST.ru.burst, { noCrit: true, noProc: true, noKb: true, src: 'spirit', col: '#ffd0a0' }); }
+}
+// ---------- Сердце Стража: щит от ударов катаны, «Второе дыхание» ----------
+function runeHeartShield(dmg) { const cap = ST.ru.shCap || 0; if (hero.shield < cap) hero.shield = Math.min(cap, hero.shield + Math.min(dmg * ST.ru.heartSh, ST.maxHp * 0.01)); }
+function runeBreath(hp0) {
+  const m = ST.maxHp, B = ST.ru.breath; if (!(hp0 >= m * 0.3 && hero.hp < m * 0.3) || (G.breathCd || 0) > G.time) return;
+  G.breathCd = G.time + 60; G.breathT = G.time + 4; heal(m * B.heal); hero.shield += m * B.sh;
+  spawnText(hero.x, hero.y - 96, 'Второе дыхание', '#7dffb0', 15, true); P('ring', hero.x, hero.y - 28, 0, 0, 0.6, 90, '125,255,176');
+}
+const runeDur = el => (ST.ru && ST.ru.elDur && ST.ru.elDur[el]) || 1; // руна «Стихия» в бижутерии — статусы своей стихии дольше
+const runeReact = (a, b) => 1 + ((ST.ru && ST.ru.reactMul && (ST.ru.reactMul[a] || 0) + (ST.ru.reactMul[b] || 0)) || 0); // и реакции с её участием сильнее
+function runeZap(e, base) { // ϟ Стихия в катане: удар — «заряд», иногда молния с неба
+  const s = eSt(e); s.zap = { t: 2 * runeDur('thunder') }; vReact(e, 'thunder', base); if (e.dead || Math.random() >= ST.ru.zapChance) return;
+  const dmg = ST.dmg * 0.5 * ST.skillMul; addBolt(e.x + rand(-20, 20), e.y - 300, e.x, e.y - 26, '127,212,255');
+  dealDamage(e, dmg * ((s.spark && s.spark.t > 0) ? 2 : 1), { noProc: true, noKb: true, noCrit: true, col: '#9fdcff', src: 'chain', el: 'thunder' }); if (!e.dead) applyElem(e, 'thunder', dmg, 'chain'); SFX.zap();
+}
+function runeScrap(bi) { const R = S.runes, x = R.bag[bi]; if (!x) return false; R.bag.splice(bi, 1); runeScrapGain(x); return runeDone(); }
 // =====================================================================
 //  БЛОК 12. ЧИТ-КОНСОЛЬ
 // =====================================================================
@@ -7009,6 +7279,8 @@ function runCmd(line) {
     case 'gold': S.gold += has ? n : 10000; clog(`¥ = ${fmt(S.gold)}`, 'ok'); break;
     case 'souls': S.souls += has ? n : 100; clog(`◆ = ${fmt(S.souls)}`, 'ok'); break;
     case 'rank_weapon': rankSet('w', n); break;
+    case 'rfrag': { const a2 = parseFloat(line.split(/\s+/)[2]); S.runes.frag[clamp(has ? n | 0 : 0, 0, 5)] += isNaN(a2) ? 10 : a2; clog('Фрагменты рун: ' + S.runes.frag.join(' / '), 'ok'); break; }
+    case 'rune': { const a2 = parseFloat(line.split(/\s+/)[2]); if (!RUNES[a1]) { clog('Руны: ' + Object.keys(RUNES).join(', '), 'err'); break; } S.runes.bag.push(runeMk(a1, clamp(isNaN(a2) ? 0 : a2 | 0, 0, 5))); clog('Руна в сумке', 'ok'); break; }
     case 'rank_armor': rankSet('a', n); break;
     case 'lvl_weapon': case 'lvl_armor': { const k = cmd === 'lvl_weapon' ? 'w' : 'a'; if (!has) return clog('Нужен уровень 0–8', 'err'); S[k].lvl = clamp(n | 0, 0, CFG.MAX_LVL); refreshStats(); clog(`Закалка: +${S[k].lvl}`, 'ok'); break; }
     case 'forge': if (!has) return clog('Нужен уровень 1–10', 'err'); S.forge = clamp(n | 0, 1, 10); clog(`Кузница: ур. ${S.forge}`, 'ok'); break;
