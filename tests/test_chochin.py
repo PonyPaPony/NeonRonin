@@ -113,3 +113,22 @@ def test_liberate_hits(page):
     run(page, BASE + "own(50, [0, 0, 0, 0, 0, 0]);")
     r = js(page, "(() => { " + MOBS + " const a = mk(100, 0), b = mk(-100, 40); G.pet.ultT = 0; updatePet(0.016); return [a.hp < 1e15, b.hp < 1e15, G.pet.ultT > 40]; })()")
     assert r == [True, True, True]
+
+
+# ---------- особые места и демоническая печать ----------
+def test_special_pet_slot(page):
+    run(page, BASE + "S.pets.slots = 6; S.pets.owned = {}; for (const id of ['cat', 'kitsune', 'tanuki', 'panda', 'imp', 'pony']) S.pets.owned[id] = {lvl: 50, xp: 0, picks: [], x2: []}; S.pets.eggs = [{sp: 'chochin', k: 500}]; tryHatch();")
+    assert js(page, "[!!S.pets.owned.chochin, S.pets.eggs.length, freeSlots()]") == [True, 0, 0]   # Тётин не занимает обычный слот
+    run(page, "openPets(); renderPets();")
+    r = js(page, "(() => { const t = document.querySelector('#pt-left').textContent; return [t.includes('Особые питомцы'), t.includes('6/6'), document.querySelectorAll('#pt-left .pslot[data-id=\"chochin\"]').length]; })()")
+    assert r == [True, True, 1]
+
+
+def test_demon_seal_drop_and_slot4(page):
+    run(page, "runCmd('открыть всё'); travelTo(3); fixSlots(); runCmd('tower'); S.tower.cp = 61; towerEnter(61, 1); runCmd('twfloor 70'); G.god = true; towerSpawns(0.016); S.tower.dSeal = 0;")
+    r = js(page, "(() => { Math.random = () => 0.2; const b = G.tw.boss; b.hp = 1; dealDamage(b, 100, {noKb: true, noProc: true}); return S.tower.dSeal; })()")
+    assert r == 1                                                      # 25% с босса 70-го этажа
+    run(page, "runCmd('twfloor 50'); towerSpawns(0.016);")
+    assert js(page, "(() => { Math.random = () => 0.01; const b = G.tw.boss; b.onmyo.ph = 4; b.hp = 1; dealDamage(b, 100, {noKb: true, noProc: true}); return S.tower.dSeal; })()") == 1   # до 60-го не падает
+    r = js(page, "(() => { S.neck.lvl = 15; S.neck.slot4 = false; S.gold = 1e12; forgeAction('jslot4', 'neck'); return [S.neck.slot4, S.tower.dSeal]; })()")
+    assert r == [True, 0]

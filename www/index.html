@@ -624,7 +624,7 @@ const JEWELS = {
 };
 const jUpCost = l => ({ gold: Math.floor(400 * Math.pow(1.7, l) * (l >= 10 ? 6 : 1)), jade: l >= 10 ? 2 + l * 2 : 2 + l });
 const jewelSlots = (l, x4) => l <= 0 ? 0 : Math.min(3, 1 + Math.floor(l / 4)) + (l >= JMAX && x4 ? 1 : 0); // 4-й слот — на +15 за Печать Четырёх Ветров
-const SLOT4_COST = { gold: 250e6, jade: 250 }, SEAL_EVERY = 25;
+const SLOT4_COST = { gold: 250e6, jade: 250 }, SEAL_EVERY = 25, TW_SLOT4 = 75e6; // в Башне: демоническая печать + ~100 млн ❖
 const jewelColor = l => l <= 0 ? '#6f7699' : RANK_COLORS[l >= 15 ? 7 : l >= 13 ? 6 : l >= 11 ? 4 : l >= 10 ? 3 : l >= 7 ? 2 : l >= 4 ? 1 : 0];
 
 const ENEMY_TYPES = {
@@ -1188,14 +1188,16 @@ function giveEgg(sp, quiet) {
     const id = P0.owned[sp] ? sp : P0.active; if (id && P0.owned[id]) { const p = P0.owned[id]; petGainXp(petNeed(p.lvl) * 0.6, id); }
     toast(`${PET_SP[sp].icon} Ещё одно яйцо «${PET_SP[sp].short}» превратилось в большое лакомство для питомца`); return;
   }
-  P0.eggs.push({ sp, k: 0 }); if (!quiet) { banner(`🥚 Яйцо: ${PET_SP[sp].name}`, `Вылупится через ${PET_SP[sp].hatch} убийств${freeSlots() > 0 ? '' : ' · нужен свободный слот в Питомнике'}`); SFX.up(); }
+  P0.eggs.push({ sp, k: 0 }); if (!quiet) { banner(`🥚 Яйцо: ${PET_SP[sp].name}`, `Вылупится через ${PET_SP[sp].hatch} убийств${freeSlots() > 0 || SPECIAL_PETS[sp] ? '' : ' · нужен свободный слот в Питомнике'}`); SFX.up(); }
   tryHatch();
 }
-const freeSlots = () => S.pets.slots - Object.keys(S.pets.owned).length;
+const SPECIAL_PETS = { chochin: '🏮 Освободи духа на 50-м этаже Башни' }; // питомцы-награды: своё место, обычный слот не занимают
+const regularOwned = () => Object.keys(S.pets.owned).filter(k => !SPECIAL_PETS[k]);
+const freeSlots = () => S.pets.slots - regularOwned().length;
 function tryHatch() {
   const P0 = S.pets;
   for (let i = 0; i < P0.eggs.length; i++) {
-    const e = P0.eggs[i]; if (e.k < PET_SP[e.sp].hatch || freeSlots() <= 0) continue;
+    const e = P0.eggs[i]; if (e.k < PET_SP[e.sp].hatch || (!SPECIAL_PETS[e.sp] && freeSlots() <= 0)) continue;
     P0.eggs.splice(i, 1); i--; P0.owned[e.sp] = { lvl: 1, xp: 0, picks: [] };
     if (!P0.active) { P0.active = e.sp; spawnPetEntity(); refreshPetFx(); refreshStats(); }
     banner(`${PET_SP[e.sp].icon} Вылупился ${PET_SP[e.sp].short}!`, `${PET_SP[e.sp].name} · ${PET_SP[e.sp].role}`); SFX.up(); flashScreen(0.2); save();
@@ -1234,7 +1236,7 @@ function renderPets() {
   $('#pt-res').innerHTML = `<span class="res g"><i>¥</i>${fmt(S.gold)}</span><span class="res j"><i>✧</i>${fmt(S.jade)}</span>`;
   $('#pt-tabs').innerHTML = `<button class="btab ${tab === 'pets' ? 'active' : ''}" data-act="ptab" data-tab="pets">🐾 Питомцы</button><button class="btab ${tab === 'nq' ? 'active' : ''}" data-act="ptab" data-tab="nq">📜 Задания Питомника <small>яйца и новые слоты</small></button>`;
   if (tab === 'nq') { renderNQ(); return; }
-  const owned = Object.keys(P0.owned);
+  const owned = regularOwned();
   let slots = '';
   for (let i = 0; i < PET_SLOTS_MAX; i++) {
     const id = owned[i];
@@ -1243,7 +1245,8 @@ function renderPets() {
     else slots += `<div class="pslot locked"><span class="pic">🔒</span><small>слот ${i + 1}</small></div>`;
   }
   const eggs = P0.eggs.map(e => `<div class="egg" style="--pc:${PET_SP[e.sp].col2}"><span>${PET_SP[e.sp].ultra ? '🌈' : '🥚'}</span><div><b>${PET_SP[e.sp].ultra ? 'Радужное яйцо' : 'Яйцо: ' + PET_SP[e.sp].short}</b><div class="heat"><i style="width:${Math.min(100, e.k / PET_SP[e.sp].hatch * 100)}%"></i></div><small>${Math.min(e.k, PET_SP[e.sp].hatch)}/${PET_SP[e.sp].hatch} убийств${e.k >= PET_SP[e.sp].hatch && freeSlots() <= 0 ? ' · нужен свободный слот!' : ''}</small></div></div>`).join('') || '<div class="note">Яиц пока нет. Их дают задания Питомника — у каждого района своё яйцо.</div>';
-  $('#pt-left').innerHTML = `<div class="ctitle">Слоты Питомника ${owned.length}/${P0.slots}</div><div class="pslots">${slots}</div><div class="ctitle">Яйца в инкубаторе</div>${eggs}`;
+  const spec = Object.keys(SPECIAL_PETS).map(id => { const p = P0.owned[id]; return p ? `<div class="pslot ${G.petSel === id ? 'sel' : ''} ${P0.active === id ? 'act' : ''}" data-act="psel" data-id="${id}" style="--pc:${PET_SP[id].col2}"><span class="pic">${PET_SP[id].icon}</span><b>${PET_SP[id].short}</b><small>ур. ${p.lvl}${P0.active === id ? ' · с тобой' : ''}</small></div>` : `<div class="pslot locked"><span class="pic">${PET_SP[id].icon}</span><small>${SPECIAL_PETS[id]}</small></div>`; }).join('');
+  $('#pt-left').innerHTML = `<div class="ctitle">Слоты Питомника ${owned.length}/${P0.slots}</div><div class="pslots">${slots}</div><div class="ctitle">Особые питомцы <small style="opacity:.7">· награды за подвиги, свои места</small></div><div class="pslots">${spec}</div><div class="ctitle">Яйца в инкубаторе</div>${eggs}`;
   const id = G.petSel && P0.owned[G.petSel] ? G.petSel : null;
   if (!id) { $('#pt-mid').innerHTML = '<div class="note" style="margin-top:40px">Здесь появится твой питомец. Пока он вылупляется, продолжай сражаться — яйцо греется от каждой победы.</div>'; $('#pt-right').innerHTML = ''; return; }
   const p = P0.owned[id], S0 = PET_SP[id], f = petForm(p.lvl), need = petNeed(p.lvl);
@@ -4149,8 +4152,9 @@ function forgeAction(act, item, slot, btn) {
     const jc = hexRGB(jewelColor(it.lvl)); SFX.up(); panelHit(); prevBurst(jc, act === 'jcraft' ? 70 : 34, 240); PREV.flash = act === 'jcraft' ? 0.8 : 0.3; emberBurst(act === 'jcraft' ? 50 : 20);
     if (act === 'jcraft') banner('Украшение выковано!', `${J.name} · ${J.stat} ${J.fmt(J.val(1))}`); else toast(`${J.icon} ${J.short}: уровень ${it.lvl} · ${J.stat} ${J.fmt(J.val(it.lvl))}`);
   } else if (act === 'jslot4') {
-    if (towerIn() || !JKEYS.includes(item) || it.lvl < JMAX || it.slot4 || !((S.jSeal || 0) > 0)) { SFX.fail(); return; }
-    if (!pay(SLOT4_COST.gold, 0, SLOT4_COST.jade)) return; S.jSeal--; it.slot4 = true; fixSlots();
+    const tw = towerIn(), seals = tw ? (S.tower.dSeal || 0) : (S.jSeal || 0);
+    if (!JKEYS.includes(item) || it.lvl < JMAX || it.slot4 || !(seals > 0)) { SFX.fail(); return; }
+    if (tw ? !pay(TW_SLOT4, 0, 0) : !pay(SLOT4_COST.gold, 0, SLOT4_COST.jade)) return; if (tw) S.tower.dSeal--; else S.jSeal--; it.slot4 = true; fixSlots();
     SFX.up(); panelHit(); prevBurst('255,215,120', 60, 240); PREV.flash = 0.5; emberBurst(40); banner('4-й слот чар открыт!', `${JEWELS[item].name} · Печать Четырёх Ветров вставлена`);
   } else if (act === 'remove') { it.ench[slot] = null; SFX.click(); }
   else if (act === 'oniwake') { if (!S.masks.every(Boolean) || S.oni) return; if (G.oniArm && performance.now() < G.oniArm) { G.oniArm = 0; oniAwaken(); return; } G.oniArm = performance.now() + 6000; SFX.warn(); }
@@ -4255,6 +4259,7 @@ function renderJewelTabRaw(R) {
   if (lv === 0) action = costBtn('jcraft', k, '', `✧ Выковать: ${J.name}`, J.craft.gold, 0, 'primary big', `${J.stat}: <b class="up">${J.fmt(J.val(1))}</b> · открывает 1 слот чар`, J.craft.jade);
   else if (lv >= 10 && !S.unlock2 && !towerIn()) action = '<button class="big" disabled>🔒 Уровни 11–15 откроются после победы над всеми боссами Токио</button>';
   else if (lv < JMAX) { const c = jUpCost(lv); action = costBtn('jup', k, '', `⚒ Улучшить до ур. ${lv + 1}`, c.gold, 0, 'primary big', `${J.stat}: ${J.fmt(J.val(lv))} <span class="ar">→</span> <b class="up">${J.fmt(J.val(lv + 1))}</b>${jewelSlots(lv + 1) > jewelSlots(lv) ? ' · +1 слот чар' : ''}`, c.jade); }
+  else if (!it.slot4 && towerIn()) action = costBtn('jslot4', k, '', '👹 Открыть 4-й слот чар', TW_SLOT4, 0, 'primary big', `нужна Демоническая печать: у тебя ${S.tower.dSeal || 0} · падает с 60-го этажа (босс 25%, страж 5%)`, 0).replace('<button', (S.tower.dSeal || 0) > 0 ? '<button' : '<button disabled');
   else if (!it.slot4 && !towerIn()) action = costBtn('jslot4', k, '', '🀄 Открыть 4-й слот чар', SLOT4_COST.gold, 0, 'primary big', `нужна Печать Четырёх Ветров: у тебя ${S.jSeal || 0} · печать даётся за каждые ${SEAL_EVERY} испытаний с наградой`, SLOT4_COST.jade).replace('<button', (S.jSeal || 0) > 0 ? '<button' : '<button disabled');
   else action = '<button class="big" disabled>✧ Украшение совершенно</button>';
   R.innerHTML = sel + `<div class="card itemcard" style="--rc:${tc}"><div class="irow"><div><div class="iname" style="color:${tc};text-shadow:0 0 16px ${tc}88">${J.name}${lv ? ' +' + lv : ''}</div><div class="stars">${lv ? '◆'.repeat(lv) + '◇'.repeat(JMAX - lv) : 'ещё не выковано'}</div></div><div class="badge" style="color:${tc}">${J.stat}: ${lv ? J.fmt(J.val(lv)) : '—'}</div></div>
@@ -4263,7 +4268,7 @@ function renderJewelTabRaw(R) {
     <div class="pips">${Array.from({ length: JMAX }, (_, i) => `<div class="pip ${i < lv ? 'on' : i === lv ? 'next' : ''}"></div>`).join('')}</div>
     <div class="btns">${action}</div>
     <div class="note">✧ Осколки нефрита выпадают с обычных врагов (≈3%, больше с чарой «Удача»), с элиты и боссов — всегда. У тебя: <b style="color:#7dffb0">${fmt(S.jade)} ✧</b></div></div>
-    <div class="card"><div class="ctitle">Слоты чар (${jewelSlots(lv, it.slot4)}/4) · чары украшений</div><div class="slots">${slotsHtml(k, it, 4, jewelSlots(lv, it.slot4), i => lv === 0 ? 'Сначала выкуй украшение' : i === 3 ? 'Ур. 15 + Печать Четырёх Ветров' : `Откроется на ур. ${[1, 4, 8][i]}`)}</div></div>`;
+    <div class="card"><div class="ctitle">Слоты чар (${jewelSlots(lv, it.slot4)}/4) · чары украшений</div><div class="slots">${slotsHtml(k, it, 4, jewelSlots(lv, it.slot4), i => lv === 0 ? 'Сначала выкуй украшение' : i === 3 ? (towerIn() ? 'Ур. 15 + Демоническая печать (с 60-го этажа)' : 'Ур. 15 + Печать Четырёх Ветров') : `Откроется на ур. ${[1, 4, 8][i]}`)}</div></div>`;
 }
 function goldGrad(ctx, y0, y1) { const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, '#fff3c0'); g.addColorStop(0.45, '#e2b04e'); g.addColorStop(1, '#7a4e10'); return g; }
 function magatamaPath(ctx, x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, Math.PI, 0); ctx.quadraticCurveTo(x + r, y + r * 1.6, x - r * 0.4, y + r * 2.3); ctx.quadraticCurveTo(x - r * 0.1, y + r * 1.2, x - r, y); ctx.closePath(); }
@@ -5835,7 +5840,7 @@ function defaultTowerProf() { return { w: { rank: 1, lvl: 0, ench: [null] }, a: 
 function fixTower() {
   let T = S.tower; if (!T || typeof T !== 'object') T = S.tower = {};
   T.unlocked = !!T.unlocked || !!(S.unlock3 && (S.loc === 3 || (S.maxZone3 | 0) > 1 || (S.kills3 | 0) > 0));
-  T.charges = clamp(T.charges === undefined ? TW.MAX_CH : T.charges | 0, 0, TW.MAX_CH); T.chk = +T.chk || 0;
+  T.charges = clamp(T.charges === undefined ? TW.MAX_CH : T.charges | 0, 0, TW.MAX_CH); T.chk = +T.chk || 0; T.dSeal = Math.max(0, T.dSeal | 0);
   T.cp = clamp(T.cp | 0, 1, 91); T.cp = 1 + Math.floor((T.cp - 1) / 10) * 10;
   T.best = clamp(T.best | 0, 0, TW.FLOORS); T.kills = Math.max(0, +T.kills || 0); T.lvlSel = clamp(T.lvlSel | 0, 1, 99);
   if (!S.mainStash && (!T.prof || typeof T.prof !== 'object')) T.prof = defaultTowerProf();
@@ -6057,6 +6062,7 @@ function towerOnKill(e) {
   runeFragDrop(e);
   if (!tw) return;
   if (e.floorMob) tw.killed++;
+  if ((e.boss || e.mini) && tw.floor >= 60 && Math.random() < (e.boss ? 0.25 : 0.05)) { T.dSeal = (T.dSeal || 0) + 1; setTimeout(() => banner('👹 Демоническая печать!', 'Открывает 4-й слот чар демонического украшения 15-го уровня'), 900); SFX.up(); }
   if (e.onmyo && !T.onmyoWin) { T.onmyoWin = true; giveEgg('chochin'); setTimeout(() => banner('🏮 Ты освободила духа!', 'Последний фонарь раскрылся — в нём яйцо Тётина'), 1500); }
   if (e === tw.boss) {
     for (const x of G.enemies) if (x.lantern || x.captive || x.lion) x.dead = true;
